@@ -7,19 +7,62 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1809DC2E2DF3EEDD00A1B0AB /* FillOutEscrowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1809DC2D2DF3EED800A1B0AB /* FillOutEscrowView.swift */; };
+		1818BD772DA1FE540078BCAB /* DaysOne-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1818BD762DA1FE540078BCAB /* DaysOne-Regular.ttf */; };
+		1818BD792DA9F57F0078BCAB /* Escrow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1818BD782DA9F57B0078BCAB /* Escrow.swift */; };
+		181B83E02D79561200C4E576 /* OpenEscrowsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 181B83DF2D79560B00C4E576 /* OpenEscrowsView.swift */; };
+		181B83E22D795EC100C4E576 /* EscrowCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 181B83E12D795EBD00C4E576 /* EscrowCardView.swift */; };
+		181C1B4A2DB0859C00B906B9 /* EscrowDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 181C1B492DB0859700B906B9 /* EscrowDetailView.swift */; };
+		1852A2C82DFF6F500034BC95 /* MakePaymentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1852A2C72DFF6F4B0034BC95 /* MakePaymentView.swift */; };
 		186326602D5B05BB00759DC1 /* GoldyApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1863265F2D5B05BB00759DC1 /* GoldyApp.swift */; };
-		186326622D5B05BB00759DC1 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 186326612D5B05BB00759DC1 /* ContentView.swift */; };
 		186326642D5B05BC00759DC1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 186326632D5B05BC00759DC1 /* Assets.xcassets */; };
 		186326682D5B05BC00759DC1 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 186326672D5B05BC00759DC1 /* Preview Assets.xcassets */; };
+		18781B612D73873600EC3178 /* SignupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18781B602D73873300EC3178 /* SignupView.swift */; };
+		18781B632D73F87900EC3178 /* SignupViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18781B622D73F87600EC3178 /* SignupViewModel.swift */; };
+		18781B682D73F97D00EC3178 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18781B672D73F97C00EC3178 /* User.swift */; };
+		18781B6B2D73F9CA00EC3178 /* LabelTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18781B6A2D73F9C700EC3178 /* LabelTextField.swift */; };
+		18781B6D2D73FCF000EC3178 /* AppBackgroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18781B6C2D73FCED00EC3178 /* AppBackgroundView.swift */; };
+		18781B6F2D73FD0900EC3178 /* PrimaryActionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18781B6E2D73FD0600EC3178 /* PrimaryActionButton.swift */; };
+		18781B712D74009E00EC3178 /* PersistentToolbarContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18781B702D74009200EC3178 /* PersistentToolbarContainer.swift */; };
+		18781B732D7400B300EC3178 /* BottomToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18781B722D7400AF00EC3178 /* BottomToolbar.swift */; };
+		18781B752D74074600EC3178 /* NotchedBarShape.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18781B742D74073F00EC3178 /* NotchedBarShape.swift */; };
+		18FC97FF2D6EE1160053CFD3 /* IntroView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18FC97FE2D6EE1120053CFD3 /* IntroView.swift */; };
+		18FC98012D6EE2910053CFD3 /* DelaGothicOne-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 18FC98002D6EE2910053CFD3 /* DelaGothicOne-Regular.ttf */; };
+		18FC98032D737DE10053CFD3 /* CreateEscrowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18FC98022D737DDC0053CFD3 /* CreateEscrowView.swift */; };
+		18FC98052D737EFC0053CFD3 /* IBMPlexMono-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 18FC98042D737EFC0053CFD3 /* IBMPlexMono-Regular.ttf */; };
+		18FC98072D7380EC0053CFD3 /* AuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18FC98062D7380E40053CFD3 /* AuthViewModel.swift */; };
+		18FC980B2D7381820053CFD3 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18FC980A2D7381800053CFD3 /* LoginView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1809DC2D2DF3EED800A1B0AB /* FillOutEscrowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FillOutEscrowView.swift; sourceTree = "<group>"; };
+		1818BD762DA1FE540078BCAB /* DaysOne-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "DaysOne-Regular.ttf"; sourceTree = "<group>"; };
+		1818BD782DA9F57B0078BCAB /* Escrow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Escrow.swift; sourceTree = "<group>"; };
+		181B83DF2D79560B00C4E576 /* OpenEscrowsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenEscrowsView.swift; sourceTree = "<group>"; };
+		181B83E12D795EBD00C4E576 /* EscrowCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EscrowCardView.swift; sourceTree = "<group>"; };
+		181C1B492DB0859700B906B9 /* EscrowDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EscrowDetailView.swift; sourceTree = "<group>"; };
+		1852A2C72DFF6F4B0034BC95 /* MakePaymentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MakePaymentView.swift; sourceTree = "<group>"; };
 		1863265C2D5B05BB00759DC1 /* Goldy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Goldy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1863265F2D5B05BB00759DC1 /* GoldyApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoldyApp.swift; sourceTree = "<group>"; };
-		186326612D5B05BB00759DC1 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		186326632D5B05BC00759DC1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		186326652D5B05BC00759DC1 /* Goldy.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Goldy.entitlements; sourceTree = "<group>"; };
 		186326672D5B05BC00759DC1 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		18781B602D73873300EC3178 /* SignupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignupView.swift; sourceTree = "<group>"; };
+		18781B622D73F87600EC3178 /* SignupViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignupViewModel.swift; sourceTree = "<group>"; };
+		18781B672D73F97C00EC3178 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		18781B6A2D73F9C700EC3178 /* LabelTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelTextField.swift; sourceTree = "<group>"; };
+		18781B6C2D73FCED00EC3178 /* AppBackgroundView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppBackgroundView.swift; sourceTree = "<group>"; };
+		18781B6E2D73FD0600EC3178 /* PrimaryActionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrimaryActionButton.swift; sourceTree = "<group>"; };
+		18781B702D74009200EC3178 /* PersistentToolbarContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistentToolbarContainer.swift; sourceTree = "<group>"; };
+		18781B722D7400AF00EC3178 /* BottomToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomToolbar.swift; sourceTree = "<group>"; };
+		18781B742D74073F00EC3178 /* NotchedBarShape.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotchedBarShape.swift; sourceTree = "<group>"; };
+		18FC97FD2D6EE0E90053CFD3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		18FC97FE2D6EE1120053CFD3 /* IntroView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntroView.swift; sourceTree = "<group>"; };
+		18FC98002D6EE2910053CFD3 /* DelaGothicOne-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "DelaGothicOne-Regular.ttf"; sourceTree = "<group>"; };
+		18FC98022D737DDC0053CFD3 /* CreateEscrowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateEscrowView.swift; sourceTree = "<group>"; };
+		18FC98042D737EFC0053CFD3 /* IBMPlexMono-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "IBMPlexMono-Regular.ttf"; sourceTree = "<group>"; };
+		18FC98062D7380E40053CFD3 /* AuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModel.swift; sourceTree = "<group>"; };
+		18FC980A2D7381800053CFD3 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -52,9 +95,16 @@
 		1863265E2D5B05BB00759DC1 /* Goldy */ = {
 			isa = PBXGroup;
 			children = (
+				18781B692D73F9B900EC3178 /* Components */,
+				18781B662D73F96E00EC3178 /* Models */,
+				18781B652D73F8A800EC3178 /* View Models */,
+				18FC98082D7380FD0053CFD3 /* Views */,
+				18FC97FD2D6EE0E90053CFD3 /* Info.plist */,
 				1863265F2D5B05BB00759DC1 /* GoldyApp.swift */,
-				186326612D5B05BB00759DC1 /* ContentView.swift */,
 				186326632D5B05BC00759DC1 /* Assets.xcassets */,
+				18FC98002D6EE2910053CFD3 /* DelaGothicOne-Regular.ttf */,
+				18FC98042D737EFC0053CFD3 /* IBMPlexMono-Regular.ttf */,
+				1818BD762DA1FE540078BCAB /* DaysOne-Regular.ttf */,
 				186326652D5B05BC00759DC1 /* Goldy.entitlements */,
 				186326662D5B05BC00759DC1 /* Preview Content */,
 			);
@@ -67,6 +117,53 @@
 				186326672D5B05BC00759DC1 /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		18781B652D73F8A800EC3178 /* View Models */ = {
+			isa = PBXGroup;
+			children = (
+				18781B622D73F87600EC3178 /* SignupViewModel.swift */,
+				18FC98062D7380E40053CFD3 /* AuthViewModel.swift */,
+			);
+			path = "View Models";
+			sourceTree = "<group>";
+		};
+		18781B662D73F96E00EC3178 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				1818BD782DA9F57B0078BCAB /* Escrow.swift */,
+				18781B672D73F97C00EC3178 /* User.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		18781B692D73F9B900EC3178 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				18781B742D74073F00EC3178 /* NotchedBarShape.swift */,
+				18781B722D7400AF00EC3178 /* BottomToolbar.swift */,
+				18781B702D74009200EC3178 /* PersistentToolbarContainer.swift */,
+				18781B6E2D73FD0600EC3178 /* PrimaryActionButton.swift */,
+				18781B6C2D73FCED00EC3178 /* AppBackgroundView.swift */,
+				18781B6A2D73F9C700EC3178 /* LabelTextField.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		18FC98082D7380FD0053CFD3 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				1852A2C72DFF6F4B0034BC95 /* MakePaymentView.swift */,
+				1809DC2D2DF3EED800A1B0AB /* FillOutEscrowView.swift */,
+				181C1B492DB0859700B906B9 /* EscrowDetailView.swift */,
+				181B83E12D795EBD00C4E576 /* EscrowCardView.swift */,
+				181B83DF2D79560B00C4E576 /* OpenEscrowsView.swift */,
+				18781B602D73873300EC3178 /* SignupView.swift */,
+				18FC980A2D7381800053CFD3 /* LoginView.swift */,
+				18FC97FE2D6EE1120053CFD3 /* IntroView.swift */,
+				18FC98022D737DDC0053CFD3 /* CreateEscrowView.swift */,
+			);
+			path = Views;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -97,7 +194,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1540;
-				LastUpgradeCheck = 1540;
+				LastUpgradeCheck = 1620;
 				TargetAttributes = {
 					1863265B2D5B05BB00759DC1 = {
 						CreatedOnToolsVersion = 15.4;
@@ -127,8 +224,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				18FC98052D737EFC0053CFD3 /* IBMPlexMono-Regular.ttf in Resources */,
 				186326682D5B05BC00759DC1 /* Preview Assets.xcassets in Resources */,
+				1818BD772DA1FE540078BCAB /* DaysOne-Regular.ttf in Resources */,
 				186326642D5B05BC00759DC1 /* Assets.xcassets in Resources */,
+				18FC98012D6EE2910053CFD3 /* DelaGothicOne-Regular.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -139,8 +239,26 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				186326622D5B05BB00759DC1 /* ContentView.swift in Sources */,
+				18781B612D73873600EC3178 /* SignupView.swift in Sources */,
+				1852A2C82DFF6F500034BC95 /* MakePaymentView.swift in Sources */,
+				181B83E02D79561200C4E576 /* OpenEscrowsView.swift in Sources */,
+				181C1B4A2DB0859C00B906B9 /* EscrowDetailView.swift in Sources */,
+				18FC98072D7380EC0053CFD3 /* AuthViewModel.swift in Sources */,
+				1818BD792DA9F57F0078BCAB /* Escrow.swift in Sources */,
+				18FC97FF2D6EE1160053CFD3 /* IntroView.swift in Sources */,
+				18781B632D73F87900EC3178 /* SignupViewModel.swift in Sources */,
+				18781B682D73F97D00EC3178 /* User.swift in Sources */,
+				1809DC2E2DF3EEDD00A1B0AB /* FillOutEscrowView.swift in Sources */,
+				18781B6F2D73FD0900EC3178 /* PrimaryActionButton.swift in Sources */,
+				181B83E22D795EC100C4E576 /* EscrowCardView.swift in Sources */,
 				186326602D5B05BB00759DC1 /* GoldyApp.swift in Sources */,
+				18FC980B2D7381820053CFD3 /* LoginView.swift in Sources */,
+				18781B712D74009E00EC3178 /* PersistentToolbarContainer.swift in Sources */,
+				18FC98032D737DE10053CFD3 /* CreateEscrowView.swift in Sources */,
+				18781B732D7400B300EC3178 /* BottomToolbar.swift in Sources */,
+				18781B752D74074600EC3178 /* NotchedBarShape.swift in Sources */,
+				18781B6D2D73FCF000EC3178 /* AppBackgroundView.swift in Sources */,
+				18781B6B2D73F9CA00EC3178 /* LabelTextField.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -181,6 +299,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -242,6 +361,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -269,11 +389,13 @@
 				CODE_SIGN_ENTITLEMENTS = Goldy/Goldy.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"Goldy/Preview Content\"";
 				DEVELOPMENT_TEAM = 24S36Y3GNV;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Goldy/Info.plist;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -307,11 +429,13 @@
 				CODE_SIGN_ENTITLEMENTS = Goldy/Goldy.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"Goldy/Preview Content\"";
 				DEVELOPMENT_TEAM = 24S36Y3GNV;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Goldy/Info.plist;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
