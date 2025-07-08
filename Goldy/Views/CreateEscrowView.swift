@@ -8,49 +8,48 @@
 import SwiftUI
 
 struct CreateEscrowView: View {
+    var viewModel: EscrowViewModel
+
     @State private var escrowName: String = ""
     @State private var parties: [String] = ["profile1", "profile2"]
+    @State private var showFillOut = false
     
     var body: some View {
         ZStack {
-            // If you have a background image or gradient, put it here.
-            // For demonstration, here’s a simple gradient:
-            Color("Background")
-                .ignoresSafeArea()
+            Color("Background").ignoresSafeArea()
             
             VStack {
-                // Title
                 TitleSection(title: "CREATE AN \n ESCROW")
                     .padding(.bottom, 50)
                 
-                // Escrow Name
                 EscrowNameField(escrowName: $escrowName)
                     .padding(.bottom, 40)
                 
-                // Parties
                 PartyList(parties: $parties) {
-                    // Handle add-party action here
+                    // TODO: Add party logic
                 }
                 .padding(.bottom, 40)
                 
-                // Terms & Conditions
                 TermsConditionsSection(
                     uploadAction: {
-                        // Handle “Upload T&C from files”
+                        // TODO: Upload logic
                     },
                     fillOutAction: {
-                        // Handle “Fill out escrow without T&C”
+                        showFillOut = true
                     }
                 )
                 .padding(.bottom, 35)
                 
                 SaveForLaterView()
-                
-                .padding(.bottom, 10)
-                
-                
+                    .padding(.bottom, 10)
             }
             .padding(.horizontal)
+        }
+        .sheet(isPresented: $showFillOut) {
+            FillOutEscrowView(
+                viewModel: viewModel, escrowName: escrowName,
+                parties: parties
+            )
         }
     }
 }
@@ -173,5 +172,5 @@ struct SaveForLaterView: View {
 
 // MARK: - Preview
 #Preview {
-    CreateEscrowView()
+    CreateEscrowView(viewModel: EscrowViewModel())
 }

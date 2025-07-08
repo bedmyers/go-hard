@@ -18,14 +18,14 @@ struct EscrowDetailView: View {
                     Text(escrow.title)
                         .font(.custom("DelaGothicOne-Regular", size: 28))
                         .foregroundColor(.black)
-                    Text(escrow.subtitle)
+                    Text(escrow.subtitle ?? "")
                         .font(.custom("DaysOne-Regular", size: 16))
                         .opacity(0.35)
                 }
 
                 // Purpose Section
                 SectionHeader(text: "PURPOSE OF THE ESCROW")
-                InfoCard(text: escrow.purpose)
+                InfoCard(text: escrow.purpose ?? "")
                 
                 HStack {
                     Text("TOTAL RELEASED AMOUNT")
@@ -45,7 +45,7 @@ struct EscrowDetailView: View {
                     }
 
                     VStack(alignment: .leading, spacing: 16) {
-                        ForEach(escrow.releaseEvents) { event in
+                        ForEach(makeReleaseEvents(from: escrow.milestones)) { event in
                             MilestoneCard(event: event)
                         }
                     }
@@ -94,6 +94,17 @@ struct EscrowDetailView: View {
             .padding(16)
         }
         .background(Color("Card1").ignoresSafeArea())
+    }
+    
+    func makeReleaseEvents(from milestones: [Milestone]) -> [ReleaseEvent] {
+        let colors: [Color] = [.orange.opacity(0.8), .yellow.opacity(0.8), .gray.opacity(0.6)]
+        return milestones.enumerated().map { index, milestone in
+            ReleaseEvent(
+                description: "Milestone \(index + 1)",
+                amount: milestone.amount,
+                color: colors[index % colors.count]
+            )
+        }
     }
 }
 
@@ -255,14 +266,21 @@ struct EscrowDetailView_Previews: PreviewProvider {
                 color: Color.gray.opacity(0.6)
             )
         ]
+        let sampleMilestones = [
+            Milestone(id: 1, amount: 7250, released: true),
+            Milestone(id: 2, amount: 3625, released: false),
+            Milestone(id: 3, amount: 3625, released: false)
+        ]
         let detail = EscrowDetail(
+            id: 1,
             title: "Cabochen Jewelry",
             subtitle: "NEXT MILESTONE ON SEPTEMBER 5, 2025",
             purpose: "The Buyer is commissioning a custom engagement ring from the Jeweler.",
-            progress: 0.8,
-            totalReleased: 5000,
-            releaseEvents: sampleEvents,
+            status: "PENDING",
             totalCommitted: 14500,
+            totalReleased: 5000,
+            progress: 0.8,
+            milestones: sampleMilestones,
             cancellationPolicy: [
                 "If the Buyer cancels before production begins, the escrow funds (minus a non‑refundable deposit of $500) will be returned.",
                 "If the Buyer cancels after production begins, the Jeweler may retain a portion of the funds to cover material and labor costs.",

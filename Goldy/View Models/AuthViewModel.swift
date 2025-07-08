@@ -9,6 +9,7 @@ import SwiftUI
 import Combine
 
 class AuthViewModel: ObservableObject {
+    @AppStorage("authToken") private var authToken: String = ""
     @Published var email: String = ""
     @Published var password: String = ""
     @Published var isAuthenticated: Bool = false
@@ -26,7 +27,7 @@ class AuthViewModel: ObservableObject {
     }
     
     func login() {
-        guard let url = URL(string: "https://escrow-backend-production.up.railway.app/users/login") else { return }
+        guard let url = URL(string: "https://go-hard-backend-production.up.railway.app/users/login") else { return }
         
         let body: [String: Any] = [
             "email": email,
@@ -57,8 +58,9 @@ class AuthViewModel: ObservableObject {
                     self.errorMessage = "Login failed: \(error.localizedDescription)"
                 }
             } receiveValue: { loginResponse in
-                // Save the token
                 self.token = loginResponse.token
+                self.authToken = loginResponse.token
+                print("✅ Token stored to AppStorage:", loginResponse.token)
             }
             .store(in: &self.cancellables)
     }

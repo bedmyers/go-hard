@@ -18,7 +18,7 @@ class SignupViewModel: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
     
     func signUp() {
-        guard let url = URL(string: "https://escrow-backend-production.up.railway.app/users/register") else { return }
+        guard let url = URL(string: "https://go-hard-backend-production.up.railway.app/users/register") else { return }
         
         let body: [String: Any] = [
             "email": email,
@@ -35,9 +35,14 @@ class SignupViewModel: ObservableObject {
         
         URLSession.shared.dataTaskPublisher(for: request)
             .tryMap { data, response -> Data in
-                if let httpResponse = response as? HTTPURLResponse,
-                   httpResponse.statusCode != 200 {
-                    throw URLError(.badServerResponse)
+                if let httpResponse = response as? HTTPURLResponse {
+                    print("Status Code:", httpResponse.statusCode)
+                    
+                    if httpResponse.statusCode != 200 {
+                        let responseBody = String(data: data, encoding: .utf8) ?? "Unable to decode response"
+                        print("Backend Error Body:", responseBody)
+                        throw URLError(.badServerResponse)
+                    }
                 }
                 return data
             }

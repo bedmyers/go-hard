@@ -10,6 +10,7 @@ import Combine
 
 // MARK: - SignupView
 struct SignupView: View {
+    @EnvironmentObject var appState: AppState
     @ObservedObject var viewModel = SignupViewModel()
     
     // Simple, naive check for demonstration:
@@ -27,10 +28,10 @@ struct SignupView: View {
             // Main Content
             SignupMainContentView(viewModel: viewModel, isValidEmail: isValidEmail)
         }
-        // If sign-up is successful, show success or navigate away
-        .fullScreenCover(isPresented: $viewModel.isSignedUp) {
-            Text("Account Created Successfully!")
-                .font(.largeTitle)
+        .onChange(of: viewModel.isSignedUp) { isSignedUp in
+            if isSignedUp {
+                appState.isAuthenticated = true
+            }
         }
     }
 }

@@ -8,7 +8,12 @@
 import SwiftUI
 
 struct OpenEscrowsView: View {
-    let projects: [EscrowProject]
+    @ObservedObject var viewModel: EscrowViewModel
+    @State private var selectedEscrow: EscrowDetail? = nil
+    @State private var showDetail: Bool = false
+    @State private var showCreateEscrow = false
+    @AppStorage("authToken") private var authToken: String = ""
+
     
     /// The front (bottom) card’s base height
     private let baseFrontHeight: CGFloat = 300
@@ -39,34 +44,48 @@ struct OpenEscrowsView: View {
             
             // MARK: - Overlapping ZStack
             ZStack(alignment: .bottom) {
-                ForEach(projects.indices, id: \.self) { i in
-                    let project = projects[i]
+                ForEach(viewModel.projects.indices, id: \.self) { i in
+                    let project = viewModel.projects[i]
+
                     
-                    // Calculate each card’s height:
-                    //   i=0 => 300
-                    //   i=1 => 350
-                    //   i=2 => 400, etc.
                     let heightAdded = i <= 3 ? heightIncrement : heightIncrementAfter4
                     let heightForThisCard = baseFrontHeight + (CGFloat(i) * heightAdded)
-                    
-                    let cardColorIndex = (i % 7) + 1    // yields 1..7
+                    let cardColorIndex = (i % 7) + 1
                     let cardColorName = "Card\(cardColorIndex)"
 
                     EscrowCardView(
                         title: project.title,
-                        subtitle: project.subtitle,
+                        subtitle: project.subtitle ?? "",
                         progress: project.progress,
                         totalCommitted: project.totalCommitted,
                         cardColorName: cardColorName
                     )
                     .frame(height: heightForThisCard)
-                    
-                    // Negative offset to place subsequent cards “above” the bottom card
                     .offset(y: -CGFloat(i) * spacing)
-                    
-                    // Ensure card 0 (the bottom card) has highest z‐index
-                    .zIndex(Double(projects.count - i))
+                    .zIndex(Double(viewModel.projects.count - i))
+                    .onTapGesture {
+                        // Convert project → EscrowDetail for now with mock data
+                        selectedEscrow = mockEscrowDetail(from: project)
+                        showDetail = true
+                    }
                 }
+            }
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(action: {
+                        showCreateEscrow = true
+                    }) {
+                        Image(systemName: "plus")
+                            .imageScale(.large)
+                            .foregroundColor(.black)
+                    }
+                }
+            }
+            .sheet(isPresented: $showCreateEscrow) {
+                CreateEscrowView(viewModel: viewModel)
+            }
+            .sheet(item: $selectedEscrow) { escrow in
+                EscrowDetailView(escrow: escrow)
             }
             // Figure out how tall the tallest card might be
             //   For i = (projects.count - 1), the card is baseFrontHeight + (lastIndex * 50)
@@ -77,7 +96,9 @@ struct OpenEscrowsView: View {
             
             Spacer()
         }
-        // Background gradient
+        .onAppear {
+            viewModel.loadEscrows(token: authToken)
+        }
         .background(
             LinearGradient(
                 gradient: Gradient(colors: [
@@ -95,49 +116,53 @@ struct OpenEscrowsView: View {
     private var maxStackHeight: CGFloat {
         // If there are `n` projects, the last index = (n-1).
         // The tallest card = baseFrontHeight + (lastIndex * heightIncrement).
-        let lastIndex = max(0, projects.count - 1)
+        let lastIndex = max(0, viewModel.projects.count - 1)
         let tallestCard = baseFrontHeight + (CGFloat(lastIndex) * heightIncrement)
         
         // Then we offset each subsequent card by spacing,
         // so total needed: tallestCard + (lastIndex * spacing).
         return tallestCard + (CGFloat(lastIndex) * spacing)
     }
+    
+    private func mockEscrowDetail(from project: EscrowProject) -> EscrowDetail {
+        let mockMilestones: [Milestone] = [
+            Milestone(id: 1, amount: project.totalCommitted * 0.5, released: false),
+            Milestone(id: 2, amount: project.totalCommitted * 0.25, released: false),
+            Milestone(id: 3, amount: project.totalCommitted * 0.25, released: false)
+        ]
+
+        return EscrowDetail(
+            id: project.id,
+            title: project.title,
+            subtitle: project.subtitle,
+            purpose: "This is a mock escrow purpose for preview/demo.",
+            status: "PENDING",
+            totalCommitted: project.totalCommitted,
+            totalReleased: project.totalCommitted * project.progress,
+            progress: project.progress,
+            milestones: mockMilestones,
+            cancellationPolicy: [
+                "You can cancel before production for a partial refund.",
+                "You can cancel after production for a smaller refund.",
+                "If delivery is missed, you get a full refund."
+            ],
+            signerImageNames: ["profile1", "profile2"],
+            signDate: Date()
+        )
+    }
 }
 
 
 // MARK: - Example Preview
-#Preview {
-    OpenEscrowsView(projects: [
-        EscrowProject(
-            title: "2021 FORD F150",
-            subtitle: "FINAL DELIVERY ON JANUARY 28, 2025",
-            progress: 0.85,
-            totalCommitted: 10_000
-        ),
-        EscrowProject(
-            title: "Lions vs. Bears",
-            subtitle: "FINAL DELIVERY ON JANUARY 28, 2025",
-            progress: 0.85,
-            totalCommitted: 8_000
-        ),
-        EscrowProject(
-            title: "For the Love of Sugar",
-            subtitle: "GOING HARD ON JUNE 11, 2025",
-            progress: 0.60,
-            totalCommitted: 5_000
-        ),
-        EscrowProject(
-            title: "Caboch en Jewelry",
-            subtitle: "NEXT MILESTONE ON SEPTEMBER 5, 2025",
-            progress: 0.75,
-            totalCommitted: 14_500
-        ),
-        // Fifth item to test the smaller incremental peek
-        EscrowProject(
-            title: "Extra Project #5",
-            subtitle: "SMALL PEEK BEHIND THE 4TH CARD",
-            progress: 0.40,
-            totalCommitted: 2_000
-        )
-    ])
+struct OpenEscrowsView_Previews: PreviewProvider {
+    static var previews: some View {
+        let vm = EscrowViewModel()
+        vm.projects = [
+            EscrowProject(id: 1, title: "2021 FORD F150", subtitle: "DELIVERY JAN 28", progress: 0.85, totalCommitted: 10_000),
+            EscrowProject(id: 2, title: "Lions vs. Bears", subtitle: "GAME FEB 12", progress: 0.6, totalCommitted: 8_000),
+            EscrowProject(id: 3, title: "For the Love of Sugar", subtitle: "DROP JUNE 11", progress: 0.3, totalCommitted: 5_000)
+        ]
+
+        return OpenEscrowsView(viewModel: vm)
+    }
 }

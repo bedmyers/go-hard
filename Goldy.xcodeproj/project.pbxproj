@@ -14,6 +14,11 @@
 		181B83E22D795EC100C4E576 /* EscrowCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 181B83E12D795EBD00C4E576 /* EscrowCardView.swift */; };
 		181C1B4A2DB0859C00B906B9 /* EscrowDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 181C1B492DB0859700B906B9 /* EscrowDetailView.swift */; };
 		1852A2C82DFF6F500034BC95 /* MakePaymentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1852A2C72DFF6F4B0034BC95 /* MakePaymentView.swift */; };
+		1852A2CD2E10E6180034BC95 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1852A2CC2E10E6150034BC95 /* AppState.swift */; };
+		1852A2CF2E10E6520034BC95 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1852A2CE2E10E6500034BC95 /* RootView.swift */; };
+		1852A2D22E1358A60034BC95 /* EscrowService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1852A2D12E1358A30034BC95 /* EscrowService.swift */; };
+		1852A2D42E135B0D0034BC95 /* EscrowViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1852A2D32E135B0A0034BC95 /* EscrowViewModel.swift */; };
+		1852A2D62E1DBD8F0034BC95 /* UserSearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1852A2D52E1DBD8B0034BC95 /* UserSearchViewModel.swift */; };
 		186326602D5B05BB00759DC1 /* GoldyApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1863265F2D5B05BB00759DC1 /* GoldyApp.swift */; };
 		186326642D5B05BC00759DC1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 186326632D5B05BC00759DC1 /* Assets.xcassets */; };
 		186326682D5B05BC00759DC1 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 186326672D5B05BC00759DC1 /* Preview Assets.xcassets */; };
@@ -42,6 +47,11 @@
 		181B83E12D795EBD00C4E576 /* EscrowCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EscrowCardView.swift; sourceTree = "<group>"; };
 		181C1B492DB0859700B906B9 /* EscrowDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EscrowDetailView.swift; sourceTree = "<group>"; };
 		1852A2C72DFF6F4B0034BC95 /* MakePaymentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MakePaymentView.swift; sourceTree = "<group>"; };
+		1852A2CC2E10E6150034BC95 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
+		1852A2CE2E10E6500034BC95 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		1852A2D12E1358A30034BC95 /* EscrowService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EscrowService.swift; sourceTree = "<group>"; };
+		1852A2D32E135B0A0034BC95 /* EscrowViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EscrowViewModel.swift; sourceTree = "<group>"; };
+		1852A2D52E1DBD8B0034BC95 /* UserSearchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSearchViewModel.swift; sourceTree = "<group>"; };
 		1863265C2D5B05BB00759DC1 /* Goldy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Goldy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1863265F2D5B05BB00759DC1 /* GoldyApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoldyApp.swift; sourceTree = "<group>"; };
 		186326632D5B05BC00759DC1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -76,6 +86,34 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1852A2CA2E10E58E0034BC95 /* Login */ = {
+			isa = PBXGroup;
+			children = (
+				18781B602D73873300EC3178 /* SignupView.swift */,
+				18FC980A2D7381800053CFD3 /* LoginView.swift */,
+				18FC97FE2D6EE1120053CFD3 /* IntroView.swift */,
+			);
+			path = Login;
+			sourceTree = "<group>";
+		};
+		1852A2CB2E10E60B0034BC95 /* State */ = {
+			isa = PBXGroup;
+			children = (
+				1852A2CE2E10E6500034BC95 /* RootView.swift */,
+				1852A2CC2E10E6150034BC95 /* AppState.swift */,
+				1863265F2D5B05BB00759DC1 /* GoldyApp.swift */,
+			);
+			path = State;
+			sourceTree = "<group>";
+		};
+		1852A2D02E13542D0034BC95 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				1852A2D12E1358A30034BC95 /* EscrowService.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
 		186326532D5B05BB00759DC1 = {
 			isa = PBXGroup;
 			children = (
@@ -95,12 +133,14 @@
 		1863265E2D5B05BB00759DC1 /* Goldy */ = {
 			isa = PBXGroup;
 			children = (
+				1852A2D02E13542D0034BC95 /* Services */,
+				1852A2CB2E10E60B0034BC95 /* State */,
+				1852A2CA2E10E58E0034BC95 /* Login */,
 				18781B692D73F9B900EC3178 /* Components */,
 				18781B662D73F96E00EC3178 /* Models */,
 				18781B652D73F8A800EC3178 /* View Models */,
 				18FC98082D7380FD0053CFD3 /* Views */,
 				18FC97FD2D6EE0E90053CFD3 /* Info.plist */,
-				1863265F2D5B05BB00759DC1 /* GoldyApp.swift */,
 				186326632D5B05BC00759DC1 /* Assets.xcassets */,
 				18FC98002D6EE2910053CFD3 /* DelaGothicOne-Regular.ttf */,
 				18FC98042D737EFC0053CFD3 /* IBMPlexMono-Regular.ttf */,
@@ -122,6 +162,8 @@
 		18781B652D73F8A800EC3178 /* View Models */ = {
 			isa = PBXGroup;
 			children = (
+				1852A2D52E1DBD8B0034BC95 /* UserSearchViewModel.swift */,
+				1852A2D32E135B0A0034BC95 /* EscrowViewModel.swift */,
 				18781B622D73F87600EC3178 /* SignupViewModel.swift */,
 				18FC98062D7380E40053CFD3 /* AuthViewModel.swift */,
 			);
@@ -158,9 +200,6 @@
 				181C1B492DB0859700B906B9 /* EscrowDetailView.swift */,
 				181B83E12D795EBD00C4E576 /* EscrowCardView.swift */,
 				181B83DF2D79560B00C4E576 /* OpenEscrowsView.swift */,
-				18781B602D73873300EC3178 /* SignupView.swift */,
-				18FC980A2D7381800053CFD3 /* LoginView.swift */,
-				18FC97FE2D6EE1120053CFD3 /* IntroView.swift */,
 				18FC98022D737DDC0053CFD3 /* CreateEscrowView.swift */,
 			);
 			path = Views;
@@ -246,14 +285,19 @@
 				18FC98072D7380EC0053CFD3 /* AuthViewModel.swift in Sources */,
 				1818BD792DA9F57F0078BCAB /* Escrow.swift in Sources */,
 				18FC97FF2D6EE1160053CFD3 /* IntroView.swift in Sources */,
+				1852A2D42E135B0D0034BC95 /* EscrowViewModel.swift in Sources */,
+				1852A2D62E1DBD8F0034BC95 /* UserSearchViewModel.swift in Sources */,
 				18781B632D73F87900EC3178 /* SignupViewModel.swift in Sources */,
 				18781B682D73F97D00EC3178 /* User.swift in Sources */,
+				1852A2CD2E10E6180034BC95 /* AppState.swift in Sources */,
+				1852A2CF2E10E6520034BC95 /* RootView.swift in Sources */,
 				1809DC2E2DF3EEDD00A1B0AB /* FillOutEscrowView.swift in Sources */,
 				18781B6F2D73FD0900EC3178 /* PrimaryActionButton.swift in Sources */,
 				181B83E22D795EC100C4E576 /* EscrowCardView.swift in Sources */,
 				186326602D5B05BB00759DC1 /* GoldyApp.swift in Sources */,
 				18FC980B2D7381820053CFD3 /* LoginView.swift in Sources */,
 				18781B712D74009E00EC3178 /* PersistentToolbarContainer.swift in Sources */,
+				1852A2D22E1358A60034BC95 /* EscrowService.swift in Sources */,
 				18FC98032D737DE10053CFD3 /* CreateEscrowView.swift in Sources */,
 				18781B732D7400B300EC3178 /* BottomToolbar.swift in Sources */,
 				18781B752D74074600EC3178 /* NotchedBarShape.swift in Sources */,

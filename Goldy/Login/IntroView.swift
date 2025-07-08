@@ -9,7 +9,7 @@ import SwiftUI
 
 // MARK: - IntroView
 struct IntroView: View {
-    // This state variable controls which sheet is shown
+    @EnvironmentObject var appState: AppState
     @State private var showLogin = false
     @State private var showSignup = false
     
@@ -37,12 +37,13 @@ struct IntroView: View {
                 .padding(.bottom, 144)
             }
         }
-        // Show the Login or Signup sheets
         .sheet(isPresented: $showLogin) {
             LoginView()
+                .environmentObject(appState)
         }
         .sheet(isPresented: $showSignup) {
             SignupView()
+                .environmentObject(appState)
         }
     }
 }

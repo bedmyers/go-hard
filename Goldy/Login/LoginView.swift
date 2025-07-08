@@ -9,7 +9,9 @@ import SwiftUI
 
 // MARK: - LoginView
 struct LoginView: View {
+    @EnvironmentObject var appState: AppState
     @ObservedObject var authVM = AuthViewModel()
+    @State private var showSignup = false
     
     var body: some View {
         ZStack {
@@ -19,9 +21,10 @@ struct LoginView: View {
             // Main Content
             LoginMainContentView(authVM: authVM)
         }
-        // If authenticated, go to main content
-        .fullScreenCover(isPresented: $authVM.isAuthenticated) {
-            MainEscrowView()
+        .onChange(of: authVM.isAuthenticated) { isAuthed in
+            if isAuthed {
+                appState.isAuthenticated = true
+            }
         }
     }
 }
@@ -34,7 +37,9 @@ struct LoginView: View {
 
 /// The main container that holds the login title, fields, button, error message, and footer.
 private struct LoginMainContentView: View {
+    @EnvironmentObject var appState: AppState
     @ObservedObject var authVM: AuthViewModel
+    @State private var showSignup = false
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -63,10 +68,15 @@ private struct LoginMainContentView: View {
             // Error message if needed
             LoginErrorMessageView(errorMessage: authVM.errorMessage)
             
-            // Footer sign-up link
-            LoginFooterView()
+            LoginFooterView {
+                showSignup = true
+            }
             
             Spacer()
+        }
+        .sheet(isPresented: $showSignup) {
+            SignupView()
+                .environmentObject(appState)
         }
         .padding(.horizontal, 15)
     }
@@ -128,16 +138,15 @@ private struct LoginErrorMessageView: View {
     }
 }
 
-/// The footer prompting the user to sign up if they don’t have an account.
 private struct LoginFooterView: View {
+    var onSignupTapped: () -> Void
+
     var body: some View {
         HStack {
             Spacer()
             Text("don’t have an account?")
                 .foregroundColor(.black)
-            Button(action: {
-                // Navigate to signup
-            }) {
+            Button(action: onSignupTapped) {
                 Text("sign up")
                     .foregroundColor(.red)
                     .fontWeight(.bold)

@@ -9,25 +9,26 @@ import Foundation
 import SwiftUI
 
 struct EscrowProject: Identifiable {
-    let id = UUID()
+    let id: Int
     let title: String
-    let subtitle: String
+    let subtitle: String?
     let progress: Double
     let totalCommitted: Double
 }
 
 struct EscrowDetail: Identifiable {
-    let id = UUID()
+    let id: Int
     let title: String
-    let subtitle: String
-    let purpose: String
-    
-    /// **NEW**: overall percent complete (0.0–1.0)
-    let progress: Double
-    
-    let totalReleased: Double
-    let releaseEvents: [ReleaseEvent]
+    let subtitle: String?
+    let purpose: String?
+    let status: String
+
     let totalCommitted: Double
+    let totalReleased: Double
+    let progress: Double
+
+    let milestones: [Milestone]
+
     let cancellationPolicy: [String]
     let signerImageNames: [String]
     let signDate: Date
@@ -38,4 +39,10 @@ struct ReleaseEvent: Identifiable {
     let description: String
     let amount: Double
     let color: Color
+}
+
+struct Milestone: Identifiable, Codable {
+    let id: Int
+    let amount: Double
+    let released: Bool
 }

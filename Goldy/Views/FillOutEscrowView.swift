@@ -8,11 +8,22 @@
 import SwiftUI
 
 struct FillOutEscrowView: View {
-    @State private var escrowName: String = ""
+    @Environment(\.dismiss) var dismiss
+    var viewModel: EscrowViewModel
+    
     @State private var purposeText: String = ""
     @State private var escrowFund = EscrowFund(text: "", amount: nil)
     @State private var releaseFunds: [EscrowFund] = Array(repeating: EscrowFund(text: "", amount: nil), count: 3)
     @State private var cancellationPolicyText: String = ""
+    @State private var selectedSellerId: Int = 2
+    @State private var amountText: String = ""
+    @State private var editableEscrowName: String = ""
+    
+    var escrowName: String
+    var parties: [String]
+    
+    @AppStorage("userId") var userId: Int = 0
+    @AppStorage("authToken") var authToken: String = ""
 
     var body: some View {
         ScrollView {
@@ -31,7 +42,7 @@ struct FillOutEscrowView: View {
                 VStack(alignment: .leading, spacing: 6) {
                     Text("ESCROW NAME")
                         .font(.custom("DelaGothicOne-Regular", size: 14))
-                    TextField("Start typing...", text: $escrowName)
+                    TextField("Start typing...", text: $editableEscrowName)
                         .frame(maxHeight: 35)
                         .padding(12)
                         .background(Color.white)
@@ -151,7 +162,7 @@ struct FillOutEscrowView: View {
                 }
 
                 // Save & Share
-                Button(action: {}) {
+                Button(action: submitEscrow) {
                     Text("SAVE & SHARE")
                         .font(.custom("DaysOne-Regular", size: 16))
                         .foregroundColor(.white)
@@ -176,7 +187,68 @@ struct FillOutEscrowView: View {
             }
             .padding()
         }
+        .onAppear {
+            editableEscrowName = escrowName
+        }
         .background(Color("Background").ignoresSafeArea())
+    }
+    
+    func submitEscrow() {
+        guard let totalAmount = escrowFund.amount else {
+            print("❌ Missing escrowed amount")
+            return
+        }
+
+        let milestonePayload = releaseFunds
+            .compactMap { $0.amount }
+            .map { ["amount": $0, "released": false] }
+
+        let payload: [String: Any] = [
+            "title": editableEscrowName,
+            "buyerId": userId,
+            "sellerId": selectedSellerId,
+            "amount": totalAmount,
+            "milestones": milestonePayload
+        ]
+
+        guard let url = URL(string: "https://go-hard-backend-production.up.railway.app/escrow/create"),
+              let body = try? JSONSerialization.data(withJSONObject: payload) else {
+            print("❌ Failed to encode payload")
+            return
+        }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.httpBody = body
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("Bearer \(authToken)", forHTTPHeaderField: "Authorization")
+
+        URLSession.shared.dataTask(with: request) { data, _, _ in
+            guard let data = data else {
+                print("❌ No data returned")
+                return
+            }
+
+            do {
+                let backendEscrow = try JSONDecoder().decode(BackendEscrow.self, from: data)
+
+                let project = EscrowProject(
+                    id: backendEscrow.id,
+                    title: backendEscrow.title ?? "Untitled",
+                    subtitle: "FINAL DELIVERY TBD",
+                    progress: calculateProgress(from: backendEscrow.milestones),
+                    totalCommitted: backendEscrow.amount
+                )
+                
+                DispatchQueue.main.async {
+                    viewModel.addEscrow(project)
+                    dismiss()
+                }
+            } catch {
+                print("❌ Decoding error:", error)
+                print(String(data: data, encoding: .utf8) ?? "")
+            }
+        }.resume()
     }
 }
 
@@ -218,5 +290,9 @@ private struct EscrowFundCard: View {
 }
 
 #Preview {
-    FillOutEscrowView()
+    let vm = EscrowViewModel()
+    FillOutEscrowView(
+        viewModel: vm, escrowName: "Cabochon Jewelry",
+        parties: ["profile1", "profile2"]
+    )
 }
