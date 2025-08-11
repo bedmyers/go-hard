@@ -19,6 +19,20 @@
 		1852A2D22E1358A60034BC95 /* EscrowService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1852A2D12E1358A30034BC95 /* EscrowService.swift */; };
 		1852A2D42E135B0D0034BC95 /* EscrowViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1852A2D32E135B0A0034BC95 /* EscrowViewModel.swift */; };
 		1852A2D62E1DBD8F0034BC95 /* UserSearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1852A2D52E1DBD8B0034BC95 /* UserSearchViewModel.swift */; };
+		1852A2D82E1DBF1A0034BC95 /* UserSearchSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1852A2D72E1DBF150034BC95 /* UserSearchSheetView.swift */; };
+		1852A2DA2E1DECDA0034BC95 /* GetStartedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1852A2D92E1DECD50034BC95 /* GetStartedView.swift */; };
+		1852A2DC2E2C57380034BC95 /* StepByStepEscrowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1852A2DB2E2C57320034BC95 /* StepByStepEscrowView.swift */; };
+		1852A2DE2E2C67480034BC95 /* ProgressBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1852A2DD2E2C673D0034BC95 /* ProgressBar.swift */; };
+		1857F8342E496B7600B75623 /* FundEscrowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1857F8332E496B7200B75623 /* FundEscrowView.swift */; };
+		1857F8382E496E7800B75623 /* Stripe in Frameworks */ = {isa = PBXBuildFile; productRef = 1857F8372E496E7800B75623 /* Stripe */; };
+		1857F83A2E496E7800B75623 /* StripeApplePay in Frameworks */ = {isa = PBXBuildFile; productRef = 1857F8392E496E7800B75623 /* StripeApplePay */; };
+		1857F83C2E496E7800B75623 /* StripeCardScan in Frameworks */ = {isa = PBXBuildFile; productRef = 1857F83B2E496E7800B75623 /* StripeCardScan */; };
+		1857F83E2E496E7800B75623 /* StripeConnect in Frameworks */ = {isa = PBXBuildFile; productRef = 1857F83D2E496E7800B75623 /* StripeConnect */; };
+		1857F8402E496E7800B75623 /* StripeFinancialConnections in Frameworks */ = {isa = PBXBuildFile; productRef = 1857F83F2E496E7800B75623 /* StripeFinancialConnections */; };
+		1857F8422E496E7800B75623 /* StripeIdentity in Frameworks */ = {isa = PBXBuildFile; productRef = 1857F8412E496E7800B75623 /* StripeIdentity */; };
+		1857F8442E496E7800B75623 /* StripePayments in Frameworks */ = {isa = PBXBuildFile; productRef = 1857F8432E496E7800B75623 /* StripePayments */; };
+		1857F8462E496E7800B75623 /* StripePaymentSheet in Frameworks */ = {isa = PBXBuildFile; productRef = 1857F8452E496E7800B75623 /* StripePaymentSheet */; };
+		1857F8482E496E7800B75623 /* StripePaymentsUI in Frameworks */ = {isa = PBXBuildFile; productRef = 1857F8472E496E7800B75623 /* StripePaymentsUI */; };
 		186326602D5B05BB00759DC1 /* GoldyApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1863265F2D5B05BB00759DC1 /* GoldyApp.swift */; };
 		186326642D5B05BC00759DC1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 186326632D5B05BC00759DC1 /* Assets.xcassets */; };
 		186326682D5B05BC00759DC1 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 186326672D5B05BC00759DC1 /* Preview Assets.xcassets */; };
@@ -52,6 +66,11 @@
 		1852A2D12E1358A30034BC95 /* EscrowService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EscrowService.swift; sourceTree = "<group>"; };
 		1852A2D32E135B0A0034BC95 /* EscrowViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EscrowViewModel.swift; sourceTree = "<group>"; };
 		1852A2D52E1DBD8B0034BC95 /* UserSearchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSearchViewModel.swift; sourceTree = "<group>"; };
+		1852A2D72E1DBF150034BC95 /* UserSearchSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSearchSheetView.swift; sourceTree = "<group>"; };
+		1852A2D92E1DECD50034BC95 /* GetStartedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetStartedView.swift; sourceTree = "<group>"; };
+		1852A2DB2E2C57320034BC95 /* StepByStepEscrowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StepByStepEscrowView.swift; sourceTree = "<group>"; };
+		1852A2DD2E2C673D0034BC95 /* ProgressBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressBar.swift; sourceTree = "<group>"; };
+		1857F8332E496B7200B75623 /* FundEscrowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FundEscrowView.swift; sourceTree = "<group>"; };
 		1863265C2D5B05BB00759DC1 /* Goldy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Goldy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1863265F2D5B05BB00759DC1 /* GoldyApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoldyApp.swift; sourceTree = "<group>"; };
 		186326632D5B05BC00759DC1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -80,6 +99,15 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1857F8462E496E7800B75623 /* StripePaymentSheet in Frameworks */,
+				1857F8402E496E7800B75623 /* StripeFinancialConnections in Frameworks */,
+				1857F83C2E496E7800B75623 /* StripeCardScan in Frameworks */,
+				1857F8382E496E7800B75623 /* Stripe in Frameworks */,
+				1857F8422E496E7800B75623 /* StripeIdentity in Frameworks */,
+				1857F83E2E496E7800B75623 /* StripeConnect in Frameworks */,
+				1857F8482E496E7800B75623 /* StripePaymentsUI in Frameworks */,
+				1857F8442E496E7800B75623 /* StripePayments in Frameworks */,
+				1857F83A2E496E7800B75623 /* StripeApplePay in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -114,10 +142,18 @@
 			path = Services;
 			sourceTree = "<group>";
 		};
+		1857F8362E496E7800B75623 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		186326532D5B05BB00759DC1 = {
 			isa = PBXGroup;
 			children = (
 				1863265E2D5B05BB00759DC1 /* Goldy */,
+				1857F8362E496E7800B75623 /* Frameworks */,
 				1863265D2D5B05BB00759DC1 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -195,6 +231,11 @@
 		18FC98082D7380FD0053CFD3 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				1857F8332E496B7200B75623 /* FundEscrowView.swift */,
+				1852A2DD2E2C673D0034BC95 /* ProgressBar.swift */,
+				1852A2DB2E2C57320034BC95 /* StepByStepEscrowView.swift */,
+				1852A2D92E1DECD50034BC95 /* GetStartedView.swift */,
+				1852A2D72E1DBF150034BC95 /* UserSearchSheetView.swift */,
 				1852A2C72DFF6F4B0034BC95 /* MakePaymentView.swift */,
 				1809DC2D2DF3EED800A1B0AB /* FillOutEscrowView.swift */,
 				181C1B492DB0859700B906B9 /* EscrowDetailView.swift */,
@@ -249,6 +290,9 @@
 				Base,
 			);
 			mainGroup = 186326532D5B05BB00759DC1;
+			packageReferences = (
+				1857F8352E496C3100B75623 /* XCRemoteSwiftPackageReference "stripe-ios" */,
+			);
 			productRefGroup = 1863265D2D5B05BB00759DC1 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -280,6 +324,7 @@
 			files = (
 				18781B612D73873600EC3178 /* SignupView.swift in Sources */,
 				1852A2C82DFF6F500034BC95 /* MakePaymentView.swift in Sources */,
+				1852A2DC2E2C57380034BC95 /* StepByStepEscrowView.swift in Sources */,
 				181B83E02D79561200C4E576 /* OpenEscrowsView.swift in Sources */,
 				181C1B4A2DB0859C00B906B9 /* EscrowDetailView.swift in Sources */,
 				18FC98072D7380EC0053CFD3 /* AuthViewModel.swift in Sources */,
@@ -287,6 +332,7 @@
 				18FC97FF2D6EE1160053CFD3 /* IntroView.swift in Sources */,
 				1852A2D42E135B0D0034BC95 /* EscrowViewModel.swift in Sources */,
 				1852A2D62E1DBD8F0034BC95 /* UserSearchViewModel.swift in Sources */,
+				1852A2D82E1DBF1A0034BC95 /* UserSearchSheetView.swift in Sources */,
 				18781B632D73F87900EC3178 /* SignupViewModel.swift in Sources */,
 				18781B682D73F97D00EC3178 /* User.swift in Sources */,
 				1852A2CD2E10E6180034BC95 /* AppState.swift in Sources */,
@@ -294,11 +340,14 @@
 				1809DC2E2DF3EEDD00A1B0AB /* FillOutEscrowView.swift in Sources */,
 				18781B6F2D73FD0900EC3178 /* PrimaryActionButton.swift in Sources */,
 				181B83E22D795EC100C4E576 /* EscrowCardView.swift in Sources */,
+				1852A2DE2E2C67480034BC95 /* ProgressBar.swift in Sources */,
 				186326602D5B05BB00759DC1 /* GoldyApp.swift in Sources */,
 				18FC980B2D7381820053CFD3 /* LoginView.swift in Sources */,
 				18781B712D74009E00EC3178 /* PersistentToolbarContainer.swift in Sources */,
 				1852A2D22E1358A60034BC95 /* EscrowService.swift in Sources */,
 				18FC98032D737DE10053CFD3 /* CreateEscrowView.swift in Sources */,
+				1857F8342E496B7600B75623 /* FundEscrowView.swift in Sources */,
+				1852A2DA2E1DECDA0034BC95 /* GetStartedView.swift in Sources */,
 				18781B732D7400B300EC3178 /* BottomToolbar.swift in Sources */,
 				18781B752D74074600EC3178 /* NotchedBarShape.swift in Sources */,
 				18781B6D2D73FCF000EC3178 /* AppBackgroundView.swift in Sources */,
@@ -527,6 +576,65 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		1857F8352E496C3100B75623 /* XCRemoteSwiftPackageReference "stripe-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/stripe/stripe-ios";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 24.19.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		1857F8372E496E7800B75623 /* Stripe */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1857F8352E496C3100B75623 /* XCRemoteSwiftPackageReference "stripe-ios" */;
+			productName = Stripe;
+		};
+		1857F8392E496E7800B75623 /* StripeApplePay */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1857F8352E496C3100B75623 /* XCRemoteSwiftPackageReference "stripe-ios" */;
+			productName = StripeApplePay;
+		};
+		1857F83B2E496E7800B75623 /* StripeCardScan */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1857F8352E496C3100B75623 /* XCRemoteSwiftPackageReference "stripe-ios" */;
+			productName = StripeCardScan;
+		};
+		1857F83D2E496E7800B75623 /* StripeConnect */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1857F8352E496C3100B75623 /* XCRemoteSwiftPackageReference "stripe-ios" */;
+			productName = StripeConnect;
+		};
+		1857F83F2E496E7800B75623 /* StripeFinancialConnections */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1857F8352E496C3100B75623 /* XCRemoteSwiftPackageReference "stripe-ios" */;
+			productName = StripeFinancialConnections;
+		};
+		1857F8412E496E7800B75623 /* StripeIdentity */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1857F8352E496C3100B75623 /* XCRemoteSwiftPackageReference "stripe-ios" */;
+			productName = StripeIdentity;
+		};
+		1857F8432E496E7800B75623 /* StripePayments */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1857F8352E496C3100B75623 /* XCRemoteSwiftPackageReference "stripe-ios" */;
+			productName = StripePayments;
+		};
+		1857F8452E496E7800B75623 /* StripePaymentSheet */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1857F8352E496C3100B75623 /* XCRemoteSwiftPackageReference "stripe-ios" */;
+			productName = StripePaymentSheet;
+		};
+		1857F8472E496E7800B75623 /* StripePaymentsUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1857F8352E496C3100B75623 /* XCRemoteSwiftPackageReference "stripe-ios" */;
+			productName = StripePaymentsUI;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 186326542D5B05BB00759DC1 /* Project object */;
 }

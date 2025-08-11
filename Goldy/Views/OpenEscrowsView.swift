@@ -26,90 +26,96 @@ struct OpenEscrowsView: View {
     private let spacing: CGFloat = 70
     
     var body: some View {
-        VStack(alignment: .leading) {
-            
-            // MARK: - Header
-            HStack {
-                Text("OPEN PROJECTS")
-                    .font(.custom("DelaGothicOne-Regular", size: 28))
-                Spacer()
-                Image(systemName: "chevron.down")
-                    .font(.title2)
-            }
-            .padding(.horizontal, 16)
-            .padding(.bottom, 8)
-            .padding(.top, 30)
-            
-            Spacer()
-            
-            // MARK: - Overlapping ZStack
-            ZStack(alignment: .bottom) {
-                ForEach(viewModel.projects.indices, id: \.self) { i in
-                    let project = viewModel.projects[i]
-
+        Group {
+            if viewModel.projects.isEmpty {
+                GetStartedView()
+            } else {
+                VStack(alignment: .leading) {
                     
-                    let heightAdded = i <= 3 ? heightIncrement : heightIncrementAfter4
-                    let heightForThisCard = baseFrontHeight + (CGFloat(i) * heightAdded)
-                    let cardColorIndex = (i % 7) + 1
-                    let cardColorName = "Card\(cardColorIndex)"
-
-                    EscrowCardView(
-                        title: project.title,
-                        subtitle: project.subtitle ?? "",
-                        progress: project.progress,
-                        totalCommitted: project.totalCommitted,
-                        cardColorName: cardColorName
+                    // MARK: - Header
+                    HStack {
+                        Text("OPEN PROJECTS")
+                            .font(.custom("DelaGothicOne-Regular", size: 28))
+                        Spacer()
+                        Image(systemName: "chevron.down")
+                            .font(.title2)
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 8)
+                    .padding(.top, 30)
+                    
+                    Spacer()
+                    
+                    // MARK: - Overlapping ZStack
+                    ZStack(alignment: .bottom) {
+                        ForEach(viewModel.projects.indices, id: \.self) { i in
+                            let project = viewModel.projects[i]
+                            
+                            
+                            let heightAdded = i <= 3 ? heightIncrement : heightIncrementAfter4
+                            let heightForThisCard = baseFrontHeight + (CGFloat(i) * heightAdded)
+                            let cardColorIndex = (i % 7) + 1
+                            let cardColorName = "Card\(cardColorIndex)"
+                            
+                            EscrowCardView(
+                                title: project.title,
+                                subtitle: project.subtitle ?? "",
+                                progress: project.progress,
+                                totalCommitted: project.totalCommitted,
+                                cardColorName: cardColorName
+                            )
+                            .frame(height: heightForThisCard)
+                            .offset(y: -CGFloat(i) * spacing)
+                            .zIndex(Double(viewModel.projects.count - i))
+                            .onTapGesture {
+                                // Convert project → EscrowDetail for now with mock data
+                                selectedEscrow = mockEscrowDetail(from: project)
+                                showDetail = true
+                            }
+                        }
+                    }
+                    .toolbar {
+                        ToolbarItem(placement: .navigationBarTrailing) {
+                            Button(action: {
+                                showCreateEscrow = true
+                            }) {
+                                Image(systemName: "plus")
+                                    .imageScale(.large)
+                                    .foregroundColor(.black)
+                            }
+                        }
+                    }
+                    .sheet(isPresented: $showCreateEscrow) {
+                        CreateEscrowView(viewModel: viewModel)
+                    }
+                    .sheet(item: $selectedEscrow) { escrow in
+                        EscrowDetailView(escrow: escrow)
+                    }
+                    // Figure out how tall the tallest card might be
+                    //   For i = (projects.count - 1), the card is baseFrontHeight + (lastIndex * 50)
+                    // Then add enough vertical space for (count - 1) offsets
+                    .frame(height: maxStackHeight)
+                    .padding(.top, 100)
+                    .padding(.horizontal, 16)
+                    
+                    Spacer()
+                }
+                .onAppear {
+                    viewModel.loadEscrows(token: authToken)
+                }
+                .background(
+                    LinearGradient(
+                        gradient: Gradient(colors: [
+                            Color(red: 0.97, green: 0.93, blue: 0.85),
+                            Color(red: 0.99, green: 0.90, blue: 0.90)
+                        ]),
+                        startPoint: .top,
+                        endPoint: .bottom
                     )
-                    .frame(height: heightForThisCard)
-                    .offset(y: -CGFloat(i) * spacing)
-                    .zIndex(Double(viewModel.projects.count - i))
-                    .onTapGesture {
-                        // Convert project → EscrowDetail for now with mock data
-                        selectedEscrow = mockEscrowDetail(from: project)
-                        showDetail = true
-                    }
-                }
+                    .ignoresSafeArea()
+                )
             }
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(action: {
-                        showCreateEscrow = true
-                    }) {
-                        Image(systemName: "plus")
-                            .imageScale(.large)
-                            .foregroundColor(.black)
-                    }
-                }
-            }
-            .sheet(isPresented: $showCreateEscrow) {
-                CreateEscrowView(viewModel: viewModel)
-            }
-            .sheet(item: $selectedEscrow) { escrow in
-                EscrowDetailView(escrow: escrow)
-            }
-            // Figure out how tall the tallest card might be
-            //   For i = (projects.count - 1), the card is baseFrontHeight + (lastIndex * 50)
-            // Then add enough vertical space for (count - 1) offsets
-            .frame(height: maxStackHeight)
-            .padding(.top, 100)
-            .padding(.horizontal, 16)
-            
-            Spacer()
         }
-        .onAppear {
-            viewModel.loadEscrows(token: authToken)
-        }
-        .background(
-            LinearGradient(
-                gradient: Gradient(colors: [
-                    Color(red: 0.97, green: 0.93, blue: 0.85),
-                    Color(red: 0.99, green: 0.90, blue: 0.90)
-                ]),
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            .ignoresSafeArea()
-        )
     }
     
     /// Computes the total ZStack height needed so the largest (rearmost) card is fully in view:

@@ -140,21 +140,33 @@ struct TermsConditionsSection: View {
             
             HStack(spacing: 8) {
                 Button(action: uploadAction) {
-                    Text("UPLOAD T&C FROM FILES")
-                        .font(.custom("DelaGothicOne-Regular", size: 16))
-                        .foregroundColor(.black)
-                        .frame(maxWidth: .infinity, minHeight: 200)
-                        .background(Color("Button"))
-                        .cornerRadius(20)
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("UPLOAD T&C FROM FILES")
+                            .font(.custom("DaysOne-Regular", size: 20))
+                            .multilineTextAlignment(.leading)
+                            .foregroundColor(.black)
+                        
+                        Spacer()
+                    }
+                    .padding()
+                    .frame(maxWidth: .infinity, minHeight: 230, alignment: .topLeading)
+                    .background(Color("ActiveColor"))
+                    .cornerRadius(16)
                 }
                 
                 Button(action: fillOutAction) {
-                    Text("FILL OUT ESCROW WITHOUT T&C")
-                        .font(.custom("DelaGothicOne-Regular", size: 16))
-                        .foregroundColor(.black)
-                        .frame(maxWidth: .infinity, minHeight: 200)
-                        .background(Color("Button"))
-                        .cornerRadius(20)
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("CREATE ESCROW WITHOUT T&C")
+                            .font(.custom("DaysOne-Regular", size: 20))
+                            .multilineTextAlignment(.leading)
+                            .foregroundColor(.black)
+                        
+                        Spacer()
+                    }
+                    .padding()
+                    .frame(maxWidth: .infinity, minHeight: 230, alignment: .topLeading)
+                    .background(Color("ActiveColor"))
+                    .cornerRadius(16)
                 }
             }
         }

@@ -15,9 +15,14 @@ struct FillOutEscrowView: View {
     @State private var escrowFund = EscrowFund(text: "", amount: nil)
     @State private var releaseFunds: [EscrowFund] = Array(repeating: EscrowFund(text: "", amount: nil), count: 3)
     @State private var cancellationPolicyText: String = ""
-    @State private var selectedSellerId: Int = 2
+    @State private var selectedSellerId: Int = 0
     @State private var amountText: String = ""
     @State private var editableEscrowName: String = ""
+    
+    @StateObject private var userSearchVM = UserSearchViewModel()
+    @State private var searchText: String = ""
+    @State private var selectedUsers: [User] = []
+    @State private var showUserSearch = false
     
     var escrowName: String
     var parties: [String]
@@ -51,26 +56,43 @@ struct FillOutEscrowView: View {
                         .multilineTextAlignment(.leading)
                 }
 
-                // Party Avatars
+                // MARK: - Party Avatars Row
                 VStack(alignment: .leading, spacing: 8) {
                     Text("ADD A PARTY")
                         .font(.custom("DelaGothicOne-Regular", size: 14))
+
                     HStack(spacing: 16) {
-                        ForEach(["profile1", "profile2"], id: \.self) { name in
-                            Image(name)
-                                .resizable()
-                                .scaledToFill()
-                                .frame(width: 50, height: 50)
-                                .clipShape(Circle())
+                        // Show selected users as avatars
+                        ForEach(selectedUsers, id: \.id) { user in
+                            if let imageName = user.avatarImageName {
+                                Image(imageName)
+                                    .resizable()
+                                    .scaledToFill()
+                                    .frame(width: 50, height: 50)
+                                    .clipShape(Circle())
+                            } else {
+                                // fallback to initials
+                                Text(initials(for: user.name))
+                                    .font(.custom("DelaGothicOne-Regular", size: 18))
+                                    .frame(width: 50, height: 50)
+                                    .background(Color.white)
+                                    .clipShape(Circle())
+                            }
                         }
-                        Button(action: {}) {
+
+                        // "+" Button to trigger search
+                        Button(action: {
+                            showUserSearch = true
+                        }) {
                             Image(systemName: "plus")
+                                .font(.system(size: 20, weight: .bold))
                                 .frame(width: 50, height: 50)
                                 .background(Color.white)
                                 .clipShape(Circle())
                         }
                     }
                 }
+
 
                 // Terms & Conditions
                 VStack(alignment: .leading, spacing: 8) {
@@ -190,6 +212,15 @@ struct FillOutEscrowView: View {
         .onAppear {
             editableEscrowName = escrowName
         }
+        .sheet(isPresented: $showUserSearch) {
+            UserSearchSheetView(
+                viewModel: userSearchVM,
+                currentUserId: userId
+            ) { user in
+                selectedUsers = [user] // or append if multi-party
+                selectedSellerId = user.id
+            }
+        }
         .background(Color("Background").ignoresSafeArea())
     }
     
@@ -250,6 +281,13 @@ struct FillOutEscrowView: View {
             }
         }.resume()
     }
+    
+    func initials(for name: String) -> String {
+        let comps = name.split(separator: " ")
+        let first = comps.first?.prefix(1) ?? ""
+        let last = comps.dropFirst().first?.prefix(1) ?? ""
+        return (first + last).uppercased()
+    }
 }
 
 struct EscrowFund {
@@ -261,31 +299,49 @@ struct EscrowFund {
 
 private struct EscrowFundCard: View {
     @Binding var fund: EscrowFund
+    @State private var amountText: String = ""
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
+            // Top input
             TextField("Start typing...", text: $fund.text)
                 .font(.custom("IBMPlexMono-Regular", size: 14))
                 .foregroundColor(.black)
                 .multilineTextAlignment(.leading)
 
+            // Bottom right amount input
             HStack {
                 Spacer()
-                Text(fund.amount != nil
-                     ? "$\(fund.amount!, specifier: "%.2f") USD"
-                     : "– USD")
-                    .font(.custom("DelaGothicOne-Regular", size: 13))
-                    .foregroundColor(.black)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 6)
-                    .background(Color.yellow.opacity(0.8))
-                    .cornerRadius(50)
+                HStack(spacing: 4) {
+                    Text("$")
+                        .font(.custom("DelaGothicOne-Regular", size: 14))
+                        .foregroundColor(.gray)
+
+                    TextField("0.00", text: $amountText)
+                        .keyboardType(.decimalPad)
+                        .font(.custom("DelaGothicOne-Regular", size: 14))
+                        .foregroundColor(.gray)
+                        .multilineTextAlignment(.leading)
+                }
+                .padding(.vertical, 6)
+                .padding(.horizontal, 12)
+                .background(Color.yellow)
+                .cornerRadius(50)
+                .frame(width: 110) // 👈 fixed width
+                .onChange(of: amountText) { newValue in
+                    fund.amount = Double(newValue)
+                }
             }
         }
         .padding()
         .background(Color.white)
         .cornerRadius(12)
         .shadow(color: Color.black.opacity(0.05), radius: 2, x: 0, y: 1)
+        .onAppear {
+            if let amount = fund.amount {
+                amountText = String(format: "%.2f", amount)
+            }
+        }
     }
 }
 
