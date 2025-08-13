@@ -14,13 +14,13 @@ class EscrowViewModel: ObservableObject {
     init(projects: [EscrowProject] = []) {
         self.projects = projects
     }
-    
+
     func loadEscrows(token: String) {
-        fetchEscrows(token: token) { projects in
+        EscrowService.fetchEscrows(token: token) { projects in
             self.projects = projects
         }
     }
-    
+
     func addEscrow(_ newEscrow: EscrowProject) {
         DispatchQueue.main.async {
             self.projects.insert(newEscrow, at: 0)
