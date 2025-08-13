@@ -8,102 +8,211 @@
 import SwiftUI
 
 struct EscrowDetailView: View {
-    let escrow: EscrowDetail
+    // Pass this from your card tap: EscrowDetailView(escrowId: project.id)
+    let escrowId: Int
+
+    @AppStorage("authToken") private var authToken = ""
+
+    // Live DTO + mapped UI model
+    @State private var dto: EscrowDTO?
+    @State private var escrow: EscrowDetail?
+
+    @State private var isLoading = false
+    @State private var errorText = ""
+    @State private var showFundSheet = false
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 24) {
-                // Title & Subtitle
-                VStack(alignment: .leading, spacing: 6) {
-                    Text(escrow.title)
-                        .font(.custom("DelaGothicOne-Regular", size: 28))
-                        .foregroundColor(.black)
-                    Text(escrow.subtitle ?? "")
-                        .font(.custom("DaysOne-Regular", size: 16))
-                        .opacity(0.35)
-                }
-
-                // Purpose Section
-                SectionHeader(text: "PURPOSE OF THE ESCROW")
-                InfoCard(text: escrow.purpose ?? "")
-                
-                HStack {
-                    Text("TOTAL RELEASED AMOUNT")
-                        .font(.custom("DaysOne-Regular", size: 14))
-                    Spacer()
-                    Text(escrow.totalReleased, format: .currency(code: "USD"))
-                        .font(.custom("DaysOne-Regular", size: 18))
-                        .bold()
-                }
-                
-                HStack(alignment: .top, spacing: 16) {
-                    VStack {
-                        Spacer()
-                        VerticalMilestoneBar(progress: escrow.progress)
-                            .frame(width: 20)
-                        Spacer()
+            if let escrow {
+                VStack(alignment: .leading, spacing: 24) {
+                    // Title & Subtitle
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text(escrow.title)
+                            .font(.custom("DelaGothicOne-Regular", size: 28))
+                            .foregroundColor(.black)
+                        Text(escrow.subtitle ?? "")
+                            .font(.custom("DaysOne-Regular", size: 16))
+                            .opacity(0.35)
                     }
 
-                    VStack(alignment: .leading, spacing: 16) {
-                        ForEach(makeReleaseEvents(from: escrow.milestones)) { event in
-                            MilestoneCard(event: event)
+                    // Status + Fund button (if pending)
+                    HStack {
+                        Text(dto?.status.capitalized ?? "")
+                            .font(.custom("DaysOne-Regular", size: 12))
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 6)
+                            .background(Color.yellow)
+                            .cornerRadius(20)
+
+                        Spacer()
+
+                        if dto?.status == "PENDING" {
+                            Button("Fund Escrow") { showFundSheet = true }
+                                .font(.custom("DaysOne-Regular", size: 14))
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 8)
+                                .background(Color.black)
+                                .foregroundColor(.white)
+                                .cornerRadius(12)
                         }
                     }
-                }
-                
-                HStack {
-                    Text("TOTAL COMMITTED AMOUNT")
-                        .font(.custom("DaysOne-Regular", size: 14))
-                    Spacer()
-                    Text(escrow.totalCommitted, format: .currency(code: "USD"))
-                        .font(.custom("DaysOne-Regular", size: 18))
-                        .bold()
-                }
 
-                // Cancellation & Refund Policy
-                SectionHeader(text: "CANCELLATION & REFUND POLICY")
-                VStack(alignment: .leading, spacing: 8) {
-                    ForEach(escrow.cancellationPolicy, id: \.self) { item in
-                        CancellationItem(text: item)
+                    // Purpose Section
+                    SectionHeader(text: "PURPOSE OF THE ESCROW")
+                    InfoCard(text: escrow.purpose ?? "")
+
+                    // Totals (Released)
+                    HStack {
+                        Text("TOTAL RELEASED AMOUNT")
+                            .font(.custom("DaysOne-Regular", size: 14))
+                        Spacer()
+                        Text(escrow.totalReleased, format: .currency(code: "USD"))
+                            .font(.custom("DaysOne-Regular", size: 18))
+                            .bold()
+                    }
+
+                    // Milestones + vertical progress bar
+                    HStack(alignment: .top, spacing: 16) {
+                        VStack {
+                            Spacer()
+                            VerticalMilestoneBar(progress: escrow.progress)
+                                .frame(width: 20)
+                            Spacer()
+                        }
+
+                        VStack(alignment: .leading, spacing: 16) {
+                            ForEach(escrow.milestones) { m in
+                                VStack(alignment: .leading, spacing: 8) {
+                                    HStack {
+                                        Text("Milestone \(m.id)")
+                                            .font(.custom("DaysOne-Regular", size: 14))
+                                        Spacer()
+                                        Text(m.amount, format: .currency(code: "USD"))
+                                            .font(.custom("DaysOne-Regular", size: 14))
+                                            .foregroundColor(.black)
+                                            .padding(.horizontal, 12)
+                                            .padding(.vertical, 4)
+                                            .background(Color.yellow.opacity(0.8))
+                                            .cornerRadius(8)
+                                    }
+
+                                    if m.released {
+                                        Text("Released")
+                                            .font(.custom("DaysOne-Regular", size: 12))
+                                            .foregroundColor(.green)
+                                    } else if dto?.status == "AUTHORIZED" {
+                                        Button("Release") { release(milestoneId: m.id) }
+                                            .font(.custom("DaysOne-Regular", size: 12))
+                                            .padding(.horizontal, 10)
+                                            .padding(.vertical, 6)
+                                            .background(Color.black)
+                                            .foregroundColor(.white)
+                                            .cornerRadius(10)
+                                    } else {
+                                        Text("Locked")
+                                            .font(.custom("DaysOne-Regular", size: 12))
+                                            .opacity(0.5)
+                                    }
+                                }
+                                .padding()
+                                .background(Color("ActiveColor"))
+                                .cornerRadius(12)
+                                .shadow(color: Color.black.opacity(0.1), radius: 2, x: 0, y: 1)
+                            }
+                        }
+                    }
+
+                    // Totals (Committed)
+                    HStack {
+                        Text("TOTAL COMMITTED AMOUNT")
+                            .font(.custom("DaysOne-Regular", size: 14))
+                        Spacer()
+                        Text(escrow.totalCommitted, format: .currency(code: "USD"))
+                            .font(.custom("DaysOne-Regular", size: 18))
+                            .bold()
+                    }
+
+                    // Cancellation & Refund Policy
+                    SectionHeader(text: "CANCELLATION & REFUND POLICY")
+                    VStack(alignment: .leading, spacing: 8) {
+                        ForEach(escrow.cancellationPolicy, id: \.self) { item in
+                            CancellationItem(text: item)
+                        }
+                    }
+                    .padding()
+                    .background(Color("ActiveColor"))
+                    .cornerRadius(12)
+
+                    // Signed and Agreed
+                    SectionHeader(text: "SIGNED AND AGREED")
+                    SignersView(
+                        imageNames: escrow.signerImageNames,
+                        signDate: escrow.signDate
+                    )
+
+                    // View Terms Button
+                    Button(action: {
+                        // TODO: Show T&C
+                    }) {
+                        Text("VIEW TERMS AND CONDITIONS")
+                            .font(.custom("DaysOne-Regular", size: 16))
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Color.black)
+                            .cornerRadius(24)
                     }
                 }
-                .padding()
-                .background(Color("ActiveColor")) // or use Color.white if not themed
-                .cornerRadius(12)
-
-                // Signed and Agreed
-                SectionHeader(text: "SIGNED AND AGREED")
-                SignersView(
-                    imageNames: escrow.signerImageNames,
-                    signDate: escrow.signDate
-                )
-
-                // View Terms Button
-                Button(action: {
-                    // Show T&C
-                }) {
-                    Text("VIEW TERMS AND CONDITIONS")
-                        .font(.custom("DaysOne-Regular", size: 16))
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.black)
-                        .cornerRadius(24)
-                }
+                .padding(16)
+            } else if isLoading {
+                ProgressView().padding()
+            } else if !errorText.isEmpty {
+                Text(errorText).foregroundColor(.red).padding()
             }
-            .padding(16)
         }
         .background(Color("Card1").ignoresSafeArea())
+        .onAppear { Task { await reload() } }
+        .sheet(isPresented: $showFundSheet, onDismiss: {
+            Task { await reload() }    // refresh after funding sheet closes
+        }) {
+            // Present your existing FundEscrowView
+            FundEscrowView(escrowId: escrowId)
+        }
     }
-    
-    func makeReleaseEvents(from milestones: [Milestone]) -> [ReleaseEvent] {
-        let colors: [Color] = [.orange.opacity(0.8), .yellow.opacity(0.8), .gray.opacity(0.6)]
-        return milestones.enumerated().map { index, milestone in
-            ReleaseEvent(
-                description: "Milestone \(index + 1)",
-                amount: milestone.amount,
-                color: colors[index % colors.count]
-            )
+
+    // MARK: - Networking
+
+    private func reload() async {
+        guard !authToken.isEmpty else { return }
+        isLoading = true
+        defer { isLoading = false }
+        do {
+            let all = try await EscrowService.myEscrows(token: authToken)
+            if let found = all.first(where: { $0.id == escrowId }) {
+                self.dto = found
+                self.escrow = found.toDetail() // uses your existing mapper
+                self.errorText = ""
+            } else {
+                self.errorText = "Escrow not found."
+            }
+        } catch {
+            self.errorText = "Failed to load escrow: \(error.localizedDescription)"
+        }
+    }
+
+    private func release(milestoneId: Int) {
+        guard !authToken.isEmpty else { return }
+        Task {
+            do {
+                _ = try await EscrowService.release(
+                    escrowId: escrowId,
+                    milestoneId: milestoneId,
+                    token: authToken
+                )
+                await reload()
+            } catch {
+                self.errorText = "Release failed: \(error.localizedDescription)"
+            }
         }
     }
 }
@@ -121,16 +230,13 @@ struct VerticalMilestoneBar: View {
             let filledHeight = totalHeight * CGFloat(progress)
 
             ZStack(alignment: .bottom) {
-                // Base track (no corner radius)
                 Rectangle()
                     .fill(Color("ActiveColor"))
 
-                // Filled portion (no corner radius)
                 Rectangle()
                     .fill(Color.black.opacity(0.35))
                     .frame(height: filledHeight)
 
-                // Dividers
                 ForEach(1..<stepCount, id: \.self) { index in
                     Rectangle()
                         .fill(Color("Card1"))
@@ -142,40 +248,6 @@ struct VerticalMilestoneBar: View {
                 }
             }
         }
-    }
-}
-
-// MARK: - Milestone Card
-
-struct MilestoneCard: View {
-    let event: ReleaseEvent
-
-    var body: some View {
-        VStack(alignment: .leading) {
-            // Description at the top
-            Text(event.description)
-                .font(.custom("DaysOne-Regular", size: 14))
-                .foregroundColor(.black)
-                .fixedSize(horizontal: false, vertical: true)
-
-            Spacer()
-
-            // Amount badge bottom-right
-            HStack {
-                Spacer()
-                Text(event.amount, format: .currency(code: "USD"))
-                    .font(.custom("DaysOne-Regular", size: 14))
-                    .foregroundColor(.black)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 4)
-                    .background(event.color)
-                    .cornerRadius(8)
-            }
-        }
-        .padding()
-        .background(Color("ActiveColor"))
-        .cornerRadius(12)
-        .shadow(color: Color.black.opacity(0.1), radius: 2, x: 0, y: 1)
     }
 }
 
@@ -234,7 +306,7 @@ private struct SignersView: View {
                 Image(name)
                     .resizable()
                     .scaledToFill()
-                    .frame(width: 40, height: 10)
+                    .frame(width: 40, height: 40) // fixed from 40x10
                     .clipShape(Circle())
             }
             Text("Executed on \(formattedDate)")
@@ -245,27 +317,11 @@ private struct SignersView: View {
     }
 }
 
-// MARK: - Previews
+// MARK: - Preview
 
 struct EscrowDetailView_Previews: PreviewProvider {
     static var previews: some View {
-        let sampleEvents = [
-            ReleaseEvent(
-                description: "The Depositor shall deposit $14,500 into escrow upon signing this Agreement.",
-                amount: 14500,
-                color: Color.orange.opacity(0.8)
-            ),
-            ReleaseEvent(
-                description: "50% Release upon completion of a CAD design approval by the Buyer.",
-                amount: 7250,
-                color: Color.yellow.opacity(0.8)
-            ),
-            ReleaseEvent(
-                description: "25% Release upon completion of the ring casting and setting, with photographs provided to the Buyer.",
-                amount: 3625,
-                color: Color.gray.opacity(0.6)
-            )
-        ]
+        // Preview with a static model (design only)
         let sampleMilestones = [
             Milestone(id: 1, amount: 7250, released: true),
             Milestone(id: 2, amount: 3625, released: false),
@@ -274,7 +330,7 @@ struct EscrowDetailView_Previews: PreviewProvider {
         let detail = EscrowDetail(
             id: 1,
             title: "Cabochen Jewelry",
-            subtitle: "NEXT MILESTONE ON SEPTEMBER 5, 2025",
+            subtitle: "NEXT MILESTONE ON SEPTEMBER 5, 2025",
             purpose: "The Buyer is commissioning a custom engagement ring from the Jeweler.",
             status: "PENDING",
             totalCommitted: 14500,
@@ -289,7 +345,21 @@ struct EscrowDetailView_Previews: PreviewProvider {
             signerImageNames: ["profile1", "profile2"],
             signDate: Date()
         )
-        EscrowDetailView(escrow: detail)
-            .previewDevice("iPhone 16")
+
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Static Layout (Preview Only)").bold()
+            // Render a tiny static snapshot of your old model for design checks
+            VStack(alignment: .leading) {
+                Text(detail.title)
+                Text(detail.subtitle ?? "")
+                Text(detail.totalCommitted, format: .currency(code: "USD"))
+            }.padding().background(Color("ActiveColor")).cornerRadius(8)
+
+            // Live view (uses escrowId in real app)
+            EscrowDetailView(escrowId: 1)
+                .previewDisplayName("Live (escrowId)")
+        }
+        .padding()
+        .previewDevice("iPhone 16")
     }
 }

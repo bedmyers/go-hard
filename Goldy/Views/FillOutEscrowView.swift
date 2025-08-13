@@ -10,7 +10,7 @@ import SwiftUI
 struct FillOutEscrowView: View {
     @Environment(\.dismiss) var dismiss
     var viewModel: EscrowViewModel
-    
+
     @State private var purposeText: String = ""
     @State private var escrowFund = EscrowFund(text: "", amount: nil)
     @State private var releaseFunds: [EscrowFund] = Array(repeating: EscrowFund(text: "", amount: nil), count: 3)
@@ -18,15 +18,15 @@ struct FillOutEscrowView: View {
     @State private var selectedSellerId: Int = 0
     @State private var amountText: String = ""
     @State private var editableEscrowName: String = ""
-    
+
     @StateObject private var userSearchVM = UserSearchViewModel()
     @State private var searchText: String = ""
     @State private var selectedUsers: [User] = []
     @State private var showUserSearch = false
-    
+
     var escrowName: String
     var parties: [String]
-    
+
     @AppStorage("userId") var userId: Int = 0
     @AppStorage("authToken") var authToken: String = ""
 
@@ -62,7 +62,6 @@ struct FillOutEscrowView: View {
                         .font(.custom("DelaGothicOne-Regular", size: 14))
 
                     HStack(spacing: 16) {
-                        // Show selected users as avatars
                         ForEach(selectedUsers, id: \.id) { user in
                             if let imageName = user.avatarImageName {
                                 Image(imageName)
@@ -71,7 +70,6 @@ struct FillOutEscrowView: View {
                                     .frame(width: 50, height: 50)
                                     .clipShape(Circle())
                             } else {
-                                // fallback to initials
                                 Text(initials(for: user.name))
                                     .font(.custom("DelaGothicOne-Regular", size: 18))
                                     .frame(width: 50, height: 50)
@@ -80,10 +78,7 @@ struct FillOutEscrowView: View {
                             }
                         }
 
-                        // "+" Button to trigger search
-                        Button(action: {
-                            showUserSearch = true
-                        }) {
+                        Button(action: { showUserSearch = true }) {
                             Image(systemName: "plus")
                                 .font(.system(size: 20, weight: .bold))
                                 .frame(width: 50, height: 50)
@@ -92,7 +87,6 @@ struct FillOutEscrowView: View {
                         }
                     }
                 }
-
 
                 // Terms & Conditions
                 VStack(alignment: .leading, spacing: 8) {
@@ -134,19 +128,17 @@ struct FillOutEscrowView: View {
                         .multilineTextAlignment(.leading)
                 }
 
-                // Escrowed Funds (single box)
+                // Escrowed Funds
                 VStack(alignment: .leading, spacing: 6) {
                     Text("ESCROWED FUNDS")
                         .font(.custom("DelaGothicOne-Regular", size: 14))
-
                     EscrowFundCard(fund: $escrowFund)
                 }
 
-                // Conditions for Release (3 boxes)
+                // Conditions for Release
                 VStack(alignment: .leading, spacing: 6) {
                     Text("CONDITIONS FOR RELEASE")
                         .font(.custom("DelaGothicOne-Regular", size: 14))
-
                     ForEach(releaseFunds.indices, id: \.self) { i in
                         EscrowFundCard(fund: $releaseFunds[i])
                     }
@@ -217,19 +209,24 @@ struct FillOutEscrowView: View {
                 viewModel: userSearchVM,
                 currentUserId: userId
             ) { user in
-                selectedUsers = [user] // or append if multi-party
+                selectedUsers = [user]
                 selectedSellerId = user.id
             }
         }
         .background(Color("Background").ignoresSafeArea())
     }
-    
+
     func submitEscrow() {
-        guard let totalAmount = escrowFund.amount else {
+        guard let totalAmount = escrowFund.amount, totalAmount > 0 else {
             print("❌ Missing escrowed amount")
             return
         }
+        guard selectedSellerId != 0 else {
+            print("❌ Select a seller")
+            return
+        }
 
+        // Build milestone payload from entered amounts
         let milestonePayload = releaseFunds
             .compactMap { $0.amount }
             .map { ["amount": $0, "released": false] }
@@ -261,16 +258,10 @@ struct FillOutEscrowView: View {
             }
 
             do {
-                let backendEscrow = try JSONDecoder().decode(BackendEscrow.self, from: data)
+                // Decode EscrowDTO returned by backend, then map to your UI model
+                let dto = try JSONDecoder().decode(EscrowDTO.self, from: data)
+                let project = dto.toProject()
 
-                let project = EscrowProject(
-                    id: backendEscrow.id,
-                    title: backendEscrow.title ?? "Untitled",
-                    subtitle: "FINAL DELIVERY TBD",
-                    progress: calculateProgress(from: backendEscrow.milestones),
-                    totalCommitted: backendEscrow.amount
-                )
-                
                 DispatchQueue.main.async {
                     viewModel.addEscrow(project)
                     dismiss()
@@ -281,7 +272,7 @@ struct FillOutEscrowView: View {
             }
         }.resume()
     }
-    
+
     func initials(for name: String) -> String {
         let comps = name.split(separator: " ")
         let first = comps.first?.prefix(1) ?? ""
@@ -303,13 +294,11 @@ private struct EscrowFundCard: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            // Top input
             TextField("Start typing...", text: $fund.text)
                 .font(.custom("IBMPlexMono-Regular", size: 14))
                 .foregroundColor(.black)
                 .multilineTextAlignment(.leading)
 
-            // Bottom right amount input
             HStack {
                 Spacer()
                 HStack(spacing: 4) {
@@ -327,7 +316,7 @@ private struct EscrowFundCard: View {
                 .padding(.horizontal, 12)
                 .background(Color.yellow)
                 .cornerRadius(50)
-                .frame(width: 110) // 👈 fixed width
+                .frame(width: 110)
                 .onChange(of: amountText) { newValue in
                     fund.amount = Double(newValue)
                 }

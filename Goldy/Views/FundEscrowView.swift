@@ -118,11 +118,3 @@ private struct FundEscrowPreviewHost: View {
     }
 }
 
-
-/*
- import StripeCore
- @main struct YourApp: App {
-     init() { StripeAPI.defaultPublishableKey = "pk_test_..." }
-     var body: some Scene { WindowGroup { RootView() } }
- }
- */

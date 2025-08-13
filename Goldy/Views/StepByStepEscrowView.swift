@@ -31,7 +31,8 @@ struct StepByStepEscrowView: View {
 
             currentStepView()
                 .padding(.bottom, 20)
-            
+
+            // Uses your existing ProgressBar component
             ProgressBar(progress: Double(step) / 4)
                 .frame(height: 30)
 
@@ -111,14 +112,23 @@ struct StepByStepEscrowView: View {
     }
 
     func submitEscrow() {
-        guard let totalAmount = Double(totalAmountText) else {
-            print("Invalid amount")
+        guard let totalAmount = Double(totalAmountText), totalAmount > 0 else {
+            print("❌ Invalid amount")
+            return
+        }
+        guard selectedSellerId != 0 else {
+            print("❌ Select a seller")
             return
         }
 
-        let milestones = releaseNotes
-            .filter { !$0.isEmpty }
-            .map { _ in ["amount": totalAmount / 3, "released": false] }
+        // Simple even split for any non-empty milestones provided
+        let nonEmptyNotes = releaseNotes.filter { !$0.isEmpty }
+        let splitCount = max(1, nonEmptyNotes.count)
+        let perMilestone = totalAmount / Double(splitCount)
+
+        let milestones: [[String: Any]] = (0..<splitCount).map { _ in
+            ["amount": perMilestone, "released": false]
+        }
 
         let payload: [String: Any] = [
             "title": escrowName,
@@ -147,15 +157,9 @@ struct StepByStepEscrowView: View {
             }
 
             do {
-                let backendEscrow = try JSONDecoder().decode(BackendEscrow.self, from: data)
-
-                let project = EscrowProject(
-                    id: backendEscrow.id,
-                    title: backendEscrow.title ?? "Untitled",
-                    subtitle: "FINAL DELIVERY TBD",
-                    progress: calculateProgress(from: backendEscrow.milestones),
-                    totalCommitted: backendEscrow.amount
-                )
+                // Decode the server response as EscrowDTO, then map to your UI model
+                let dto = try JSONDecoder().decode(EscrowDTO.self, from: data)
+                let project = dto.toProject()
 
                 DispatchQueue.main.async {
                     viewModel.addEscrow(project)
@@ -163,6 +167,7 @@ struct StepByStepEscrowView: View {
                 }
             } catch {
                 print("❌ Decoding error:", error)
+                print(String(data: data, encoding: .utf8) ?? "")
             }
         }.resume()
     }

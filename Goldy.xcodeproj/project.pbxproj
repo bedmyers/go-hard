@@ -33,6 +33,8 @@
 		1857F8442E496E7800B75623 /* StripePayments in Frameworks */ = {isa = PBXBuildFile; productRef = 1857F8432E496E7800B75623 /* StripePayments */; };
 		1857F8462E496E7800B75623 /* StripePaymentSheet in Frameworks */ = {isa = PBXBuildFile; productRef = 1857F8452E496E7800B75623 /* StripePaymentSheet */; };
 		1857F8482E496E7800B75623 /* StripePaymentsUI in Frameworks */ = {isa = PBXBuildFile; productRef = 1857F8472E496E7800B75623 /* StripePaymentsUI */; };
+		1857F84A2E4AA74400B75623 /* EscrowAPIModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1857F8492E4AA73A00B75623 /* EscrowAPIModel.swift */; };
+		1857F84C2E4C05C100B75623 /* EscrowDetailScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1857F84B2E4C05BC00B75623 /* EscrowDetailScreen.swift */; };
 		186326602D5B05BB00759DC1 /* GoldyApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1863265F2D5B05BB00759DC1 /* GoldyApp.swift */; };
 		186326642D5B05BC00759DC1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 186326632D5B05BC00759DC1 /* Assets.xcassets */; };
 		186326682D5B05BC00759DC1 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 186326672D5B05BC00759DC1 /* Preview Assets.xcassets */; };
@@ -71,6 +73,8 @@
 		1852A2DB2E2C57320034BC95 /* StepByStepEscrowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StepByStepEscrowView.swift; sourceTree = "<group>"; };
 		1852A2DD2E2C673D0034BC95 /* ProgressBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressBar.swift; sourceTree = "<group>"; };
 		1857F8332E496B7200B75623 /* FundEscrowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FundEscrowView.swift; sourceTree = "<group>"; };
+		1857F8492E4AA73A00B75623 /* EscrowAPIModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EscrowAPIModel.swift; sourceTree = "<group>"; };
+		1857F84B2E4C05BC00B75623 /* EscrowDetailScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EscrowDetailScreen.swift; sourceTree = "<group>"; };
 		1863265C2D5B05BB00759DC1 /* Goldy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Goldy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1863265F2D5B05BB00759DC1 /* GoldyApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoldyApp.swift; sourceTree = "<group>"; };
 		186326632D5B05BC00759DC1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -209,6 +213,7 @@
 		18781B662D73F96E00EC3178 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				1857F8492E4AA73A00B75623 /* EscrowAPIModel.swift */,
 				1818BD782DA9F57B0078BCAB /* Escrow.swift */,
 				18781B672D73F97C00EC3178 /* User.swift */,
 			);
@@ -231,6 +236,7 @@
 		18FC98082D7380FD0053CFD3 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				1857F84B2E4C05BC00B75623 /* EscrowDetailScreen.swift */,
 				1857F8332E496B7200B75623 /* FundEscrowView.swift */,
 				1852A2DD2E2C673D0034BC95 /* ProgressBar.swift */,
 				1852A2DB2E2C57320034BC95 /* StepByStepEscrowView.swift */,
@@ -342,10 +348,12 @@
 				181B83E22D795EC100C4E576 /* EscrowCardView.swift in Sources */,
 				1852A2DE2E2C67480034BC95 /* ProgressBar.swift in Sources */,
 				186326602D5B05BB00759DC1 /* GoldyApp.swift in Sources */,
+				1857F84A2E4AA74400B75623 /* EscrowAPIModel.swift in Sources */,
 				18FC980B2D7381820053CFD3 /* LoginView.swift in Sources */,
 				18781B712D74009E00EC3178 /* PersistentToolbarContainer.swift in Sources */,
 				1852A2D22E1358A60034BC95 /* EscrowService.swift in Sources */,
 				18FC98032D737DE10053CFD3 /* CreateEscrowView.swift in Sources */,
+				1857F84C2E4C05C100B75623 /* EscrowDetailScreen.swift in Sources */,
 				1857F8342E496B7600B75623 /* FundEscrowView.swift in Sources */,
 				1852A2DA2E1DECDA0034BC95 /* GetStartedView.swift in Sources */,
 				18781B732D7400B300EC3178 /* BottomToolbar.swift in Sources */,

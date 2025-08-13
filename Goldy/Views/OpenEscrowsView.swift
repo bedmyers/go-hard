@@ -89,7 +89,7 @@ struct OpenEscrowsView: View {
                         CreateEscrowView(viewModel: viewModel)
                     }
                     .sheet(item: $selectedEscrow) { escrow in
-                        EscrowDetailView(escrow: escrow)
+                        EscrowDetailView(escrowId: escrow.id)  // ✅ pass id
                     }
                     // Figure out how tall the tallest card might be
                     //   For i = (projects.count - 1), the card is baseFrontHeight + (lastIndex * 50)
