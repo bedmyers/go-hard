@@ -24,7 +24,9 @@ enum EscrowService {
     // MARK: - High-level APIs
 
     static func myEscrows(token: String) async throws -> [EscrowDTO] {
-        try await request("escrows/byUser", method: "GET", token: token)
+        print("🌐 DEBUG: Making request to escrows/byUser")
+        print("🔑 DEBUG: Token prefix: \(String(token.prefix(20)))...")
+        return try await request("escrows/byUser", method: "GET", token: token)
     }
 
     static func fund(escrowId: Int, paymentMethodId: String, token: String) async throws -> FundResponse {
@@ -43,14 +45,35 @@ enum EscrowService {
 
     /// Callback-style helper used by older code paths (maps DTOs → `EscrowProject`)
     static func fetchEscrows(token: String, completion: @escaping ([EscrowProject]) -> Void) {
+        print("📡 DEBUG: fetchEscrows called with token: \(token.isEmpty ? "EMPTY" : "Present")")
+        
         Task {
             do {
+                print("⏳ DEBUG: Starting async request...")
                 let dtos = try await myEscrows(token: token)
-                let projects = dtos.map { $0.toProject() }
-                await MainActor.run { completion(projects) }
+                print("✅ DEBUG: Received \(dtos.count) DTOs from backend")
+                
+                let projects = dtos.map { dto in
+                    let project = dto.toProject()
+                    print("🔄 DEBUG: Mapped DTO id:\(dto.id) -> Project '\(project.title)'")
+                    return project
+                }
+                
+                print("📦 DEBUG: Final projects array has \(projects.count) items")
+                await MainActor.run {
+                    print("🔄 DEBUG: Calling completion with \(projects.count) projects")
+                    completion(projects)
+                }
             } catch {
-                print("❌ fetchEscrows error:", error.localizedDescription)
-                await MainActor.run { completion([]) }
+                print("❌ DEBUG: fetchEscrows error: \(error)")
+                if let nsError = error as NSError? {
+                    print("❌ DEBUG: Error code: \(nsError.code)")
+                    print("❌ DEBUG: Error description: \(nsError.localizedDescription)")
+                }
+                await MainActor.run {
+                    print("🔄 DEBUG: Calling completion with empty array due to error")
+                    completion([])
+                }
             }
         }
     }
@@ -60,22 +83,51 @@ enum EscrowService {
     private static func request<T: Decodable, B: Encodable>(
         _ path: String, method: String, body: B? = nil, token: String
     ) async throws -> T {
-        var req = URLRequest(url: base.appendingPathComponent(path))
+        let url = base.appendingPathComponent(path)
+        print("🌐 DEBUG: Making \(method) request to: \(url)")
+        
+        var req = URLRequest(url: url)
         req.httpMethod = method
         req.setValue("application/json", forHTTPHeaderField: "Content-Type")
         req.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-        if let body { req.httpBody = try JSONEncoder().encode(body) }
+        
+        if let body {
+            req.httpBody = try JSONEncoder().encode(body)
+            print("📤 DEBUG: Request has body")
+        }
 
         let (data, resp) = try await URLSession.shared.data(for: req)
-        guard let http = resp as? HTTPURLResponse, (200..<300).contains(http.statusCode) else {
+        
+        guard let http = resp as? HTTPURLResponse else {
+            print("❌ DEBUG: Response is not HTTPURLResponse")
+            throw NSError(domain: "EscrowService", code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid response type"])
+        }
+        
+        print("📡 DEBUG: HTTP Status: \(http.statusCode)")
+        print("📡 DEBUG: Response data size: \(data.count) bytes")
+        
+        if let responseString = String(data: data, encoding: .utf8) {
+            print("📡 DEBUG: Response body: \(responseString)")
+        }
+        
+        guard (200..<300).contains(http.statusCode) else {
             let msg = String(data: data, encoding: .utf8) ?? "Unknown error"
+            print("❌ DEBUG: HTTP error \(http.statusCode): \(msg)")
             throw NSError(
                 domain: "EscrowService",
-                code: (resp as? HTTPURLResponse)?.statusCode ?? -1,
+                code: http.statusCode,
                 userInfo: [NSLocalizedDescriptionKey: msg]
             )
         }
-        return try JSONDecoder().decode(T.self, from: data)
+        
+        do {
+            let decoded = try JSONDecoder().decode(T.self, from: data)
+            print("✅ DEBUG: Successfully decoded response")
+            return decoded
+        } catch {
+            print("❌ DEBUG: JSON decoding error: \(error)")
+            throw error
+        }
     }
 
     private static func request<T: Decodable>(_ path: String, method: String, token: String) async throws -> T {

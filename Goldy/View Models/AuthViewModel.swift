@@ -43,7 +43,6 @@ class AuthViewModel: ObservableObject {
         
         URLSession.shared.dataTaskPublisher(for: request)
             .tryMap { data, response -> Data in
-                // Check status
                 if let httpResponse = response as? HTTPURLResponse,
                    httpResponse.statusCode != 200 {
                     throw URLError(.badServerResponse)
@@ -53,14 +52,22 @@ class AuthViewModel: ObservableObject {
             .decode(type: LoginResponse.self, decoder: JSONDecoder())
             .receive(on: DispatchQueue.main)
             .sink { completion in
-                // Handle error
                 if case .failure(let error) = completion {
                     self.errorMessage = "Login failed: \(error.localizedDescription)"
                 }
             } receiveValue: { loginResponse in
+                // Store BOTH token and userId
                 self.token = loginResponse.token
                 self.authToken = loginResponse.token
-                print("✅ Token stored to AppStorage:", loginResponse.token)
+                
+                // IMPORTANT: Store userId too
+                UserDefaults.standard.set(loginResponse.userId, forKey: "userId")
+                
+                print("✅ Token stored: \(loginResponse.token)")
+                print("✅ UserId stored: \(loginResponse.userId)")
+                
+                // Set authenticated status
+                self.isAuthenticated = true
             }
             .store(in: &self.cancellables)
     }

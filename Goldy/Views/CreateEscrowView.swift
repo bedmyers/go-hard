@@ -9,180 +9,173 @@ import SwiftUI
 
 struct CreateEscrowView: View {
     var viewModel: EscrowViewModel
+    var onComplete: (() -> Void)? = nil
 
-    @State private var escrowName: String = ""
-    @State private var parties: [String] = ["profile1", "profile2"]
     @State private var showFillOut = false
+    @State private var showUpload = false
+    @Environment(\.dismiss) private var dismiss
     
     var body: some View {
-        ZStack {
-            Color("Background").ignoresSafeArea()
-            
-            VStack {
-                TitleSection(title: "CREATE AN \n ESCROW")
-                    .padding(.bottom, 50)
+        ScrollView {
+            VStack(spacing: 32) {
+                // Header
+                headerSection
                 
-                EscrowNameField(escrowName: $escrowName)
-                    .padding(.bottom, 40)
+                // Main Action Cards
+                actionCardsSection
                 
-                PartyList(parties: $parties) {
-                    // TODO: Add party logic
-                }
-                .padding(.bottom, 40)
-                
-                TermsConditionsSection(
-                    uploadAction: {
-                        // TODO: Upload logic
-                    },
-                    fillOutAction: {
-                        showFillOut = true
-                    }
-                )
-                .padding(.bottom, 35)
-                
-                SaveForLaterView()
-                    .padding(.bottom, 10)
+                // Alternative Action
+                alternativeActionSection
             }
-            .padding(.horizontal)
+            .padding(24)
+            .padding(.bottom, 40)
         }
+        .background(Color(red: 0.97, green: 0.93, blue: 0.85).ignoresSafeArea())
         .sheet(isPresented: $showFillOut) {
             FillOutEscrowView(
-                viewModel: viewModel, escrowName: escrowName,
-                parties: parties
+                viewModel: viewModel,
+                onComplete: onComplete,
+                escrowName: "",
+                parties: []
             )
         }
-    }
-}
-
-// MARK: - TitleSection
-struct TitleSection: View {
-    let title: String
-    
-    var body: some View {
-        Text(title)
-            .font(.custom("DelaGothicOne-Regular", size: 30))
-            .foregroundColor(.black)
-            .frame(maxWidth: .infinity, alignment: .leading)
-    }
-}
-
-// MARK: - EscrowNameField
-struct EscrowNameField: View {
-    @Binding var escrowName: String
-    
-    var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("ESCROW NAME")
-                .font(.custom("DelaGothicOne-Regular", size: 16))
-            
-            TextField("Start typing...", text: $escrowName)
-                .frame(height: 30)
-                .padding(.leading, 15)
-                .font(.custom("IBMPlexMono-Regular", size: 16))
-                .background(Color.white.opacity(0.8))
-                .cornerRadius(8)
-                .shadow(radius: 2)
+        .sheet(isPresented: $showUpload) {
+            Text("Upload T&C functionality coming soon")
+                .padding()
         }
     }
-}
-
-// MARK: - PartyList
-// MARK: - PartyList
-struct PartyList: View {
-    @Binding var parties: [String]
-    var addPartyAction: () -> Void
     
-    var body: some View {
-        VStack(alignment: .leading, spacing: parties.isEmpty ? 0 : 16) {
-            // Left-align the "ADD A PARTY" label
-            Text("ADD A PARTY")
-                .font(.custom("DelaGothicOne-Regular", size: 16))
-                .frame(maxWidth: .infinity, alignment: .leading)
-            
-            // This HStack will list party images, then the plus button
-            HStack(spacing: 16) {
-                ForEach(parties, id: \.self) { party in
-                    Image(party)
-                        .resizable()
-                        .scaledToFill()
-                        .frame(width: 50, height: 50)
-                        .clipShape(Circle())
+    // MARK: - View Components
+    
+    private var headerSection: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            HStack {
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("CREATE AN \n ESCROW")
+                        .font(.custom("DelaGothicOne-Regular", size: 30))
+                        .foregroundColor(.black)
+                    
+                    Text("Choose how you'd like to set up your escrow agreement")
+                        .font(.custom("IBMPlexMono-Regular", size: 14))
+                        .foregroundColor(.black)
+                        .opacity(0.7)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
                 
-                // Plus button to add more parties
-                Button(action: {
-                    addPartyAction()
-                }) {
-                    Image(systemName: "plus")
-                        .font(.system(size: 32))
+                Spacer()
+                
+                Button(action: { dismiss() }) {
+                    Image(systemName: "chevron.down")
+                        .font(.title2)
                         .foregroundColor(.black)
-                        .frame(width: 70, height: 60)
-                        .background(Color.white.opacity(0.8))
-                        .clipShape(Circle())
-                        .shadow(radius: 2)
                 }
             }
-            // Make sure the HStack is left-aligned
-            .frame(maxWidth: .infinity, alignment: .leading)
         }
     }
-}
-
-// MARK: - TermsConditionsSection
-struct TermsConditionsSection: View {
-    var uploadAction: () -> Void
-    var fillOutAction: () -> Void
     
-    var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
+    private var actionCardsSection: some View {
+        VStack(alignment: .leading, spacing: 20) {
             Text("ADD TERMS & CONDITIONS")
                 .font(.custom("DelaGothicOne-Regular", size: 16))
+                .foregroundColor(.black)
             
-            HStack(spacing: 8) {
-                Button(action: uploadAction) {
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text("UPLOAD T&C FROM FILES")
-                            .font(.custom("DaysOne-Regular", size: 20))
-                            .multilineTextAlignment(.leading)
-                            .foregroundColor(.black)
-                        
-                        Spacer()
-                    }
-                    .padding()
-                    .frame(maxWidth: .infinity, minHeight: 230, alignment: .topLeading)
-                    .background(Color("ActiveColor"))
-                    .cornerRadius(16)
-                }
+            VStack(spacing: 12) {
+                // Upload terms card
+                ActionCard(
+                    icon: "doc.badge.plus",
+                    title: "UPLOAD EXISTING TERMS",
+                    subtitle: "Import your T&C document",
+                    isDisabled: true,
+                    action: { showUpload = true }
+                )
                 
-                Button(action: fillOutAction) {
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text("CREATE ESCROW WITHOUT T&C")
-                            .font(.custom("DaysOne-Regular", size: 20))
-                            .multilineTextAlignment(.leading)
-                            .foregroundColor(.black)
-                        
-                        Spacer()
-                    }
-                    .padding()
-                    .frame(maxWidth: .infinity, minHeight: 230, alignment: .topLeading)
-                    .background(Color("ActiveColor"))
-                    .cornerRadius(16)
-                }
+                // Manual creation card
+                ActionCard(
+                    icon: "doc.text.fill",
+                    title: "CREATE FROM SCRATCH",
+                    subtitle: "Build your escrow step by step",
+                    action: { showFillOut = true }
+                )
+            }
+        }
+    }
+    
+    private var alternativeActionSection: some View {
+        VStack(spacing: 12) {
+            Button(action: {}) {
+                Text("SAVE FOR LATER")
+                    .font(.custom("DelaGothicOne-Regular", size: 12))
+                    .foregroundColor(.black)
+                    .underline()
             }
         }
     }
 }
 
-struct SaveForLaterView: View {
+// MARK: - Supporting Views
+
+private struct ActionCard: View {
+    let icon: String
+    let title: String
+    let subtitle: String
+    var isDisabled: Bool = false
+    let action: () -> Void
     
     var body: some View {
-        Text("SAVE FOR LATER")
-            .font(.custom("DelaGothicOne-Regular", size: 12))
-            .underline()
+        Button(action: action) {
+            HStack(spacing: 20) {
+                // Icon section
+                VStack {
+                    Image(systemName: icon)
+                        .font(.system(size: 32, weight: .medium))
+                        .foregroundColor(.black)
+                        .opacity(isDisabled ? 0.4 : 1.0)
+                    
+                    if isDisabled {
+                        Text("SOON")
+                            .font(.custom("DelaGothicOne-Regular", size: 8))
+                            .foregroundColor(.white)
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 2)
+                            .background(Color.orange)
+                            .cornerRadius(6)
+                    }
+                }
+                .frame(width: 60)
+                
+                // Content section
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(title)
+                        .font(.custom("DelaGothicOne-Regular", size: 18))
+                        .foregroundColor(.black)
+                        .multilineTextAlignment(.leading)
+                    
+                    Text(subtitle)
+                        .font(.custom("IBMPlexMono-Regular", size: 14))
+                        .foregroundColor(.black)
+                        .opacity(0.7)
+                        .multilineTextAlignment(.leading)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                
+                // Arrow
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 16))
+                    .foregroundColor(.black)
+                    .opacity(0.6)
+            }
+            .padding(24)
+            .frame(maxWidth: .infinity, minHeight: 80)
+            .background(Color("ActiveColor"))
+            .cornerRadius(16)
+            .shadow(color: Color.black.opacity(0.08), radius: 4, x: 0, y: 2)
+            .opacity(isDisabled ? 0.7 : 1.0)
+        }
+        .disabled(isDisabled)
     }
 }
 
-// MARK: - Preview
 #Preview {
     CreateEscrowView(viewModel: EscrowViewModel())
 }

@@ -23,7 +23,12 @@ struct LoginView: View {
         }
         .onChange(of: authVM.isAuthenticated) { isAuthed in
             if isAuthed {
-                appState.isAuthenticated = true
+                // Get the stored values and call AppState.login()
+                let token = UserDefaults.standard.string(forKey: "authToken") ?? ""
+                let userId = UserDefaults.standard.integer(forKey: "userId")
+                
+                print("DEBUG: LoginView calling appState.login with userId: \(userId)")
+                appState.login(token: token, userId: userId)
             }
         }
     }

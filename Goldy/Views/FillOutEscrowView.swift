@@ -10,20 +10,18 @@ import SwiftUI
 struct FillOutEscrowView: View {
     @Environment(\.dismiss) var dismiss
     var viewModel: EscrowViewModel
+    var onComplete: (() -> Void)? = nil
 
     @State private var purposeText: String = ""
     @State private var escrowFund = EscrowFund(text: "", amount: nil)
     @State private var releaseFunds: [EscrowFund] = Array(repeating: EscrowFund(text: "", amount: nil), count: 3)
     @State private var cancellationPolicyText: String = ""
     @State private var selectedSellerId: Int = 0
-    @State private var amountText: String = ""
     @State private var editableEscrowName: String = ""
-
-    @StateObject private var userSearchVM = UserSearchViewModel()
-    @State private var searchText: String = ""
     @State private var selectedUsers: [User] = []
-    @State private var showUserSearch = false
-
+    @State private var isLoading = false
+    @State private var showValidationErrors = false
+    
     var escrowName: String
     var parties: [String]
 
@@ -32,216 +30,442 @@ struct FillOutEscrowView: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 24) {
-
-                // Title
-                HStack {
-                    Text("CREATE AN ESCROW")
-                        .font(.custom("DelaGothicOne-Regular", size: 30))
-                    Spacer()
-                    Image(systemName: "chevron.down")
-                        .font(.title2)
-                }
-
-                // Escrow Name
-                VStack(alignment: .leading, spacing: 6) {
-                    Text("ESCROW NAME")
-                        .font(.custom("DelaGothicOne-Regular", size: 14))
-                    TextField("Start typing...", text: $editableEscrowName)
-                        .frame(maxHeight: 35)
-                        .padding(12)
-                        .background(Color.white)
-                        .cornerRadius(8)
-                        .font(.custom("IBMPlexMono-Regular", size: 14))
-                        .multilineTextAlignment(.leading)
-                }
-
-                // MARK: - Party Avatars Row
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("ADD A PARTY")
-                        .font(.custom("DelaGothicOne-Regular", size: 14))
-
-                    HStack(spacing: 16) {
-                        ForEach(selectedUsers, id: \.id) { user in
-                            if let imageName = user.avatarImageName {
-                                Image(imageName)
-                                    .resizable()
-                                    .scaledToFill()
-                                    .frame(width: 50, height: 50)
-                                    .clipShape(Circle())
-                            } else {
-                                Text(initials(for: user.name))
-                                    .font(.custom("DelaGothicOne-Regular", size: 18))
-                                    .frame(width: 50, height: 50)
-                                    .background(Color.white)
-                                    .clipShape(Circle())
-                            }
-                        }
-
-                        Button(action: { showUserSearch = true }) {
-                            Image(systemName: "plus")
-                                .font(.system(size: 20, weight: .bold))
-                                .frame(width: 50, height: 50)
-                                .background(Color.white)
-                                .clipShape(Circle())
-                        }
-                    }
-                }
-
-                // Terms & Conditions
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("ADD TERMS & CONDITIONS")
-                        .font(.custom("DelaGothicOne-Regular", size: 14))
-                    HStack(spacing: 8) {
-                        Button(action: {}) {
-                            Text("UPLOAD")
-                                .font(.custom("DelaGothicOne-Regular", size: 14))
-                                .foregroundColor(.black)
-                                .frame(maxWidth: .infinity, maxHeight: 35)
-                                .padding()
-                                .background(Color("Button"))
-                                .cornerRadius(50)
-                        }
-                        Button(action: {}) {
-                            Text("CREATE")
-                                .font(.custom("DelaGothicOne-Regular", size: 14))
-                                .foregroundColor(.black)
-                                .frame(maxWidth: .infinity, maxHeight: 35)
-                                .padding()
-                                .background(Color("Button"))
-                                .cornerRadius(50)
-                        }
-                    }
-                    .padding(.bottom, 20)
-                }
-
-                // Purpose
-                VStack(alignment: .leading, spacing: 6) {
-                    Text("PURPOSE OF THE ESCROW")
-                        .font(.custom("DelaGothicOne-Regular", size: 14))
-                    TextField("Start typing...", text: $purposeText)
-                        .frame(height: 85)
-                        .padding(12)
-                        .background(Color.white)
-                        .cornerRadius(8)
-                        .font(.custom("IBMPlexMono-Regular", size: 14))
-                        .multilineTextAlignment(.leading)
-                }
-
-                // Escrowed Funds
-                VStack(alignment: .leading, spacing: 6) {
-                    Text("ESCROWED FUNDS")
-                        .font(.custom("DelaGothicOne-Regular", size: 14))
-                    EscrowFundCard(fund: $escrowFund)
-                }
-
-                // Conditions for Release
-                VStack(alignment: .leading, spacing: 6) {
-                    Text("CONDITIONS FOR RELEASE")
-                        .font(.custom("DelaGothicOne-Regular", size: 14))
-                    ForEach(releaseFunds.indices, id: \.self) { i in
-                        EscrowFundCard(fund: $releaseFunds[i])
-                    }
-                }
-
-                // Cancellation Policy
-                VStack(alignment: .leading, spacing: 6) {
-                    Text("CANCELLATION & REFUND POLICY")
-                        .font(.custom("DelaGothicOne-Regular", size: 14))
-                    TextField("Start typing...", text: $cancellationPolicyText)
-                        .frame(height: 85)
-                        .padding(12)
-                        .background(Color.white)
-                        .cornerRadius(8)
-                        .font(.custom("IBMPlexMono-Regular", size: 14))
-                        .multilineTextAlignment(.leading)
-                }
-
-                // Signed and Agreed
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("SIGNED AND AGREED")
-                        .font(.custom("DelaGothicOne-Regular", size: 14))
-                    HStack(spacing: 16) {
-                        ForEach(["profile1", "profile2"], id: \.self) { name in
-                            Image(name)
-                                .resizable()
-                                .scaledToFill()
-                                .frame(width: 50, height: 50)
-                                .clipShape(Circle())
-                        }
-                    }
-                    Text("Unexecuted")
-                        .font(.custom("DaysOne-Regular", size: 12))
-                        .opacity(0.35)
-                }
-
-                // Save & Share
-                Button(action: submitEscrow) {
-                    Text("SAVE & SHARE")
-                        .font(.custom("DaysOne-Regular", size: 16))
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.black)
-                        .cornerRadius(24)
-                }
-
-                // Save For Later
-                HStack {
-                    Spacer()
-                    Button(action: {}) {
-                        Text("SAVE FOR LATER")
-                            .font(.custom("DelaGothicOne-Regular", size: 12))
-                            .foregroundStyle(.black)
-                            .underline()
-                            .padding(.top, 4)
-                    }
-                    Spacer()
+            VStack(alignment: .leading, spacing: 28) {
+                // Header
+                headerSection
+                
+                // Form sections
+                VStack(spacing: 32) {
+                    escrowNameSection
+                    partySelectionSection
+                    termsConditionsSection
+                    purposeSection
+                    escrowFundsSection
+                    releaseConditionsSection
+                    cancellationPolicySection
+                    signedSection
+                    submitButton
+                    saveForLaterButton
                 }
             }
-            .padding()
+            .padding(24)
         }
+        .background(Color(red: 0.97, green: 0.93, blue: 0.85).ignoresSafeArea())
         .onAppear {
             editableEscrowName = escrowName
         }
-        .sheet(isPresented: $showUserSearch) {
-            UserSearchSheetView(
-                viewModel: userSearchVM,
-                currentUserId: userId
-            ) { user in
-                selectedUsers = [user]
-                selectedSellerId = user.id
+    }
+    
+    // MARK: - View Components
+    
+    private var headerSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Text("CREATE AN ESCROW")
+                    .font(.custom("DelaGothicOne-Regular", size: 30))
+                    .foregroundColor(.black)
+                Spacer()
+                Button(action: { dismiss() }) {
+                    Image(systemName: "chevron.down")
+                        .font(.title2)
+                        .foregroundColor(.black)
+                        .padding(8)
+                        .background(Color.white.opacity(0.8))
+                        .clipShape(Circle())
+                }
+            }
+            
+            Text("Fill out the details below to create your escrow agreement")
+                .font(.custom("IBMPlexMono-Regular", size: 14))
+                .foregroundColor(.black)
+                .opacity(0.7)
+        }
+    }
+    
+    private var escrowNameSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(spacing: 4) {
+                Text("ESCROW NAME")
+                    .font(.custom("DelaGothicOne-Regular", size: 14))
+                    .foregroundColor(.black)
+                
+                Text("*")
+                    .font(.custom("DelaGothicOne-Regular", size: 14))
+                    .foregroundColor(.red)
+            }
+            
+            TextField("Start typing...", text: $editableEscrowName)
+                .font(.custom("IBMPlexMono-Regular", size: 14))
+                .padding(16)
+                .background(Color.white)
+                .cornerRadius(12)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .stroke(validationBorder(isEmpty: editableEscrowName.isEmpty), lineWidth: 1.5)
+                )
+            
+            if showValidationErrors && editableEscrowName.isEmpty {
+                ValidationMessage(text: "Escrow name is required")
             }
         }
-        .background(Color("Background").ignoresSafeArea())
     }
-
-    func submitEscrow() {
-        guard let totalAmount = escrowFund.amount, totalAmount > 0 else {
-            print("❌ Missing escrowed amount")
+    
+    private var partySelectionSection: some View {
+        PartySelectionView(
+            selectedUsers: $selectedUsers,
+            selectedSellerId: $selectedSellerId,
+            currentUserId: userId
+        )
+    }
+    
+    private var termsConditionsSection: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            Text("ADD TERMS & CONDITIONS")
+                .font(.custom("DelaGothicOne-Regular", size: 14))
+                .foregroundColor(.black)
+            
+            HStack(spacing: 12) {
+                TermsButton(
+                    icon: "doc.badge.plus",
+                    title: "UPLOAD",
+                    subtitle: "From files",
+                    isDisabled: true,
+                    action: {}
+                )
+                
+                TermsButton(
+                    icon: "doc.text",
+                    title: "CREATE",
+                    subtitle: "From scratch",
+                    action: {}
+                )
+            }
+        }
+    }
+    
+    private var purposeSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("PURPOSE OF THE ESCROW")
+                .font(.custom("DelaGothicOne-Regular", size: 14))
+                .foregroundColor(.black)
+            
+            TextField("Describe the purpose of this escrow...", text: $purposeText, axis: .vertical)
+                .font(.custom("IBMPlexMono-Regular", size: 14))
+                .padding(16)
+                .background(Color.white)
+                .cornerRadius(12)
+                .frame(minHeight: 100, alignment: .topLeading)
+        }
+    }
+    
+    private var escrowFundsSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(spacing: 4) {
+                Text("ESCROWED FUNDS")
+                    .font(.custom("DelaGothicOne-Regular", size: 14))
+                    .foregroundColor(.black)
+                
+                Text("*")
+                    .font(.custom("DelaGothicOne-Regular", size: 14))
+                    .foregroundColor(.red)
+            }
+            
+            EscrowFundCard(fund: $escrowFund)
+            
+            if showValidationErrors && (escrowFund.amount == nil || escrowFund.amount! <= 0) {
+                ValidationMessage(text: "Please enter a valid amount greater than $0")
+            }
+        }
+    }
+    
+    private var releaseConditionsSection: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            Text("CONDITIONS FOR RELEASE")
+                .font(.custom("DelaGothicOne-Regular", size: 14))
+                .foregroundColor(.black)
+            
+            VStack(spacing: 12) {
+                ForEach(releaseFunds.indices, id: \.self) { i in
+                    EscrowFundCard(fund: $releaseFunds[i])
+                }
+            }
+            
+            Text("Define the conditions under which funds will be released")
+                .font(.custom("IBMPlexMono-Regular", size: 12))
+                .foregroundColor(.black)
+                .opacity(0.6)
+        }
+    }
+    
+    private var cancellationPolicySection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("CANCELLATION & REFUND POLICY")
+                .font(.custom("DelaGothicOne-Regular", size: 14))
+                .foregroundColor(.black)
+            
+            TextField("Describe your cancellation and refund policy...", text: $cancellationPolicyText, axis: .vertical)
+                .font(.custom("IBMPlexMono-Regular", size: 14))
+                .padding(16)
+                .background(Color.white)
+                .cornerRadius(12)
+                .frame(minHeight: 100, alignment: .topLeading)
+        }
+    }
+    
+    private var signedSection: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            Text("SIGNATORIES")
+                .font(.custom("DelaGothicOne-Regular", size: 14))
+                .foregroundColor(.black)
+            
+            HStack(spacing: 20) {
+                // Current user (buyer)
+                SignatoryView(
+                    title: "YOU",
+                    subtitle: "Buyer",
+                    isCurrentUser: true
+                )
+                
+                // Selected party (seller)
+                if let selectedUser = selectedUsers.first {
+                    SignatoryView(
+                        initials: initials(for: selectedUser.name),
+                        subtitle: "Seller"
+                    )
+                } else {
+                    SignatoryView(
+                        subtitle: "Add Party",
+                        isEmpty: true
+                    )
+                }
+            }
+            
+            StatusIndicator(isValid: isFormValid)
+        }
+    }
+    
+    private var submitButton: some View {
+        Button(action: submitEscrow) {
+            HStack(spacing: 12) {
+                if isLoading {
+                    ProgressView()
+                        .scaleEffect(0.8)
+                        .tint(.white)
+                }
+                
+                Text(isLoading ? "CREATING..." : "SAVE & SHARE")
+                    .font(.custom("DaysOne-Regular", size: 16))
+                    .foregroundColor(.white)
+            }
+            .frame(maxWidth: .infinity, minHeight: 52)
+            .background(
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(buttonBackground)
+            )
+            .shadow(color: .black.opacity(isFormValid ? 0.1 : 0), radius: 4, y: 2)
+        }
+        .disabled(isLoading || !isFormValid)
+        .animation(.easeInOut(duration: 0.2), value: isFormValid)
+    }
+    
+    private var saveForLaterButton: some View {
+        HStack {
+            Spacer()
+            Button(action: {}) {
+                HStack(spacing: 8) {
+                    Image(systemName: "bookmark")
+                        .font(.system(size: 12))
+                    Text("SAVE FOR LATER")
+                        .font(.custom("DelaGothicOne-Regular", size: 12))
+                }
+                .foregroundColor(.black)
+                .opacity(0.7)
+            }
+            Spacer()
+        }
+        .padding(.top, 16)
+    }
+    
+    // MARK: - Supporting Views
+    
+    private struct ValidationMessage: View {
+        let text: String
+        
+        var body: some View {
+            HStack(spacing: 8) {
+                Image(systemName: "exclamationmark.circle.fill")
+                    .font(.system(size: 12))
+                    .foregroundColor(.red)
+                
+                Text(text)
+                    .font(.custom("IBMPlexMono-Regular", size: 12))
+                    .foregroundColor(.red)
+            }
+            .padding(.horizontal, 4)
+        }
+    }
+    
+    private struct TermsButton: View {
+        let icon: String
+        let title: String
+        let subtitle: String
+        var isDisabled: Bool = false
+        let action: () -> Void
+        
+        var body: some View {
+            Button(action: action) {
+                VStack(spacing: 8) {
+                    Image(systemName: icon)
+                        .font(.system(size: 20))
+                        .foregroundColor(.black)
+                        .opacity(isDisabled ? 0.4 : 1.0)
+                    
+                    VStack(spacing: 2) {
+                        Text(title)
+                            .font(.custom("DelaGothicOne-Regular", size: 13))
+                            .foregroundColor(.black)
+                        
+                        Text(subtitle)
+                            .font(.custom("IBMPlexMono-Regular", size: 10))
+                            .foregroundColor(.black)
+                            .opacity(0.6)
+                    }
+                    
+                    if isDisabled {
+                        Text("SOON")
+                            .font(.custom("DelaGothicOne-Regular", size: 8))
+                            .foregroundColor(.white)
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 2)
+                            .background(Color.orange)
+                            .cornerRadius(4)
+                    }
+                }
+                .frame(maxWidth: .infinity, minHeight: 80)
+                .padding()
+                .background(Color("Button"))
+                .cornerRadius(12)
+                .opacity(isDisabled ? 0.7 : 1.0)
+            }
+            .disabled(isDisabled)
+        }
+    }
+    
+    private struct SignatoryView: View {
+        var title: String? = nil
+        var initials: String? = nil
+        let subtitle: String
+        var isCurrentUser: Bool = false
+        var isEmpty: Bool = false
+        
+        var body: some View {
+            VStack(spacing: 8) {
+                Circle()
+                    .fill(backgroundColor)
+                    .frame(width: 50, height: 50)
+                    .overlay(
+                        Group {
+                            if isEmpty {
+                                Image(systemName: "person.badge.plus")
+                                    .foregroundColor(.black)
+                                    .opacity(0.4)
+                            } else if let title = title {
+                                Text(title)
+                                    .font(.custom("DelaGothicOne-Regular", size: 12))
+                                    .foregroundColor(.black)
+                            } else if let initials = initials {
+                                Text(initials)
+                                    .font(.custom("DelaGothicOne-Regular", size: 16))
+                                    .foregroundColor(.black)
+                            }
+                        }
+                    )
+                
+                Text(subtitle)
+                    .font(.custom("DaysOne-Regular", size: 10))
+                    .foregroundColor(.black)
+                    .opacity(0.6)
+            }
+        }
+        
+        private var backgroundColor: Color {
+            if isEmpty {
+                return Color.white.opacity(0.8)
+            } else {
+                return Color("ActiveColor")
+            }
+        }
+    }
+    
+    private struct StatusIndicator: View {
+        let isValid: Bool
+        
+        var body: some View {
+            HStack(spacing: 8) {
+                Image(systemName: isValid ? "checkmark.circle.fill" : "clock.circle")
+                    .font(.system(size: 14))
+                    .foregroundColor(isValid ? .green : .orange)
+                
+                Text(isValid ? "Ready to create" : "Complete required fields")
+                    .font(.custom("DaysOne-Regular", size: 12))
+                    .foregroundColor(.black)
+                    .opacity(0.6)
+            }
+            .padding(.top, 4)
+        }
+    }
+    
+    // MARK: - Helper Properties
+    
+    private var isFormValid: Bool {
+        !editableEscrowName.isEmpty &&
+        selectedSellerId != 0 &&
+        escrowFund.amount != nil &&
+        escrowFund.amount! > 0
+    }
+    
+    private var buttonBackground: Color {
+        if isLoading || !isFormValid {
+            return Color.black.opacity(0.3)
+        } else {
+            return Color.black
+        }
+    }
+    
+    private func validationBorder(isEmpty: Bool) -> Color {
+        if showValidationErrors && isEmpty {
+            return Color.red
+        } else {
+            return Color.black.opacity(0.1)
+        }
+    }
+    
+    // MARK: - Actions
+    
+    private func submitEscrow() {
+        if !isFormValid {
+            showValidationErrors = true
             return
         }
-        guard selectedSellerId != 0 else {
-            print("❌ Select a seller")
-            return
-        }
-
-        // Build milestone payload from entered amounts
-        let milestonePayload = releaseFunds
+        
+        isLoading = true
+        
+        let totalCents = Int(((escrowFund.amount ?? 0) * 100).rounded())
+        let milestonePayload: [[String: Any]] = releaseFunds
             .compactMap { $0.amount }
-            .map { ["amount": $0, "released": false] }
+            .map { ["amountCents": Int(($0 * 100).rounded())] }
 
         let payload: [String: Any] = [
             "title": editableEscrowName,
-            "buyerId": userId,
             "sellerId": selectedSellerId,
-            "amount": totalAmount,
+            "amountCents": totalCents,
+            "status": "PENDING",
             "milestones": milestonePayload
         ]
 
         guard let url = URL(string: "https://go-hard-backend-production.up.railway.app/escrow/create"),
               let body = try? JSONSerialization.data(withJSONObject: payload) else {
-            print("❌ Failed to encode payload")
+            isLoading = false
             return
         }
 
@@ -251,93 +475,46 @@ struct FillOutEscrowView: View {
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.setValue("Bearer \(authToken)", forHTTPHeaderField: "Authorization")
 
-        URLSession.shared.dataTask(with: request) { data, _, _ in
-            guard let data = data else {
-                print("❌ No data returned")
-                return
-            }
-
-            do {
-                // Decode EscrowDTO returned by backend, then map to your UI model
-                let dto = try JSONDecoder().decode(EscrowDTO.self, from: data)
-                let project = dto.toProject()
-
-                DispatchQueue.main.async {
-                    viewModel.addEscrow(project)
-                    dismiss()
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            DispatchQueue.main.async {
+                isLoading = false
+                
+                if let error = error {
+                    return
                 }
-            } catch {
-                print("❌ Decoding error:", error)
-                print(String(data: data, encoding: .utf8) ?? "")
+                
+                guard let data = data else { return }
+
+                do {
+                    let dto = try JSONDecoder().decode(EscrowDTO.self, from: data)
+                    let project = dto.toProject()
+                    
+                    viewModel.addEscrow(project)
+                    
+                    if let onComplete = onComplete {
+                        onComplete()
+                    } else {
+                        dismiss()
+                    }
+                } catch {
+                    // Handle error
+                }
             }
         }.resume()
     }
-
-    func initials(for name: String) -> String {
-        let comps = name.split(separator: " ")
-        let first = comps.first?.prefix(1) ?? ""
-        let last = comps.dropFirst().first?.prefix(1) ?? ""
+    
+    private func initials(for name: String) -> String {
+        let components = name.split(separator: " ")
+        let first = components.first?.prefix(1) ?? ""
+        let last = components.dropFirst().first?.prefix(1) ?? ""
         return (first + last).uppercased()
     }
 }
 
-struct EscrowFund {
-    var text: String
-    var amount: Double?
-}
-
-// MARK: - EscrowFundCard View
-
-private struct EscrowFundCard: View {
-    @Binding var fund: EscrowFund
-    @State private var amountText: String = ""
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            TextField("Start typing...", text: $fund.text)
-                .font(.custom("IBMPlexMono-Regular", size: 14))
-                .foregroundColor(.black)
-                .multilineTextAlignment(.leading)
-
-            HStack {
-                Spacer()
-                HStack(spacing: 4) {
-                    Text("$")
-                        .font(.custom("DelaGothicOne-Regular", size: 14))
-                        .foregroundColor(.gray)
-
-                    TextField("0.00", text: $amountText)
-                        .keyboardType(.decimalPad)
-                        .font(.custom("DelaGothicOne-Regular", size: 14))
-                        .foregroundColor(.gray)
-                        .multilineTextAlignment(.leading)
-                }
-                .padding(.vertical, 6)
-                .padding(.horizontal, 12)
-                .background(Color.yellow)
-                .cornerRadius(50)
-                .frame(width: 110)
-                .onChange(of: amountText) { newValue in
-                    fund.amount = Double(newValue)
-                }
-            }
-        }
-        .padding()
-        .background(Color.white)
-        .cornerRadius(12)
-        .shadow(color: Color.black.opacity(0.05), radius: 2, x: 0, y: 1)
-        .onAppear {
-            if let amount = fund.amount {
-                amountText = String(format: "%.2f", amount)
-            }
-        }
-    }
-}
-
 #Preview {
-    let vm = EscrowViewModel()
     FillOutEscrowView(
-        viewModel: vm, escrowName: "Cabochon Jewelry",
+        viewModel: EscrowViewModel(),
+        escrowName: "Sample Escrow",
         parties: ["profile1", "profile2"]
     )
 }

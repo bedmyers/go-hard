@@ -13,6 +13,9 @@
 		181B83E02D79561200C4E576 /* OpenEscrowsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 181B83DF2D79560B00C4E576 /* OpenEscrowsView.swift */; };
 		181B83E22D795EC100C4E576 /* EscrowCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 181B83E12D795EBD00C4E576 /* EscrowCardView.swift */; };
 		181C1B4A2DB0859C00B906B9 /* EscrowDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 181C1B492DB0859700B906B9 /* EscrowDetailView.swift */; };
+		182824E82E7BE9450040BD18 /* EscrowFundCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 182824E72E7BE9410040BD18 /* EscrowFundCard.swift */; };
+		182824EA2E7BE96B0040BD18 /* PartySelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 182824E92E7BE9680040BD18 /* PartySelectionView.swift */; };
+		182824EC2E7BE9DF0040BD18 /* EscrowFormComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 182824EB2E7BE9DA0040BD18 /* EscrowFormComponents.swift */; };
 		1852A2C82DFF6F500034BC95 /* MakePaymentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1852A2C72DFF6F4B0034BC95 /* MakePaymentView.swift */; };
 		1852A2CD2E10E6180034BC95 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1852A2CC2E10E6150034BC95 /* AppState.swift */; };
 		1852A2CF2E10E6520034BC95 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1852A2CE2E10E6500034BC95 /* RootView.swift */; };
@@ -62,6 +65,9 @@
 		181B83DF2D79560B00C4E576 /* OpenEscrowsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenEscrowsView.swift; sourceTree = "<group>"; };
 		181B83E12D795EBD00C4E576 /* EscrowCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EscrowCardView.swift; sourceTree = "<group>"; };
 		181C1B492DB0859700B906B9 /* EscrowDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EscrowDetailView.swift; sourceTree = "<group>"; };
+		182824E72E7BE9410040BD18 /* EscrowFundCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EscrowFundCard.swift; sourceTree = "<group>"; };
+		182824E92E7BE9680040BD18 /* PartySelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PartySelectionView.swift; sourceTree = "<group>"; };
+		182824EB2E7BE9DA0040BD18 /* EscrowFormComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EscrowFormComponents.swift; sourceTree = "<group>"; };
 		1852A2C72DFF6F4B0034BC95 /* MakePaymentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MakePaymentView.swift; sourceTree = "<group>"; };
 		1852A2CC2E10E6150034BC95 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		1852A2CE2E10E6500034BC95 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
@@ -236,6 +242,9 @@
 		18FC98082D7380FD0053CFD3 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				182824EB2E7BE9DA0040BD18 /* EscrowFormComponents.swift */,
+				182824E92E7BE9680040BD18 /* PartySelectionView.swift */,
+				182824E72E7BE9410040BD18 /* EscrowFundCard.swift */,
 				1857F84B2E4C05BC00B75623 /* EscrowDetailScreen.swift */,
 				1857F8332E496B7200B75623 /* FundEscrowView.swift */,
 				1852A2DD2E2C673D0034BC95 /* ProgressBar.swift */,
@@ -330,6 +339,7 @@
 			files = (
 				18781B612D73873600EC3178 /* SignupView.swift in Sources */,
 				1852A2C82DFF6F500034BC95 /* MakePaymentView.swift in Sources */,
+				182824E82E7BE9450040BD18 /* EscrowFundCard.swift in Sources */,
 				1852A2DC2E2C57380034BC95 /* StepByStepEscrowView.swift in Sources */,
 				181B83E02D79561200C4E576 /* OpenEscrowsView.swift in Sources */,
 				181C1B4A2DB0859C00B906B9 /* EscrowDetailView.swift in Sources */,
@@ -345,6 +355,7 @@
 				1852A2CF2E10E6520034BC95 /* RootView.swift in Sources */,
 				1809DC2E2DF3EEDD00A1B0AB /* FillOutEscrowView.swift in Sources */,
 				18781B6F2D73FD0900EC3178 /* PrimaryActionButton.swift in Sources */,
+				182824EA2E7BE96B0040BD18 /* PartySelectionView.swift in Sources */,
 				181B83E22D795EC100C4E576 /* EscrowCardView.swift in Sources */,
 				1852A2DE2E2C67480034BC95 /* ProgressBar.swift in Sources */,
 				186326602D5B05BB00759DC1 /* GoldyApp.swift in Sources */,
@@ -352,6 +363,7 @@
 				18FC980B2D7381820053CFD3 /* LoginView.swift in Sources */,
 				18781B712D74009E00EC3178 /* PersistentToolbarContainer.swift in Sources */,
 				1852A2D22E1358A60034BC95 /* EscrowService.swift in Sources */,
+				182824EC2E7BE9DF0040BD18 /* EscrowFormComponents.swift in Sources */,
 				18FC98032D737DE10053CFD3 /* CreateEscrowView.swift in Sources */,
 				1857F84C2E4C05C100B75623 /* EscrowDetailScreen.swift in Sources */,
 				1857F8342E496B7600B75623 /* FundEscrowView.swift in Sources */,

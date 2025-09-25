@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct GetStartedView: View {
+    @ObservedObject var viewModel: EscrowViewModel
     @State private var showCreateEscrow = false
 
     var body: some View {
@@ -37,7 +38,7 @@ struct GetStartedView: View {
             }
         }
         .sheet(isPresented: $showCreateEscrow) {
-            CreateEscrowView(viewModel: EscrowViewModel())
+            CreateEscrowView(viewModel: viewModel)
         }
         .padding()
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -63,7 +64,7 @@ struct GetStartedView: View {
 }
 
 #Preview {
-    GetStartedView()
+    GetStartedView(viewModel: EscrowViewModel())
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color("Background").ignoresSafeArea())
 }
