@@ -14,7 +14,7 @@ struct FundEscrowView: View {
     let escrowId: Int
     @AppStorage("authToken") private var authToken = ""
 
-    @State private var cardFormRef: STPCardFormView?   // <- keep a reference
+    @State private var cardFormRef: STPCardFormView?
     @State private var isLoading = false
     @State private var errorText = ""
     @Environment(\.dismiss) var dismiss
@@ -44,15 +44,12 @@ struct FundEscrowView: View {
         isLoading = true; defer { isLoading = false }
         errorText = ""
 
-        // STPCardFormView.cardParams -> STPPaymentMethodParams
         guard let pmParams: STPPaymentMethodParams = cardFormRef?.cardParams else {
             errorText = "Enter a valid card."
             return
         }
 
-        // Optional: add billing details
         let billing = STPPaymentMethodBillingDetails()
-        // e.g. billing.name = "Blair Myers"
         pmParams.billingDetails = billing
 
         do {
@@ -77,7 +74,6 @@ struct FundEscrowView: View {
         }
     }
 
-    // Wrap Stripe's completion-based API in async/await
     private func createPaymentMethod(with params: STPPaymentMethodParams) async throws -> STPPaymentMethod {
         try await withCheckedThrowingContinuation { cont in
             STPAPIClient.shared.createPaymentMethod(with: params) { pm, err in
@@ -89,7 +85,6 @@ struct FundEscrowView: View {
     }
 }
 
-// SwiftUI wrapper that gives you a reference to the UIKit card form
 struct CardFormRepresentable: UIViewRepresentable {
     @Binding var formRef: STPCardFormView?
 

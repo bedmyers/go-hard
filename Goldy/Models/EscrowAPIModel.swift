@@ -21,25 +21,31 @@ struct EscrowDTO: Decodable {
 struct MilestoneDTO: Decodable {
     let id: Int
     let escrowId: Int
+    let description: String?
     let amountCents: Int
+    let releaseConditions: String?
+    let dueDate: String?
     let released: Bool
 }
 
 extension EscrowDTO {
     func toProject() -> EscrowProject {
         let total = Double(amountCents) / 100.0
-        // progress = released / total (fallback 0 if no milestones yet)
         let released = milestones.filter { $0.released }
             .map { Double($0.amountCents) / 100.0 }
             .reduce(0, +)
         let progress = total > 0 ? (released / total) : 0
+        
+        // Convert milestones
+        let convertedMilestones = milestones.map { $0.toMilestone() }
 
         return EscrowProject(
             id: id,
             title: title ?? "Untitled Escrow",
-            subtitle: nil, // fill later if you want
+            subtitle: nil,
             progress: progress,
-            totalCommitted: total
+            totalCommitted: total,
+            milestones: convertedMilestones  // Add this
         )
     }
 
@@ -69,9 +75,19 @@ extension EscrowDTO {
 
 extension MilestoneDTO {
     func toMilestone() -> Milestone {
-        Milestone(
+        let date: Date?
+        if let dueDateString = dueDate {
+            date = ISO8601DateFormatter().date(from: dueDateString)
+        } else {
+            date = nil
+        }
+            
+        return Milestone(
             id: id,
+            description: description,
             amount: Double(amountCents) / 100.0,
+            releaseConditions: releaseConditions,
+            dueDate: date,
             released: released
         )
     }

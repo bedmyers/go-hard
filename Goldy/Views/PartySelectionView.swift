@@ -24,14 +24,12 @@ struct PartySelectionView: View {
             EscrowSectionHeader(title: "ADD A PARTY", isRequired: true)
 
             HStack(spacing: 16) {
-                // Display selected users
                 ForEach(selectedUsers, id: \.id) { user in
                     UserAvatarView(user: user) {
                         removeUser(user)
                     }
                 }
 
-                // Add party button
                 Button(action: { showUserSearch = true }) {
                     Image(systemName: selectedUsers.isEmpty ? "plus.circle" : "plus")
                         .font(.system(size: selectedUsers.isEmpty ? 28 : 20, weight: .medium))
@@ -50,7 +48,6 @@ struct PartySelectionView: View {
                 .animation(.easeInOut(duration: 0.2), value: selectedUsers.isEmpty)
             }
             
-            // Show selected party info or empty state
             if selectedUsers.isEmpty {
                 VStack(alignment: .leading, spacing: 8) {
                     Text("No party selected")
@@ -99,7 +96,6 @@ private struct UserAvatarView: View {
     
     var body: some View {
         ZStack {
-            // Main avatar
             Text(initials(for: user.name))
                 .font(.custom("DelaGothicOne-Regular", size: 16))
                 .foregroundColor(.white)
@@ -121,7 +117,6 @@ private struct UserAvatarView: View {
                 .scaleEffect(isHovered ? 0.95 : 1.0)
                 .animation(.easeInOut(duration: 0.2), value: isHovered)
             
-            // Remove button - positioned outside the circle
             VStack {
                 HStack {
                     Spacer()

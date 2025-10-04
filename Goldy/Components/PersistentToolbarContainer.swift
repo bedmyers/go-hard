@@ -17,12 +17,9 @@ struct PersistentToolbarContainer<Content: View>: View {
     var body: some View {
         ZStack(alignment: .bottom) {
             content
-                // Ensure your main content can extend underneath the bar
                 .edgesIgnoringSafeArea(.bottom)
             
-            // The custom bar pinned at the bottom
             BottomToolbar()
-                // Force it to hug the bottom edge
                 .ignoresSafeArea(.container, edges: .bottom)
         }
     }

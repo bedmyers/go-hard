@@ -17,13 +17,10 @@ class UserSearchViewModel: ObservableObject {
     private let minQueryLength = 2
     
     func searchUsers(query: String, token: String) {
-        // Cancel previous search
         searchTask?.cancel()
         
-        // Clear previous error
         errorMessage = nil
         
-        // Validate input
         guard !query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
             results = []
             return
@@ -39,7 +36,6 @@ class UserSearchViewModel: ObservableObject {
             return
         }
         
-        // Start new search
         searchTask = Task {
             await performSearch(query: query, token: token)
         }
@@ -52,7 +48,6 @@ class UserSearchViewModel: ObservableObject {
         do {
             let users = try await searchUsersAsync(query: query, token: token)
             
-            // Only update if task wasn't cancelled
             if !Task.isCancelled {
                 self.results = users
                 self.errorMessage = nil
@@ -76,13 +71,12 @@ class UserSearchViewModel: ObservableObject {
         }
         
         var request = URLRequest(url: url)
-        //request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         request.setValue("application/json", forHTTPHeaderField: "Accept")
         request.timeoutInterval = 10.0
         
         let (data, response) = try await URLSession.shared.data(for: request)
         
-        // Check HTTP status
         if let httpResponse = response as? HTTPURLResponse {
             switch httpResponse.statusCode {
             case 200:
@@ -90,7 +84,7 @@ class UserSearchViewModel: ObservableObject {
             case 401:
                 throw UserSearchError.unauthorized
             case 404:
-                return [] // No users found
+                return []
             case 500...599:
                 throw UserSearchError.serverError
             default:
@@ -98,7 +92,6 @@ class UserSearchViewModel: ObservableObject {
             }
         }
         
-        // Parse response
         do {
             let users = try JSONDecoder().decode([User].self, from: data)
             return users

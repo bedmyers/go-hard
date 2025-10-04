@@ -14,6 +14,7 @@ struct EscrowProject: Identifiable {
     let subtitle: String?
     let progress: Double
     let totalCommitted: Double
+    let milestones: [Milestone]? // Add this
 }
 
 struct EscrowDetail: Identifiable {
@@ -43,6 +44,9 @@ struct ReleaseEvent: Identifiable {
 
 struct Milestone: Identifiable, Codable {
     let id: Int
+    let description: String?
     let amount: Double
+    let releaseConditions: String?
+    let dueDate: Date?
     let released: Bool
 }

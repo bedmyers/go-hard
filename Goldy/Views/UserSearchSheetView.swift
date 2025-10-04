@@ -20,10 +20,8 @@ struct UserSearchSheetView: View {
     var body: some View {
         NavigationView {
             VStack(spacing: 0) {
-                // Search Header
                 searchHeaderSection
                 
-                // Results Content
                 if query.isEmpty {
                     emptySearchState
                 } else if viewModel.isLoading {
@@ -194,7 +192,6 @@ private struct UserResultRow: View {
     var body: some View {
         Button(action: onTap) {
             HStack(spacing: 16) {
-                // Avatar with initials
                 Circle()
                     .fill(Color("ActiveColor"))
                     .frame(width: 40, height: 40)

@@ -16,7 +16,6 @@ struct StepByStepEscrowView: View {
 
     @State private var step = 0
 
-    // Collected data
     @State private var escrowName = ""
     @State private var purposeText = ""
     @State private var totalAmountText = ""
@@ -32,7 +31,6 @@ struct StepByStepEscrowView: View {
             currentStepView()
                 .padding(.bottom, 20)
 
-            // Uses your existing ProgressBar component
             ProgressBar(progress: Double(step) / 4)
                 .frame(height: 30)
 
@@ -121,7 +119,6 @@ struct StepByStepEscrowView: View {
             return
         }
 
-        // Simple even split for any non-empty milestones provided
         let nonEmptyNotes = releaseNotes.filter { !$0.isEmpty }
         let splitCount = max(1, nonEmptyNotes.count)
         let perMilestone = totalAmount / Double(splitCount)
@@ -157,7 +154,6 @@ struct StepByStepEscrowView: View {
             }
 
             do {
-                // Decode the server response as EscrowDTO, then map to your UI model
                 let dto = try JSONDecoder().decode(EscrowDTO.self, from: data)
                 let project = dto.toProject()
 

@@ -24,31 +24,22 @@ struct EscrowDetailView: View {
             ScrollView {
                 if let escrow {
                     VStack(alignment: .leading, spacing: 28) {
-                        // Header Section
                         headerSection(escrow)
                         
-                        // Status & Actions
                         statusSection
                         
-                        // Purpose
                         purposeSection(escrow)
                         
-                        // Progress Overview
                         progressOverviewSection(escrow)
                         
-                        // Milestones
                         milestonesSection(escrow)
                         
-                        // Financial Summary
                         financialSummarySection(escrow)
                         
-                        // Cancellation Policy
                         cancellationSection(escrow)
                         
-                        // Signatories
                         signatoriesSection(escrow)
                         
-                        // Actions
                         actionsSection
                     }
                     .padding(24)
@@ -154,7 +145,6 @@ struct EscrowDetailView: View {
             SectionHeader(text: "PROGRESS OVERVIEW")
             
             VStack(spacing: 16) {
-                // Progress bar
                 GeometryReader { geometry in
                     ZStack(alignment: .leading) {
                         RoundedRectangle(cornerRadius: 6)
