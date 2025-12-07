@@ -5,7 +5,7 @@
 //  Created by Blair Myers on 9/17/25.
 //
 
-import SwiftUI
+/*import SwiftUI
 
 struct PartySelectionView: View {
     @Binding var selectedUsers: [User]
@@ -173,4 +173,4 @@ private struct UserAvatarView: View {
     }
     .padding()
     .background(Color(.systemGroupedBackground))
-}*/
+ }*/*/
