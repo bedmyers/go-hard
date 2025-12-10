@@ -41,8 +41,3 @@ struct CustomerTabView: View {
         .accentColor(.black)
     }
 }
-
-#Preview {
-    CustomerTabView()
-        .environmentObject(AppState())
-}

@@ -8,28 +8,163 @@
 import SwiftUI
 
 struct MessagesView: View {
+    @StateObject private var viewModel = MessagesViewModel()
+    
     var body: some View {
         NavigationStack {
             ZStack {
                 Color(hex: "F5F1E8")
                     .ignoresSafeArea()
                 
-                VStack(spacing: 16) {
-                    Image(systemName: "message.fill")
-                        .font(.system(size: 48))
-                        .foregroundColor(.gray)
-                    
-                    Text("No Messages")
-                        .font(.custom("DelaGothicOne-Regular", size: 20))
-                    
-                    Text("Your conversations will appear here")
-                        .font(.system(size: 14))
-                        .foregroundColor(.gray)
+                if viewModel.isLoading {
+                    ProgressView()
+                } else if viewModel.conversations.isEmpty {
+                    emptyState
+                } else {
+                    conversationList
                 }
             }
             .navigationTitle("Messages")
             .navigationBarTitleDisplayMode(.large)
+            .navigationDestination(for: MessageUser.self) { partner in
+                ChatView(partner: partner)
+            }
         }
+        .task {
+            await viewModel.loadConversations()
+        }
+        .refreshable {
+            await viewModel.loadConversations()
+        }
+    }
+    
+    private var emptyState: some View {
+        VStack(spacing: 20) {
+            Image(systemName: "bubble.left.and.bubble.right")
+                .font(.system(size: 60))
+                .foregroundColor(.gray.opacity(0.4))
+            
+            Text("No Messages Yet")
+                .font(.custom("DelaGothicOne-Regular", size: 20))
+            
+            Text("Your conversations will appear here")
+                .font(.system(size: 14))
+                .foregroundColor(.gray)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 40)
+        }
+    }
+    
+    private var conversationList: some View {
+        ScrollView {
+            LazyVStack(spacing: 0) {
+                ForEach(viewModel.conversations) { conversation in
+                    NavigationLink(value: conversation.partner) {
+                        ConversationRow(conversation: conversation)
+                    }
+                    .buttonStyle(.plain)
+                    
+                    Divider()
+                        .padding(.leading, 76)
+                }
+            }
+            .background(Color.white)
+            .cornerRadius(16)
+            .padding()
+        }
+    }
+}
+
+// MARK: - Conversation Row
+
+private struct ConversationRow: View {
+    let conversation: Conversation
+    
+    var body: some View {
+        HStack(spacing: 14) {
+            // Avatar
+            ZStack {
+                Circle()
+                    .fill(Color(hex: "FFD700").opacity(0.2))
+                    .frame(width: 52, height: 52)
+                
+                Text(initials)
+                    .font(.custom("DelaGothicOne-Regular", size: 16))
+                    .foregroundColor(Color(hex: "B8860B"))
+            }
+            
+            // Content
+            VStack(alignment: .leading, spacing: 4) {
+                HStack {
+                    Text(conversation.partner.name)
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundColor(.black)
+                    
+                    Spacer()
+                    
+                    Text(conversation.lastMessage.timeDisplay)
+                        .font(.system(size: 12))
+                        .foregroundColor(.gray)
+                }
+                
+                HStack {
+                    Text(conversation.lastMessage.content)
+                        .font(.system(size: 14))
+                        .foregroundColor(.gray)
+                        .lineLimit(1)
+                    
+                    Spacer()
+                    
+                    if conversation.unreadCount > 0 {
+                        Text("\(conversation.unreadCount)")
+                            .font(.system(size: 11, weight: .bold))
+                            .foregroundColor(.white)
+                            .frame(minWidth: 20, minHeight: 20)
+                            .background(Color(hex: "FF6B35"))
+                            .clipShape(Circle())
+                    }
+                }
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
+    }
+    
+    private var initials: String {
+        let parts = conversation.partner.name.split(separator: " ")
+        if parts.count >= 2 {
+            return "\(parts[0].prefix(1))\(parts[1].prefix(1))".uppercased()
+        }
+        return String(conversation.partner.name.prefix(2)).uppercased()
+    }
+}
+
+// MARK: - View Model
+
+@MainActor
+class MessagesViewModel: ObservableObject {
+    @Published var conversations: [Conversation] = []
+    @Published var isLoading = true
+    
+    func loadConversations() async {
+        do {
+            conversations = try await APIService.shared.getConversations()
+        } catch {
+            print("❌ Error loading conversations: \(error)")
+        }
+        isLoading = false
+    }
+}
+
+// MARK: - Make MessageUser Hashable for navigation
+
+extension MessageUser: Hashable {
+    static func == (lhs: MessageUser, rhs: MessageUser) -> Bool {
+        lhs.id == rhs.id
+    }
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
     }
 }
 

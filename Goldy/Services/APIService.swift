@@ -295,6 +295,183 @@ class APIService {
             method: "GET"
         )
     }
+    
+    // MARK: - Vendor Marketplace
+
+    func searchVendors(query: String? = nil, service: String? = nil, location: String? = nil) async throws -> [User] {
+        var components = URLComponents(string: "\(baseURL)/vendors/search")!
+        var queryItems: [URLQueryItem] = []
+        
+        if let query = query, !query.isEmpty {
+            queryItems.append(URLQueryItem(name: "query", value: query))
+        }
+        if let service = service {
+            queryItems.append(URLQueryItem(name: "service", value: service))
+        }
+        if let location = location {
+            queryItems.append(URLQueryItem(name: "location", value: location))
+        }
+        
+        if !queryItems.isEmpty {
+            components.queryItems = queryItems
+        }
+        
+        var request = URLRequest(url: components.url!)
+        request.httpMethod = "GET"
+        // Note: /vendors/search doesn't require auth based on current backend
+        
+        let (data, response) = try await URLSession.shared.data(for: request)
+        
+        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+            throw APIError.serverError("Failed to search vendors")
+        }
+        
+        return try JSONDecoder().decode([User].self, from: data)
+    }
+
+    func getVendorProfile(vendorId: Int) async throws -> User {
+        var request = URLRequest(url: URL(string: "\(baseURL)/vendors/\(vendorId)")!)
+        request.httpMethod = "GET"
+        // Note: /vendors/:id doesn't require auth based on current backend
+        
+        let (data, response) = try await URLSession.shared.data(for: request)
+        
+        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+            throw APIError.serverError("Failed to fetch vendor profile")
+        }
+        
+        return try JSONDecoder().decode(User.self, from: data)
+    }
+
+    func inviteVendorToRFP(rfpId: Int, vendorId: Int) async throws {
+        var request = URLRequest(url: URL(string: "\(baseURL)/rfps/\(rfpId)/invite")!)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        if let token = UserDefaults.standard.string(forKey: "authToken") {
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        }
+        
+        let body = ["vendorId": vendorId]
+        request.httpBody = try JSONEncoder().encode(body)
+        
+        let (data, response) = try await URLSession.shared.data(for: request)
+        
+        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+            if let errorResponse = try? JSONDecoder().decode(ErrorResponse.self, from: data) {
+                throw APIError.serverError(errorResponse.error ?? "Failed to invite vendor")
+            }
+            throw APIError.serverError("Failed to invite vendor")
+        }
+    }
+    
+    // MARK: - Messaging
+
+    func getConversations() async throws -> [Conversation] {
+        var request = URLRequest(url: URL(string: "\(baseURL)/conversations")!)
+        request.httpMethod = "GET"
+        
+        if let token = UserDefaults.standard.string(forKey: "authToken") {
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        }
+        
+        let (data, response) = try await URLSession.shared.data(for: request)
+        
+        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+            throw APIError.serverError("Failed to fetch conversations")
+        }
+        
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        return try decoder.decode([Conversation].self, from: data)
+    }
+
+    func getMessages(with userId: Int) async throws -> [Message] {
+        var request = URLRequest(url: URL(string: "\(baseURL)/messages/\(userId)")!)
+        request.httpMethod = "GET"
+        
+        if let token = UserDefaults.standard.string(forKey: "authToken") {
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        }
+        
+        let (data, response) = try await URLSession.shared.data(for: request)
+        
+        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+            throw APIError.serverError("Failed to fetch messages")
+        }
+        
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        return try decoder.decode([Message].self, from: data)
+    }
+
+    func sendMessage(to receiverId: Int, content: String) async throws -> Message {
+        var request = URLRequest(url: URL(string: "\(baseURL)/messages")!)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        if let token = UserDefaults.standard.string(forKey: "authToken") {
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        }
+        
+        let body = ["receiverId": receiverId, "content": content] as [String: Any]
+        request.httpBody = try JSONSerialization.data(withJSONObject: body)
+        
+        let (data, response) = try await URLSession.shared.data(for: request)
+        
+        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+            throw APIError.serverError("Failed to send message")
+        }
+        
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        return try decoder.decode(Message.self, from: data)
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
 
 // MARK: - Error Type
