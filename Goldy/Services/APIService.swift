@@ -427,51 +427,85 @@ class APIService {
         decoder.dateDecodingStrategy = .iso8601
         return try decoder.decode(Message.self, from: data)
     }
+    
+    // MARK: - User Profile
 
+    func getCurrentUser() async throws -> User {
+        var request = URLRequest(url: URL(string: "\(baseURL)/users/me")!)
+        request.httpMethod = "GET"
+        
+        if let token = UserDefaults.standard.string(forKey: "authToken") {
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        }
+        
+        let (data, response) = try await URLSession.shared.data(for: request)
+        
+        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+            throw APIError.serverError("Failed to fetch user")
+        }
+        
+        return try JSONDecoder().decode(User.self, from: data)
+    }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    func updateVendorProfile(
+        name: String,
+        bio: String?,
+        location: String?,
+        phoneNumber: String?,
+        services: [String],
+        portfolioUrls: [String],
+        profileImageUrl: String?,
+        startingPrice: Int?,
+        instagramHandle: String?,
+        websiteUrl: String?,
+        yearsInBusiness: Int?
+    ) async throws {
+        guard let token = UserDefaults.standard.string(forKey: "authToken") else {
+            throw APIError.unauthorized
+        }
+        
+        let url = URL(string: "\(baseURL)/users/me")!
+        var request = URLRequest(url: url)
+        request.httpMethod = "PATCH"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        
+        var body: [String: Any] = [
+            "name": name,
+            "services": services,
+            "portfolioUrls": portfolioUrls
+        ]
+        
+        // Handle optional fields - send null to clear them
+        body["bio"] = bio ?? NSNull()
+        body["location"] = location ?? NSNull()
+        body["phoneNumber"] = phoneNumber ?? NSNull()
+        body["profileImageUrl"] = profileImageUrl ?? NSNull()
+        body["startingPrice"] = startingPrice ?? NSNull()
+        body["instagramHandle"] = instagramHandle ?? NSNull()
+        body["websiteUrl"] = websiteUrl ?? NSNull()
+        body["yearsInBusiness"] = yearsInBusiness ?? NSNull()
+        
+        request.httpBody = try JSONSerialization.data(withJSONObject: body)
+        
+        let (data, response) = try await URLSession.shared.data(for: request)
+        
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw APIError.invalidResponse
+        }
+        
+        if httpResponse.statusCode == 401 {
+            throw APIError.unauthorized
+        }
+        
+        guard httpResponse.statusCode == 200 else {
+            let errorBody = String(data: data, encoding: .utf8) ?? "Unknown error"
+            print("❌ Update profile error: \(errorBody)")
+            throw APIError.serverError("Failed to update profile")
+        }
+        
+        print("✅ Profile updated successfully")
+    }
 }
 
 // MARK: - Error Type

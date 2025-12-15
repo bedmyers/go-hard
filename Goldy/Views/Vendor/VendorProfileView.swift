@@ -8,107 +8,207 @@
 import SwiftUI
 
 struct VendorProfileView: View {
-    let vendor: User
-    @StateObject private var viewModel: VendorProfileViewModel
+    let vendorId: Int
+    @StateObject private var viewModel = VendorProfileViewModel()
     @State private var showInviteSheet = false
-    
-    init(vendor: User) {
-        self.vendor = vendor
-        _viewModel = StateObject(wrappedValue: VendorProfileViewModel(vendorId: vendor.id))
-    }
+    @State private var selectedPhotoIndex: Int? = nil
+    @Environment(\.dismiss) var dismiss
     
     var body: some View {
-        ScrollView {
-            VStack(spacing: 24) {
-                // Header
-                profileHeader
-                
-                // Services
-                if let services = vendorData.services, !services.isEmpty {
-                    servicesSection(services)
+        ZStack {
+            Color(hex: "F5F1E8")
+                .ignoresSafeArea()
+            
+            if viewModel.isLoading {
+                ProgressView()
+            } else if let vendor = viewModel.vendor {
+                ScrollView {
+                    VStack(spacing: 20) {
+                        headerSection(vendor)
+                        
+                        if hasQuickStats(vendor) {
+                            quickStatsRow(vendor)
+                        }
+                        
+                        if let bio = vendor.bio, !bio.isEmpty {
+                            bioSection(bio)
+                        }
+                        
+                        if let services = vendor.services, !services.isEmpty {
+                            servicesSection(services)
+                        }
+                        
+                        if hasLinks(vendor) {
+                            linksSection(vendor)
+                        }
+                        
+                        if let photos = vendor.portfolioUrls, !photos.isEmpty {
+                            portfolioSection(photos)
+                        }
+                        
+                        actionButtons(vendor)
+                        
+                        Spacer(minLength: 40)
+                    }
+                    .padding()
                 }
-                
-                // Bio
-                if let bio = vendorData.bio, !bio.isEmpty {
-                    bioSection(bio)
+            } else if let error = viewModel.errorMessage {
+                VStack(spacing: 12) {
+                    Image(systemName: "exclamationmark.triangle")
+                        .font(.system(size: 40))
+                        .foregroundColor(.gray)
+                    Text(error)
+                        .foregroundColor(.gray)
                 }
-                
-                // Portfolio
-                if let urls = vendorData.portfolioUrls, !urls.isEmpty {
-                    portfolioSection(urls)
-                }
-                
-                // Contact & Invite
-                actionButtons
-                
-                Spacer(minLength: 40)
             }
-            .padding()
         }
-        .background(Color(hex: "F5F1E8"))
         .navigationTitle("Vendor Profile")
         .navigationBarTitleDisplayMode(.inline)
-        .sheet(isPresented: $showInviteSheet) {
-            InviteToBidSheet(vendor: vendorData)
-        }
         .task {
-            await viewModel.loadFullProfile()
+            await viewModel.loadVendor(id: vendorId)
+        }
+        .sheet(isPresented: $showInviteSheet) {
+            VendorInviteToRFPSheet(vendorId: vendorId, vendorName: viewModel.vendor?.name ?? "Vendor")
+        }
+        .fullScreenCover(item: $selectedPhotoIndex) { index in
+            if let photos = viewModel.vendor?.portfolioUrls {
+                PhotoGalleryView(photos: photos, initialIndex: index)
+            }
         }
     }
     
-    private var vendorData: User {
-        viewModel.fullProfile ?? vendor
-    }
+    // MARK: - Header Section
     
-    // MARK: - Header
-    
-    private var profileHeader: some View {
+    private func headerSection(_ vendor: User) -> some View {
         VStack(spacing: 16) {
-            // Avatar
             ZStack {
                 Circle()
                     .fill(Color(hex: "FFD700").opacity(0.2))
                     .frame(width: 100, height: 100)
                 
-                Text(initials)
-                    .font(.custom("DelaGothicOne-Regular", size: 32))
-                    .foregroundColor(Color(hex: "B8860B"))
-            }
-            
-            // Name
-            Text(vendorData.name)
-                .font(.custom("DelaGothicOne-Regular", size: 24))
-            
-            // Location
-            if let location = vendorData.location {
-                HStack(spacing: 6) {
-                    Image(systemName: "mappin.circle.fill")
-                        .foregroundColor(Color(hex: "3B82F6"))
-                    Text(location)
-                        .font(.system(size: 15))
-                        .foregroundColor(.gray)
+                if let urlString = vendor.profileImageUrl, !urlString.isEmpty,
+                   let url = URL(string: urlString) {
+                    AsyncImage(url: url) { image in
+                        image
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                    } placeholder: {
+                        ProgressView()
+                    }
+                    .frame(width: 100, height: 100)
+                    .clipShape(Circle())
+                } else {
+                    Text(vendor.initials)
+                        .font(.custom("DelaGothicOne-Regular", size: 28))
+                        .foregroundColor(Color(hex: "B8860B"))
                 }
             }
+            
+            HStack(spacing: 8) {
+                Text(vendor.name)
+                    .font(.custom("DelaGothicOne-Regular", size: 22))
+                
+                if vendor.isVerified {
+                    Image(systemName: "checkmark.seal.fill")
+                        .foregroundColor(Color(hex: "3B82F6"))
+                        .font(.system(size: 18))
+                }
+            }
+            
+            if let location = vendor.location, !location.isEmpty {
+                HStack(spacing: 4) {
+                    Image(systemName: "mappin")
+                        .font(.system(size: 12))
+                    Text(location)
+                        .font(.system(size: 14))
+                }
+                .foregroundColor(.gray)
+            }
+            
+            if let priceText = vendor.startingPriceFormatted {
+                Text("Starting at \(priceText)")
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundColor(Color(hex: "22C55E"))
+            }
         }
+        .padding(24)
         .frame(maxWidth: .infinity)
-        .padding(.vertical, 20)
         .background(Color.white)
         .cornerRadius(20)
     }
     
-    // MARK: - Services
+    // MARK: - Quick Stats
+    
+    private func hasQuickStats(_ vendor: User) -> Bool {
+        vendor.yearsInBusiness != nil || (vendor.portfolioUrls?.count ?? 0) > 0
+    }
+    
+    private func quickStatsRow(_ vendor: User) -> some View {
+        HStack(spacing: 0) {
+            if let years = vendor.yearsInBusiness {
+                statItem(value: "\(years)", label: years == 1 ? "Year" : "Years", icon: "clock.fill")
+            }
+            
+            if let photos = vendor.portfolioUrls, !photos.isEmpty {
+                if vendor.yearsInBusiness != nil {
+                    Divider()
+                        .frame(height: 40)
+                }
+                statItem(value: "\(photos.count)", label: "Photos", icon: "photo.fill")
+            }
+        }
+        .padding(.vertical, 16)
+        .background(Color.white)
+        .cornerRadius(16)
+    }
+    
+    private func statItem(value: String, label: String, icon: String) -> some View {
+        HStack(spacing: 8) {
+            Image(systemName: icon)
+                .foregroundColor(Color(hex: "8B5CF6"))
+            VStack(alignment: .leading, spacing: 2) {
+                Text(value)
+                    .font(.system(size: 18, weight: .bold))
+                Text(label)
+                    .font(.system(size: 12))
+                    .foregroundColor(.gray)
+            }
+        }
+        .frame(maxWidth: .infinity)
+    }
+    
+    // MARK: - Bio Section
+    
+    private func bioSection(_ bio: String) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("ABOUT")
+                .font(.system(size: 12, weight: .semibold))
+                .foregroundColor(.gray)
+            
+            Text(bio)
+                .font(.system(size: 15))
+                .lineSpacing(4)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(20)
+        .background(Color.white)
+        .cornerRadius(16)
+    }
+    
+    // MARK: - Services Section
     
     private func servicesSection(_ services: [String]) -> some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Services")
-                .font(.custom("DelaGothicOne-Regular", size: 16))
+            Text("SERVICES")
+                .font(.system(size: 12, weight: .semibold))
+                .foregroundColor(.gray)
             
-            FlowLayout(spacing: 8) {
+            VendorProfileFlowLayout(spacing: 8) {
                 ForEach(services, id: \.self) { service in
                     Text(service.capitalized)
                         .font(.system(size: 13, weight: .medium))
                         .foregroundColor(Color(hex: "8B5CF6"))
-                        .padding(.horizontal, 12)
+                        .padding(.horizontal, 14)
                         .padding(.vertical, 8)
                         .background(Color(hex: "8B5CF6").opacity(0.1))
                         .cornerRadius(16)
@@ -121,78 +221,57 @@ struct VendorProfileView: View {
         .cornerRadius(16)
     }
     
-    // MARK: - Bio
+    // MARK: - Links Section
     
-    private func bioSection(_ bio: String) -> some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text("About")
-                .font(.custom("DelaGothicOne-Regular", size: 16))
-            
-            Text(bio)
-                .font(.system(size: 15))
-                .foregroundColor(.gray)
-                .lineSpacing(4)
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(20)
-        .background(Color.white)
-        .cornerRadius(16)
+    private func hasLinks(_ vendor: User) -> Bool {
+        vendor.websiteUrlParsed != nil || vendor.instagramUrl != nil
     }
     
-    // MARK: - Portfolio
-    
-    private func portfolioSection(_ urls: [String]) -> some View {
+    private func linksSection(_ vendor: User) -> some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Portfolio")
-                .font(.custom("DelaGothicOne-Regular", size: 16))
+            Text("LINKS")
+                .font(.system(size: 12, weight: .semibold))
+                .foregroundColor(.gray)
             
-            LazyVGrid(columns: [
-                GridItem(.flexible(), spacing: 8),
-                GridItem(.flexible(), spacing: 8)
-            ], spacing: 8) {
-                ForEach(urls.indices, id: \.self) { index in
-                    if let url = URL(string: urls[index]) {
-                        AsyncImage(url: url) { phase in
-                            switch phase {
-                            case .empty:
-                                Rectangle()
-                                    .fill(Color.gray.opacity(0.1))
-                                    .aspectRatio(1, contentMode: .fit)
-                                    .overlay(ProgressView())
-                            case .success(let image):
-                                image
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fill)
-                                    .frame(minHeight: 120)
-                                    .clipped()
-                            case .failure:
-                                Rectangle()
-                                    .fill(Color.gray.opacity(0.1))
-                                    .aspectRatio(1, contentMode: .fit)
-                                    .overlay(
-                                        Image(systemName: "photo")
-                                            .foregroundColor(.gray)
-                                    )
-                            @unknown default:
-                                EmptyView()
-                            }
+            VStack(spacing: 10) {
+                if let websiteUrl = vendor.websiteUrlParsed {
+                    Link(destination: websiteUrl) {
+                        HStack {
+                            Image(systemName: "globe")
+                                .foregroundColor(Color(hex: "3B82F6"))
+                                .frame(width: 24)
+                            Text(vendor.websiteUrl ?? "Website")
+                                .font(.system(size: 14))
+                                .foregroundColor(Color(hex: "3B82F6"))
+                                .lineLimit(1)
+                            Spacer()
+                            Image(systemName: "arrow.up.right")
+                                .font(.system(size: 12))
+                                .foregroundColor(.gray)
                         }
-                        .cornerRadius(12)
-                    } else {
-                        // Show as link if not an image URL
-                        Link(destination: URL(string: urls[index]) ?? URL(string: "https://google.com")!) {
-                            HStack {
-                                Image(systemName: "link")
-                                Text("Portfolio Link")
-                                    .lineLimit(1)
-                            }
-                            .font(.system(size: 13))
-                            .foregroundColor(Color(hex: "3B82F6"))
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .background(Color(hex: "3B82F6").opacity(0.1))
-                            .cornerRadius(12)
+                        .padding(12)
+                        .background(Color(hex: "3B82F6").opacity(0.1))
+                        .cornerRadius(10)
+                    }
+                }
+                
+                if let instagramUrl = vendor.instagramUrl {
+                    Link(destination: instagramUrl) {
+                        HStack {
+                            Image(systemName: "camera")
+                                .foregroundColor(Color(hex: "E1306C"))
+                                .frame(width: 24)
+                            Text("@\(vendor.instagramHandle ?? "")")
+                                .font(.system(size: 14))
+                                .foregroundColor(Color(hex: "E1306C"))
+                            Spacer()
+                            Image(systemName: "arrow.up.right")
+                                .font(.system(size: 12))
+                                .foregroundColor(.gray)
                         }
+                        .padding(12)
+                        .background(Color(hex: "E1306C").opacity(0.1))
+                        .cornerRadius(10)
                     }
                 }
             }
@@ -203,9 +282,33 @@ struct VendorProfileView: View {
         .cornerRadius(16)
     }
     
+    // MARK: - Portfolio Section (Masonry Grid)
+    
+    private func portfolioSection(_ photos: [String]) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Text("PORTFOLIO")
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundColor(.gray)
+                
+                Text("Tap to view")
+                    .font(.system(size: 11))
+                    .foregroundColor(.gray.opacity(0.7))
+            }
+            
+            MasonryGrid(photos: photos) { index in
+                selectedPhotoIndex = index
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(20)
+        .background(Color.white)
+        .cornerRadius(16)
+    }
+    
     // MARK: - Action Buttons
     
-    private var actionButtons: some View {
+    private func actionButtons(_ vendor: User) -> some View {
         VStack(spacing: 12) {
             Button {
                 showInviteSheet = true
@@ -222,7 +325,7 @@ struct VendorProfileView: View {
                 .cornerRadius(12)
             }
             
-            NavigationLink(destination: ChatView(partner: MessageUser(id: vendorData.id, name: vendorData.name, userType: vendorData.userType.rawValue))) {
+            NavigationLink(destination: ChatView(partner: MessageUser(id: vendor.id, name: vendor.name, userType: vendor.userType.rawValue))) {
                 HStack {
                     Image(systemName: "message.fill")
                     Text("MESSAGE")
@@ -235,7 +338,7 @@ struct VendorProfileView: View {
                 .cornerRadius(12)
             }
             
-            if let phone = vendorData.phoneNumber, !phone.isEmpty {
+            if let phone = vendor.phoneNumber, !phone.isEmpty {
                 Link(destination: URL(string: "tel:\(phone)")!) {
                     HStack {
                         Image(systemName: "phone.fill")
@@ -251,61 +354,254 @@ struct VendorProfileView: View {
             }
         }
     }
+}
+
+// MARK: - Masonry Grid
+
+struct MasonryGrid: View {
+    let photos: [String]
+    let onTap: (Int) -> Void
     
-    private var initials: String {
-        let parts = vendorData.name.split(separator: " ")
-        if parts.count >= 2 {
-            return "\(parts[0].prefix(1))\(parts[1].prefix(1))".uppercased()
+    private let spacing: CGFloat = 8
+    
+    // Varying heights for visual interest
+    private func getHeight(for index: Int) -> CGFloat {
+        let heights: [CGFloat] = [140, 180, 160, 200, 150, 170, 190, 145]
+        return heights[index % heights.count]
+    }
+    
+    // Split photos into left/right columns
+    private var leftColumnPhotos: [(index: Int, url: String)] {
+        photos.enumerated().filter { $0.offset % 2 == 0 }.map { ($0.offset, $0.element) }
+    }
+    
+    private var rightColumnPhotos: [(index: Int, url: String)] {
+        photos.enumerated().filter { $0.offset % 2 == 1 }.map { ($0.offset, $0.element) }
+    }
+    
+    var body: some View {
+        HStack(alignment: .top, spacing: spacing) {
+            // Left column (even indices)
+            VStack(spacing: spacing) {
+                ForEach(leftColumnPhotos, id: \.index) { item in
+                    MasonryPhotoCell(
+                        urlString: item.url,
+                        height: getHeight(for: item.index)
+                    ) {
+                        onTap(item.index)
+                    }
+                }
+            }
+            
+            // Right column (odd indices)
+            VStack(spacing: spacing) {
+                ForEach(rightColumnPhotos, id: \.index) { item in
+                    MasonryPhotoCell(
+                        urlString: item.url,
+                        height: getHeight(for: item.index)
+                    ) {
+                        onTap(item.index)
+                    }
+                }
+            }
         }
-        return String(vendorData.name.prefix(2)).uppercased()
     }
 }
 
-// MARK: - Flow Layout
-
-struct FlowLayout: Layout {
-    var spacing: CGFloat = 8
+struct MasonryPhotoCell: View {
+    let urlString: String
+    let height: CGFloat
+    let onTap: () -> Void
     
-    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
-        let result = FlowResult(in: proposal.width ?? 0, subviews: subviews, spacing: spacing)
-        return result.size
-    }
-    
-    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
-        let result = FlowResult(in: bounds.width, subviews: subviews, spacing: spacing)
-        for (index, subview) in subviews.enumerated() {
-            subview.place(at: CGPoint(x: bounds.minX + result.positions[index].x,
-                                       y: bounds.minY + result.positions[index].y),
-                          proposal: .unspecified)
-        }
-    }
-    
-    struct FlowResult {
-        var size: CGSize = .zero
-        var positions: [CGPoint] = []
-        
-        init(in maxWidth: CGFloat, subviews: Subviews, spacing: CGFloat) {
-            var x: CGFloat = 0
-            var y: CGFloat = 0
-            var rowHeight: CGFloat = 0
-            
-            for subview in subviews {
-                let size = subview.sizeThatFits(.unspecified)
-                
-                if x + size.width > maxWidth, x > 0 {
-                    x = 0
-                    y += rowHeight + spacing
-                    rowHeight = 0
+    var body: some View {
+        Button(action: onTap) {
+            if let url = URL(string: urlString) {
+                AsyncImage(url: url) { phase in
+                    switch phase {
+                    case .success(let image):
+                        image
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(height: height)
+                            .clipped()
+                    case .failure(_):
+                        Color.gray.opacity(0.2)
+                            .frame(height: height)
+                            .overlay(
+                                Image(systemName: "photo")
+                                    .foregroundColor(.gray)
+                            )
+                    case .empty:
+                        Color.gray.opacity(0.1)
+                            .frame(height: height)
+                            .overlay(ProgressView())
+                    @unknown default:
+                        Color.gray.opacity(0.1)
+                            .frame(height: height)
+                    }
                 }
-                
-                positions.append(CGPoint(x: x, y: y))
-                rowHeight = max(rowHeight, size.height)
-                x += size.width + spacing
-                
-                self.size.width = max(self.size.width, x - spacing)
+                .cornerRadius(12)
             }
+        }
+        .buttonStyle(.plain)
+    }
+}
+
+// MARK: - Photo Gallery (Fullscreen Viewer)
+
+extension Int: @retroactive Identifiable {
+    public var id: Int { self }
+}
+
+struct PhotoGalleryView: View {
+    let photos: [String]
+    let initialIndex: Int
+    
+    @State private var currentIndex: Int
+    @Environment(\.dismiss) var dismiss
+    @GestureState private var dragOffset: CGFloat = 0
+    
+    init(photos: [String], initialIndex: Int) {
+        self.photos = photos
+        self.initialIndex = initialIndex
+        _currentIndex = State(initialValue: initialIndex)
+    }
+    
+    var body: some View {
+        ZStack {
+            Color.black.ignoresSafeArea()
             
-            self.size.height = y + rowHeight
+            // Photo
+            TabView(selection: $currentIndex) {
+                ForEach(Array(photos.enumerated()), id: \.offset) { index, urlString in
+                    ZoomablePhotoView(urlString: urlString)
+                        .tag(index)
+                }
+            }
+            .tabViewStyle(.page(indexDisplayMode: .never))
+            
+            // Overlay controls
+            VStack {
+                // Top bar
+                HStack {
+                    Button {
+                        dismiss()
+                    } label: {
+                        Image(systemName: "xmark")
+                            .font(.system(size: 18, weight: .semibold))
+                            .foregroundColor(.white)
+                            .frame(width: 40, height: 40)
+                            .background(Color.black.opacity(0.5))
+                            .clipShape(Circle())
+                    }
+                    
+                    Spacer()
+                    
+                    Text("\(currentIndex + 1) / \(photos.count)")
+                        .font(.system(size: 14, weight: .medium))
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 6)
+                        .background(Color.black.opacity(0.5))
+                        .cornerRadius(16)
+                }
+                .padding()
+                
+                Spacer()
+                
+                // Bottom indicator dots
+                if photos.count > 1 && photos.count <= 10 {
+                    HStack(spacing: 6) {
+                        ForEach(0..<photos.count, id: \.self) { index in
+                            Circle()
+                                .fill(index == currentIndex ? Color.white : Color.white.opacity(0.4))
+                                .frame(width: 8, height: 8)
+                        }
+                    }
+                    .padding(.bottom, 30)
+                }
+            }
+        }
+        .statusBarHidden()
+    }
+}
+
+struct ZoomablePhotoView: View {
+    let urlString: String
+    @State private var scale: CGFloat = 1.0
+    @State private var lastScale: CGFloat = 1.0
+    @State private var offset: CGSize = .zero
+    @State private var lastOffset: CGSize = .zero
+    
+    var body: some View {
+        GeometryReader { geo in
+            if let url = URL(string: urlString) {
+                AsyncImage(url: url) { phase in
+                    switch phase {
+                    case .success(let image):
+                        image
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .scaleEffect(scale)
+                            .offset(offset)
+                            .gesture(
+                                MagnificationGesture()
+                                    .onChanged { value in
+                                        let delta = value / lastScale
+                                        lastScale = value
+                                        scale = min(max(scale * delta, 1), 4)
+                                    }
+                                    .onEnded { _ in
+                                        lastScale = 1.0
+                                        if scale < 1 {
+                                            withAnimation { scale = 1 }
+                                        }
+                                    }
+                            )
+                            .gesture(
+                                DragGesture()
+                                    .onChanged { value in
+                                        if scale > 1 {
+                                            offset = CGSize(
+                                                width: lastOffset.width + value.translation.width,
+                                                height: lastOffset.height + value.translation.height
+                                            )
+                                        }
+                                    }
+                                    .onEnded { _ in
+                                        lastOffset = offset
+                                        if scale <= 1 {
+                                            withAnimation {
+                                                offset = .zero
+                                                lastOffset = .zero
+                                            }
+                                        }
+                                    }
+                            )
+                            .onTapGesture(count: 2) {
+                                withAnimation {
+                                    if scale > 1 {
+                                        scale = 1
+                                        offset = .zero
+                                        lastOffset = .zero
+                                    } else {
+                                        scale = 2
+                                    }
+                                }
+                            }
+                    case .failure(_):
+                        Image(systemName: "photo")
+                            .font(.system(size: 50))
+                            .foregroundColor(.gray)
+                    case .empty:
+                        ProgressView()
+                            .tint(.white)
+                    @unknown default:
+                        EmptyView()
+                    }
+                }
+                .frame(width: geo.size.width, height: geo.size.height)
+            }
         }
     }
 }
@@ -314,34 +610,35 @@ struct FlowLayout: Layout {
 
 @MainActor
 class VendorProfileViewModel: ObservableObject {
-    @Published var fullProfile: User?
+    @Published var vendor: User?
     @Published var isLoading = false
+    @Published var errorMessage: String?
     
-    let vendorId: Int
-    
-    init(vendorId: Int) {
-        self.vendorId = vendorId
-    }
-    
-    func loadFullProfile() async {
+    func loadVendor(id: Int) async {
         isLoading = true
+        errorMessage = nil
+        
         do {
-            fullProfile = try await APIService.shared.getVendorProfile(vendorId: vendorId)
+            vendor = try await APIService.shared.getVendorProfile(vendorId: id)
         } catch {
-            print("❌ Error loading vendor profile: \(error)")
+            errorMessage = "Failed to load vendor profile"
+            print("❌ Error loading vendor: \(error)")
         }
+        
         isLoading = false
     }
 }
 
-// MARK: - Invite to Bid Sheet
+// MARK: - Invite Sheet
 
-struct InviteToBidSheet: View {
-    let vendor: User
+struct VendorInviteToRFPSheet: View {
+    let vendorId: Int
+    let vendorName: String
     @Environment(\.dismiss) var dismiss
     @State private var rfps: [RFP] = []
     @State private var isLoading = true
     @State private var selectedRFP: RFP?
+    @State private var isInviting = false
     @State private var showSuccess = false
     
     var body: some View {
@@ -353,91 +650,69 @@ struct InviteToBidSheet: View {
                 if isLoading {
                     ProgressView()
                 } else if rfps.isEmpty {
-                    noRFPsView
+                    VStack(spacing: 12) {
+                        Image(systemName: "doc.text")
+                            .font(.system(size: 40))
+                            .foregroundColor(.gray)
+                        Text("No open RFPs")
+                            .font(.system(size: 16, weight: .medium))
+                        Text("Create an RFP first to invite vendors")
+                            .font(.system(size: 14))
+                            .foregroundColor(.gray)
+                    }
                 } else {
-                    rfpList
+                    List(rfps) { rfp in
+                        Button {
+                            selectedRFP = rfp
+                            Task { await inviteVendor(to: rfp) }
+                        } label: {
+                            HStack {
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text(rfp.title)
+                                        .font(.system(size: 15, weight: .medium))
+                                        .foregroundColor(.black)
+                                    if let budget = rfp.budget {
+                                        Text("$\(budget / 100)")
+                                            .font(.system(size: 13))
+                                            .foregroundColor(.gray)
+                                    }
+                                }
+                                Spacer()
+                                if isInviting && selectedRFP?.id == rfp.id {
+                                    ProgressView()
+                                } else {
+                                    Image(systemName: "chevron.right")
+                                        .foregroundColor(.gray)
+                                }
+                            }
+                        }
+                        .listRowBackground(Color.white)
+                    }
+                    .scrollContentBackground(.hidden)
                 }
             }
-            .navigationTitle("Invite \(vendor.name.components(separatedBy: " ").first ?? "Vendor")")
+            .navigationTitle("Invite to RFP")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { dismiss() }
                 }
             }
-            .alert("Invite Sent!", isPresented: $showSuccess) {
-                Button("Done") { dismiss() }
+            .alert("Invited!", isPresented: $showSuccess) {
+                Button("OK") { dismiss() }
             } message: {
-                Text("\(vendor.name) has been invited to bid on your request.")
+                Text("\(vendorName) has been invited to bid on your RFP.")
             }
         }
         .task {
-            await loadMyRFPs()
+            await loadRFPs()
         }
     }
     
-    private var noRFPsView: some View {
-        VStack(spacing: 20) {
-            Image(systemName: "doc.text")
-                .font(.system(size: 50))
-                .foregroundColor(.gray.opacity(0.4))
-            
-            Text("No Open Requests")
-                .font(.custom("DelaGothicOne-Regular", size: 18))
-            
-            Text("Create a request first, then you can invite vendors to bid on it.")
-                .font(.system(size: 14))
-                .foregroundColor(.gray)
-                .multilineTextAlignment(.center)
-                .padding(.horizontal, 40)
-        }
-    }
-    
-    private var rfpList: some View {
-        ScrollView {
-            VStack(spacing: 12) {
-                Text("Select a request to invite this vendor to:")
-                    .font(.system(size: 14))
-                    .foregroundColor(.gray)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.horizontal)
-                    .padding(.top)
-                
-                ForEach(rfps.filter { $0.isOpen }) { rfp in
-                    Button {
-                        Task {
-                            await inviteVendor(to: rfp)
-                        }
-                    } label: {
-                        HStack {
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text(rfp.title)
-                                    .font(.system(size: 15, weight: .semibold))
-                                    .foregroundColor(.black)
-                                
-                                Text(rfp.budgetFormatted)
-                                    .font(.system(size: 13))
-                                    .foregroundColor(Color(hex: "22C55E"))
-                            }
-                            
-                            Spacer()
-                            
-                            Image(systemName: "paperplane.fill")
-                                .foregroundColor(Color(hex: "FFD700"))
-                        }
-                        .padding()
-                        .background(Color.white)
-                        .cornerRadius(12)
-                    }
-                }
-                .padding(.horizontal)
-            }
-        }
-    }
-    
-    private func loadMyRFPs() async {
+    private func loadRFPs() async {
         do {
             rfps = try await APIService.shared.getMyRFPs()
+            rfps = rfps.filter { $0.status == .open }
         } catch {
             print("❌ Error loading RFPs: \(error)")
         }
@@ -445,30 +720,61 @@ struct InviteToBidSheet: View {
     }
     
     private func inviteVendor(to rfp: RFP) async {
+        isInviting = true
         do {
-            try await APIService.shared.inviteVendorToRFP(rfpId: rfp.id, vendorId: vendor.id)
+            try await APIService.shared.inviteVendorToRFP(rfpId: rfp.id, vendorId: vendorId)
             showSuccess = true
         } catch {
             print("❌ Error inviting vendor: \(error)")
         }
+        isInviting = false
     }
 }
 
-// MARK: - Preview
+// MARK: - Flow Layout (local to this file)
+
+struct VendorProfileFlowLayout: Layout {
+    var spacing: CGFloat = 8
+    
+    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+        let result = arrange(proposal: proposal, subviews: subviews)
+        return result.size
+    }
+    
+    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
+        let result = arrange(proposal: proposal, subviews: subviews)
+        for (index, position) in result.positions.enumerated() {
+            subviews[index].place(at: CGPoint(x: bounds.minX + position.x, y: bounds.minY + position.y), proposal: .unspecified)
+        }
+    }
+    
+    private func arrange(proposal: ProposedViewSize, subviews: Subviews) -> (size: CGSize, positions: [CGPoint]) {
+        let maxWidth = proposal.width ?? .infinity
+        var positions: [CGPoint] = []
+        var x: CGFloat = 0
+        var y: CGFloat = 0
+        var rowHeight: CGFloat = 0
+        
+        for subview in subviews {
+            let size = subview.sizeThatFits(.unspecified)
+            
+            if x + size.width > maxWidth && x > 0 {
+                x = 0
+                y += rowHeight + spacing
+                rowHeight = 0
+            }
+            
+            positions.append(CGPoint(x: x, y: y))
+            rowHeight = max(rowHeight, size.height)
+            x += size.width + spacing
+        }
+        
+        return (CGSize(width: maxWidth, height: y + rowHeight), positions)
+    }
+}
 
 #Preview {
     NavigationStack {
-        VendorProfileView(vendor: User(
-            id: 1,
-            email: "photo@example.com",
-            name: "Sarah Chen Photography",
-            userType: .vendor,
-            bio: "Award-winning wedding photographer with 10 years of experience capturing beautiful moments. I specialize in natural light and candid shots.",
-            services: ["photographer", "videographer"],
-            portfolioUrls: ["https://picsum.photos/400/300", "https://picsum.photos/400/301"],
-            location: "Detroit, MI",
-            phoneNumber: "313-555-1234",
-            stripeAccountId: nil
-        ))
+        VendorProfileView(vendorId: 1)
     }
 }

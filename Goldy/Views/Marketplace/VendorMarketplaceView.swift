@@ -39,7 +39,7 @@ struct VendorMarketplaceView: View {
             .navigationTitle("Find Vendors")
             .navigationBarTitleDisplayMode(.large)
             .navigationDestination(for: User.self) { vendor in
-                VendorProfileView(vendor: vendor)
+                VendorProfileView(vendorId: vendor.id)
             }
         }
         .task {

@@ -603,7 +603,7 @@ private struct BrowseVendorsView: View {
                     .padding(.horizontal)
                 
                 ForEach(viewModel.filteredVendors) { vendor in
-                    NavigationLink(destination: VendorProfileView(vendor: vendor)) {
+                    NavigationLink(destination: VendorProfileView(vendorId: vendor.id)) {
                         VendorRowCard(vendor: vendor)
                     }
                     .buttonStyle(.plain)

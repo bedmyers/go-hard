@@ -11,6 +11,7 @@ struct ProfileView: View {
     @EnvironmentObject var appState: AppState
     @State private var showLogoutConfirm = false
     @State private var showDeleteAccountConfirm = false
+    @State private var showEditProfile = false
     
     var body: some View {
         NavigationStack {
@@ -51,6 +52,9 @@ struct ProfileView: View {
             Button("Cancel", role: .cancel) { }
         } message: {
             Text("This action cannot be undone. All your data will be permanently deleted.")
+        }
+        .sheet(isPresented: $showEditProfile) {
+            VendorEditProfileView()
         }
     }
     
@@ -108,7 +112,7 @@ struct ProfileView: View {
             
             VStack(spacing: 0) {
                 ProfileRow(icon: "person.fill", title: "Edit Profile", showChevron: true) {
-                    // TODO: Edit profile
+                    showEditProfile = true
                 }
                 
                 Divider().padding(.leading, 52)
