@@ -18,7 +18,7 @@ struct ProfileViewOld: View {
                 
                 VStack(spacing: 24) {
                     Image(systemName: "person.crop.circle.fill")
-                        .font(.system(size: 80))
+                        .font(.custom("Spectral-Regular", size: 80))
                         .foregroundColor(.gray)
                     
                     if let user = appState.currentUser {
@@ -26,11 +26,11 @@ struct ProfileViewOld: View {
                             .font(.custom("DelaGothicOne-Regular", size: 24))
                         
                         Text(user.email)
-                            .font(.system(size: 15))
+                            .font(.custom("Spectral-Regular", size: 15))
                             .foregroundColor(.gray)
                         
                         Text(user.userType.rawValue)
-                            .font(.system(size: 13, weight: .medium))
+                            .font(.custom("Spectral-Medium", size: 13))
                             .foregroundColor(.white)
                             .padding(.horizontal, 16)
                             .padding(.vertical, 6)

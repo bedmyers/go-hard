@@ -83,7 +83,7 @@ struct ProfileView: View {
                     .font(.custom("DelaGothicOne-Regular", size: 24))
                 
                 Text(appState.currentUser?.email ?? "")
-                    .font(.system(size: 14))
+                    .font(.custom("Spectral-Regular", size: 14))
                     .foregroundColor(.gray)
                 
                 UserTypeBadge(userType: appState.currentUser?.userType ?? .customer)
@@ -211,9 +211,9 @@ struct ProfileView: View {
             } label: {
                 HStack {
                     Image(systemName: "rectangle.portrait.and.arrow.right")
-                        .font(.system(size: 16, weight: .medium))
+                        .font(.custom("Spectral-Medium", size: 16))
                     Text("Log Out")
-                        .font(.system(size: 16, weight: .semibold))
+                        .font(.custom("Spectral-Bold", size: 16))
                 }
                 .foregroundColor(.red)
                 .frame(maxWidth: .infinity)
@@ -227,7 +227,7 @@ struct ProfileView: View {
                 showDeleteAccountConfirm = true
             } label: {
                 Text("Delete Account")
-                    .font(.system(size: 14))
+                    .font(.custom("Spectral-Regular", size: 14))
                     .foregroundColor(.gray)
             }
         }
@@ -244,7 +244,7 @@ struct ProfileView: View {
                 .foregroundColor(.gray.opacity(0.5))
             
             Text("Version 1.0.0 (1)")
-                .font(.system(size: 11))
+                .font(.custom("Spectral-Regular", size: 11))
                 .foregroundColor(.gray.opacity(0.4))
         }
         .padding(.top, 20)
@@ -258,7 +258,7 @@ private struct SectionHeader: View {
     
     var body: some View {
         Text(title.uppercased())
-            .font(.system(size: 12, weight: .semibold))
+            .font(.custom("Spectral-Bold", size: 12))
             .foregroundColor(.gray)
             .padding(.leading, 4)
     }
@@ -276,19 +276,19 @@ private struct ProfileRow: View {
         Button(action: action) {
             HStack(spacing: 16) {
                 Image(systemName: icon)
-                    .font(.system(size: 16))
+                    .font(.custom("Spectral-Regular", size: 16))
                     .foregroundColor(Color(hex: "FFD700"))
                     .frame(width: 24)
                 
                 Text(title)
-                    .font(.system(size: 15))
+                    .font(.custom("Spectral-Regular", size: 15))
                     .foregroundColor(.black)
                 
                 Spacer()
                 
                 if showChevron {
                     Image(systemName: "chevron.right")
-                        .font(.system(size: 13, weight: .medium))
+                        .font(.custom("Spectral-Medium", size: 13))
                         .foregroundColor(.gray.opacity(0.5))
                 }
             }
@@ -305,7 +305,7 @@ private struct UserTypeBadge: View {
     
     var body: some View {
         Text(userType == .customer ? "CUSTOMER" : "VENDOR")
-            .font(.system(size: 10, weight: .bold))
+            .font(.custom("Spectral-Bold", size: 10))
             .foregroundColor(userType == .customer ? Color(hex: "8B5CF6") : Color(hex: "22C55E"))
             .padding(.horizontal, 10)
             .padding(.vertical, 4)

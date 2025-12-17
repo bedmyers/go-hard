@@ -40,14 +40,14 @@ struct VendorMyBidsView: View {
     private var emptyState: some View {
         VStack(spacing: 20) {
             Image(systemName: "paperplane")
-                .font(.system(size: 60))
+                .font(.custom("Spectral-Regular", size: 60))
                 .foregroundColor(.gray.opacity(0.4))
             
             Text("No Bids Yet")
                 .font(.custom("DelaGothicOne-Regular", size: 20))
             
             Text("Browse open requests and submit bids to get started")
-                .font(.system(size: 14))
+                .font(.custom("Spectral-Regular", size: 14))
                 .foregroundColor(.gray)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 40)
@@ -139,7 +139,7 @@ private struct StatCard: View {
                 .font(.custom("DelaGothicOne-Regular", size: 24))
                 .foregroundColor(color)
             Text(label)
-                .font(.system(size: 11, weight: .medium))
+                .font(.custom("Spectral-Medium", size: 11))
                 .foregroundColor(.gray)
         }
         .frame(maxWidth: .infinity)
@@ -168,7 +168,7 @@ private struct MyBidCard: View {
                     }
                     
                     Text("Submitted \(bid.createdAt.timeAgoDisplay())")
-                        .font(.system(size: 12))
+                        .font(.custom("Spectral-Regular", size: 12))
                         .foregroundColor(.gray)
                 }
                 
@@ -180,7 +180,7 @@ private struct MyBidCard: View {
             // Your bid amount
             HStack {
                 Text("Your bid:")
-                    .font(.system(size: 14))
+                    .font(.custom("Spectral-Regular", size: 14))
                     .foregroundColor(.gray)
                 Text(bid.amountFormatted)
                     .font(.custom("DelaGothicOne-Regular", size: 18))
@@ -189,7 +189,7 @@ private struct MyBidCard: View {
             
             // Proposal preview
             Text(bid.proposal)
-                .font(.system(size: 14))
+                .font(.custom("Spectral-Regular", size: 14))
                 .foregroundColor(.gray)
                 .lineLimit(2)
             
@@ -214,7 +214,7 @@ private struct MyBidCard: View {
                 Image(systemName: "clock")
                 Text("Waiting for client response")
             }
-            .font(.system(size: 12))
+            .font(.custom("Spectral-Regular", size: 12))
             .foregroundColor(Color(hex: "F59E0B"))
             .padding(.horizontal, 12)
             .padding(.vertical, 8)
@@ -226,7 +226,7 @@ private struct MyBidCard: View {
                 Image(systemName: "checkmark.circle.fill")
                 Text("Congratulations! Your bid was accepted")
             }
-            .font(.system(size: 12))
+            .font(.custom("Spectral-Regular", size: 12))
             .foregroundColor(Color(hex: "22C55E"))
             .padding(.horizontal, 12)
             .padding(.vertical, 8)
@@ -238,7 +238,7 @@ private struct MyBidCard: View {
                 Image(systemName: "xmark.circle.fill")
                 Text("Bid was not selected")
             }
-            .font(.system(size: 12))
+            .font(.custom("Spectral-Regular", size: 12))
             .foregroundColor(.gray)
             .padding(.horizontal, 12)
             .padding(.vertical, 8)
@@ -263,7 +263,7 @@ private struct BidStatusBadge: View {
     
     var body: some View {
         Text(displayText)
-            .font(.system(size: 10, weight: .bold))
+            .font(.custom("Spectral-Bold", size: 10))
             .foregroundColor(color)
             .padding(.horizontal, 10)
             .padding(.vertical, 4)

@@ -70,9 +70,9 @@ private struct AllRFPsView: View {
                 } label: {
                     HStack(spacing: 4) {
                         Image(systemName: "plus")
-                            .font(.system(size: 12, weight: .bold))
+                            .font(.custom("Spectral-Bold", size: 12))
                         Text("New RFP")
-                            .font(.system(size: 13, weight: .semibold))
+                            .font(.custom("Spectral-Bold", size: 13))
                     }
                     .foregroundColor(.black)
                     .padding(.horizontal, 12)
@@ -102,14 +102,14 @@ private struct AllRFPsView: View {
     private var emptyState: some View {
         VStack(spacing: 20) {
             Image(systemName: "megaphone")
-                .font(.system(size: 60))
+                .font(.custom("Spectral-Regular", size: 60))
                 .foregroundColor(.gray.opacity(0.4))
             
             Text("No RFPs Yet")
                 .font(.custom("DelaGothicOne-Regular", size: 20))
             
             Text("Post a request and let vendors come to you with bids")
-                .font(.system(size: 14))
+                .font(.custom("Spectral-Regular", size: 14))
                 .foregroundColor(.gray)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 40)
@@ -137,7 +137,7 @@ private struct AllRFPsView: View {
         ScrollView {
             VStack(spacing: 12) {
                 Text("All your requests for proposals")
-                    .font(.system(size: 14))
+                    .font(.custom("Spectral-Regular", size: 14))
                     .foregroundColor(.gray)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.horizontal)
@@ -205,9 +205,9 @@ private struct RFPCardWithProject: View {
             if let project = rfp.project {
                 HStack(spacing: 4) {
                     Image(systemName: "folder.fill")
-                        .font(.system(size: 10))
+                        .font(.custom("Spectral-Regular", size: 10))
                     Text(project.title)
-                        .font(.system(size: 11, weight: .medium))
+                        .font(.custom("Spectral-Medium", size: 11))
                 }
                 .foregroundColor(Color(hex: "3B82F6"))
                 .padding(.horizontal, 8)
@@ -217,9 +217,9 @@ private struct RFPCardWithProject: View {
             } else {
                 HStack(spacing: 4) {
                     Image(systemName: "sparkles")
-                        .font(.system(size: 10))
+                        .font(.custom("Spectral-Regular", size: 10))
                     Text("Standalone")
-                        .font(.system(size: 11, weight: .medium))
+                        .font(.custom("Spectral-Medium", size: 11))
                 }
                 .foregroundColor(Color(hex: "8B5CF6"))
                 .padding(.horizontal, 8)
@@ -239,7 +239,7 @@ private struct RFPCardWithProject: View {
                     }
                     
                     Text("Posted \(rfp.createdAt.timeAgoDisplay())")
-                        .font(.system(size: 13))
+                        .font(.custom("Spectral-Regular", size: 13))
                         .foregroundColor(.gray)
                 }
                 
@@ -247,7 +247,7 @@ private struct RFPCardWithProject: View {
                 
                 Button(action: onToggle) {
                     Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
-                        .font(.system(size: 14, weight: .medium))
+                        .font(.custom("Spectral-Medium", size: 14))
                         .foregroundColor(.gray)
                         .frame(width: 32, height: 32)
                 }
@@ -288,7 +288,7 @@ private struct RFPCardWithProject: View {
                     Image(systemName: "envelope.open")
                         .foregroundColor(.gray.opacity(0.5))
                     Text("No bids yet")
-                        .font(.system(size: 14))
+                        .font(.custom("Spectral-Regular", size: 14))
                         .foregroundColor(.gray)
                 }
                 .frame(maxWidth: .infinity)
@@ -311,15 +311,15 @@ private struct StatBox: View {
         VStack(alignment: .leading, spacing: 6) {
             HStack(spacing: 4) {
                 Image(systemName: icon)
-                    .font(.system(size: 10))
+                    .font(.custom("Spectral-Regular", size: 10))
                     .foregroundColor(.gray)
                 Text(label)
-                    .font(.system(size: 9, weight: .semibold))
+                    .font(.custom("Spectral-Bold", size: 9))
                     .foregroundColor(.gray)
             }
             
             Text(value)
-                .font(.system(size: 12, weight: .bold))
+                .font(.custom("Spectral-Bold", size: 12))
                 .foregroundColor(valueColor)
                 .lineLimit(1)
                 .minimumScaleFactor(0.8)
@@ -338,7 +338,7 @@ private struct StatusBadge: View {
     
     var body: some View {
         Text(status == .open ? "ACTIVE" : status.rawValue)
-            .font(.system(size: 10, weight: .bold))
+            .font(.custom("Spectral-Bold", size: 10))
             .foregroundColor(color)
             .padding(.horizontal, 10)
             .padding(.vertical, 4)
@@ -373,16 +373,16 @@ private struct BidRowCompact: View {
                         .frame(width: 44, height: 44)
                     
                     Text(initials)
-                        .font(.system(size: 14, weight: .semibold))
+                        .font(.custom("Spectral-Bold", size: 14))
                         .foregroundColor(.gray)
                 }
                 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(bid.vendor?.name ?? "Vendor")
-                        .font(.system(size: 15, weight: .semibold))
+                        .font(.custom("Spectral-Bold", size: 15))
                     
                     Text(bid.proposal)
-                        .font(.system(size: 13))
+                        .font(.custom("Spectral-Regular", size: 13))
                         .foregroundColor(.gray)
                         .lineLimit(2)
                 }
@@ -399,7 +399,7 @@ private struct BidRowCompact: View {
                         showAcceptConfirm = true
                     } label: {
                         Text("Accept")
-                            .font(.system(size: 13, weight: .semibold))
+                            .font(.custom("Spectral-Bold", size: 13))
                             .foregroundColor(.white)
                             .padding(.horizontal, 16)
                             .padding(.vertical, 8)
@@ -414,7 +414,7 @@ private struct BidRowCompact: View {
                         }
                     } label: {
                         Text("Decline")
-                            .font(.system(size: 13, weight: .medium))
+                            .font(.custom("Spectral-Medium", size: 13))
                             .foregroundColor(.gray)
                     }
                 }
@@ -483,7 +483,7 @@ private struct BrowseVendorsView: View {
                 } label: {
                     ZStack(alignment: .topTrailing) {
                         Image(systemName: "slider.horizontal.3")
-                            .font(.system(size: 16))
+                            .font(.custom("Spectral-Regular", size: 16))
                             .foregroundColor(viewModel.hasActiveFilters ? .white : .gray)
                             .frame(width: 44, height: 44)
                             .background(viewModel.hasActiveFilters ? Color(hex: "3B82F6") : Color.white)
@@ -569,14 +569,14 @@ private struct BrowseVendorsView: View {
         VStack(spacing: 16) {
             Spacer()
             Image(systemName: "person.2.slash")
-                .font(.system(size: 48))
+                .font(.custom("Spectral-Regular", size: 48))
                 .foregroundColor(.gray.opacity(0.4))
             
             Text("No Vendors Found")
                 .font(.custom("DelaGothicOne-Regular", size: 20))
             
             Text("Try adjusting your filters")
-                .font(.system(size: 14))
+                .font(.custom("Spectral-Regular", size: 14))
                 .foregroundColor(.gray)
             
             if viewModel.hasActiveFilters {
@@ -585,7 +585,7 @@ private struct BrowseVendorsView: View {
                     Task { await viewModel.search() }
                 } label: {
                     Text("Clear All Filters")
-                        .font(.system(size: 14, weight: .semibold))
+                        .font(.custom("Spectral-Bold", size: 14))
                         .foregroundColor(Color(hex: "3B82F6"))
                 }
             }
@@ -597,7 +597,7 @@ private struct BrowseVendorsView: View {
         ScrollView {
             LazyVStack(spacing: 12) {
                 Text("\(viewModel.filteredVendors.count) vendor\(viewModel.filteredVendors.count == 1 ? "" : "s")")
-                    .font(.system(size: 13))
+                    .font(.custom("Spectral-Regular", size: 13))
                     .foregroundColor(.gray)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.horizontal)
@@ -627,11 +627,11 @@ private struct FilterTag: View {
     var body: some View {
         HStack(spacing: 4) {
             Text(label)
-                .font(.system(size: 12, weight: .medium))
+                .font(.custom("Spectral-Medium", size: 12))
             
             Button(action: onRemove) {
                 Image(systemName: "xmark")
-                    .font(.system(size: 10, weight: .bold))
+                    .font(.custom("Spectral-Bold", size: 10))
             }
         }
         .foregroundColor(Color(hex: "3B82F6"))
@@ -659,7 +659,7 @@ private struct FilterSheet: View {
                         // Location
                         VStack(alignment: .leading, spacing: 12) {
                             Text("LOCATION")
-                                .font(.system(size: 12, weight: .semibold))
+                                .font(.custom("Spectral-Bold", size: 12))
                                 .foregroundColor(.gray)
                             
                             VStack(spacing: 8) {
@@ -680,21 +680,21 @@ private struct FilterSheet: View {
                         // Portfolio filter
                         VStack(alignment: .leading, spacing: 12) {
                             Text("QUALITY FILTERS")
-                                .font(.system(size: 12, weight: .semibold))
+                                .font(.custom("Spectral-Bold", size: 12))
                                 .foregroundColor(.gray)
                             
                             Toggle(isOn: $viewModel.portfolioOnly) {
                                 HStack(spacing: 12) {
                                     Image(systemName: "photo.on.rectangle")
-                                        .font(.system(size: 18))
+                                        .font(.custom("Spectral-Regular", size: 18))
                                         .foregroundColor(Color(hex: "8B5CF6"))
                                         .frame(width: 32)
                                     
                                     VStack(alignment: .leading, spacing: 2) {
                                         Text("Has Portfolio")
-                                            .font(.system(size: 15, weight: .medium))
+                                            .font(.custom("Spectral-Medium", size: 15))
                                         Text("Only show vendors with photos")
-                                            .font(.system(size: 12))
+                                            .font(.custom("Spectral-Regular", size: 12))
                                             .foregroundColor(.gray)
                                     }
                                 }
@@ -728,7 +728,7 @@ private struct FilterSheet: View {
                         }
                     } label: {
                         Text("Apply")
-                            .font(.system(size: 15, weight: .semibold))
+                            .font(.custom("Spectral-Bold", size: 15))
                             .foregroundColor(.black)
                             .padding(.horizontal, 16)
                             .padding(.vertical, 8)
@@ -756,14 +756,14 @@ private struct LocationOption: View {
                     .foregroundColor(isSelected ? Color(hex: "3B82F6") : .gray.opacity(0.5))
                 
                 Text(title)
-                    .font(.system(size: 15))
+                    .font(.custom("Spectral-Regular", size: 15))
                     .foregroundColor(.black)
                 
                 Spacer()
                 
                 if isSelected {
                     Image(systemName: "checkmark")
-                        .font(.system(size: 14, weight: .semibold))
+                        .font(.custom("Spectral-Bold", size: 14))
                         .foregroundColor(Color(hex: "22C55E"))
                 }
             }
@@ -784,7 +784,7 @@ private struct CategoryChip: View {
     var body: some View {
         Button(action: action) {
             Text(title)
-                .font(.system(size: 13, weight: .medium))
+                .font(.custom("Spectral-Medium", size: 13))
                 .foregroundColor(isSelected ? .black : .gray)
                 .padding(.horizontal, 14)
                 .padding(.vertical, 8)
@@ -814,20 +814,20 @@ private struct VendorRowCard: View {
             VStack(alignment: .leading, spacing: 4) {
                 HStack(spacing: 6) {
                     Text(vendor.name)
-                        .font(.system(size: 16, weight: .semibold))
+                        .font(.custom("Spectral-Bold", size: 16))
                         .foregroundColor(.black)
                     
                     // Verified badge
                     if vendor.stripeAccountId != nil {
                         Image(systemName: "checkmark.seal.fill")
-                            .font(.system(size: 14))
+                            .font(.custom("Spectral-Regular", size: 14))
                             .foregroundColor(Color(hex: "3B82F6"))
                     }
                 }
                 
                 if let services = vendor.services, !services.isEmpty {
                     Text(services.prefix(2).joined(separator: " • "))
-                        .font(.system(size: 13))
+                        .font(.custom("Spectral-Regular", size: 13))
                         .foregroundColor(Color(hex: "8B5CF6"))
                 }
                 
@@ -835,9 +835,9 @@ private struct VendorRowCard: View {
                     if let location = vendor.location {
                         HStack(spacing: 4) {
                             Image(systemName: "mappin")
-                                .font(.system(size: 10))
+                                .font(.custom("Spectral-Regular", size: 10))
                             Text(location)
-                                .font(.system(size: 12))
+                                .font(.custom("Spectral-Regular", size: 12))
                         }
                         .foregroundColor(.gray)
                     }
@@ -845,9 +845,9 @@ private struct VendorRowCard: View {
                     if let urls = vendor.portfolioUrls, !urls.isEmpty {
                         HStack(spacing: 4) {
                             Image(systemName: "photo")
-                                .font(.system(size: 10))
+                                .font(.custom("Spectral-Regular", size: 10))
                             Text("\(urls.count) photos")
-                                .font(.system(size: 12))
+                                .font(.custom("Spectral-Regular", size: 12))
                         }
                         .foregroundColor(Color(hex: "22C55E"))
                     }
@@ -857,7 +857,7 @@ private struct VendorRowCard: View {
             Spacer()
             
             Image(systemName: "chevron.right")
-                .font(.system(size: 14))
+                .font(.custom("Spectral-Regular", size: 14))
                 .foregroundColor(.gray.opacity(0.5))
         }
         .padding(16)

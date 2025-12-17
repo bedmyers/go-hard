@@ -26,7 +26,7 @@ struct VendorWelcomeView: View {
                             // Welcome header
                             VStack(spacing: 12) {
                                 Image(systemName: "checkmark.circle.fill")
-                                    .font(.system(size: 64, weight: .light))
+                                    .font(.custom("Spectral-Light", size: 64))
                                     .foregroundColor(Color(hex: "7C3AED"))
                                 
                                 Text("WELCOME TO\nGO HARD")
@@ -35,7 +35,7 @@ struct VendorWelcomeView: View {
                                     .lineSpacing(2)
                                 
                                 Text("Find clients, manage projects, and get paid securely")
-                                    .font(.system(size: 14))
+                                    .font(.custom("Spectral-Regular", size: 14))
                                     .foregroundColor(.gray)
                                     .multilineTextAlignment(.center)
                                     .padding(.horizontal, 32)
@@ -89,7 +89,7 @@ struct VendorWelcomeView: View {
                             dismiss()
                         } label: {
                             Text("I'll do this later")
-                                .font(.system(size: 14, weight: .medium))
+                                .font(.custom("Spectral-Medium", size: 14))
                                 .foregroundColor(.gray)
                                 .padding(.vertical, 4)
                         }
@@ -118,7 +118,7 @@ private struct BenefitCard: View {
     var body: some View {
         HStack(spacing: 12) {
             Image(systemName: icon)
-                .font(.system(size: 24, weight: .light))
+                .font(.custom("Spectral-Light", size: 24))
                 .foregroundColor(.black)
                 .frame(width: 44, height: 44)
             
@@ -128,7 +128,7 @@ private struct BenefitCard: View {
                     .foregroundColor(.black)
                 
                 Text(description)
-                    .font(.system(size: 12))
+                    .font(.custom("Spectral-Regular", size: 12))
                     .foregroundColor(.gray)
                     .lineLimit(2)
             }

@@ -41,14 +41,14 @@ struct MessagesView: View {
     private var emptyState: some View {
         VStack(spacing: 20) {
             Image(systemName: "bubble.left.and.bubble.right")
-                .font(.system(size: 60))
+                .font(.custom("Spectral-Regular", size: 60))
                 .foregroundColor(.gray.opacity(0.4))
             
             Text("No Messages Yet")
                 .font(.custom("DelaGothicOne-Regular", size: 20))
             
             Text("Your conversations will appear here")
-                .font(.system(size: 14))
+                .font(.custom("Spectral-Regular", size: 14))
                 .foregroundColor(.gray)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 40)
@@ -97,19 +97,19 @@ private struct ConversationRow: View {
             VStack(alignment: .leading, spacing: 4) {
                 HStack {
                     Text(conversation.partner.name)
-                        .font(.system(size: 16, weight: .semibold))
+                        .font(.custom("Spectral-Bold", size: 16))
                         .foregroundColor(.black)
                     
                     Spacer()
                     
                     Text(conversation.lastMessage.timeDisplay)
-                        .font(.system(size: 12))
+                        .font(.custom("Spectral-Regular", size: 12))
                         .foregroundColor(.gray)
                 }
                 
                 HStack {
                     Text(conversation.lastMessage.content)
-                        .font(.system(size: 14))
+                        .font(.custom("Spectral-Regular", size: 14))
                         .foregroundColor(.gray)
                         .lineLimit(1)
                     
@@ -117,7 +117,7 @@ private struct ConversationRow: View {
                     
                     if conversation.unreadCount > 0 {
                         Text("\(conversation.unreadCount)")
-                            .font(.system(size: 11, weight: .bold))
+                            .font(.custom("Spectral-Bold", size: 11))
                             .foregroundColor(.white)
                             .frame(minWidth: 20, minHeight: 20)
                             .background(Color(hex: "FF6B35"))

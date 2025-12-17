@@ -45,7 +45,7 @@ struct VendorEditProfileView: View {
                             .tint(.white)
                         
                         Text(viewModel.uploadingMessage)
-                            .font(.system(size: 16, weight: .medium))
+                            .font(.custom("Spectral-Medium", size: 16))
                             .foregroundColor(.white)
                     }
                     .padding(32)
@@ -73,7 +73,7 @@ struct VendorEditProfileView: View {
                             ProgressView()
                         } else {
                             Text("Save")
-                                .font(.system(size: 16, weight: .semibold))
+                                .font(.custom("Spectral-Bold", size: 16))
                         }
                     }
                     .disabled(viewModel.isSaving || viewModel.isUploading)
@@ -112,7 +112,7 @@ struct VendorEditProfileView: View {
                     .clipShape(Circle())
                 } else {
                     Image(systemName: "person.fill")
-                        .font(.system(size: 40))
+                        .font(.custom("Spectral-Regular", size: 40))
                         .foregroundColor(Color(hex: "B8860B"))
                 }
                 
@@ -124,7 +124,7 @@ struct VendorEditProfileView: View {
                             .frame(width: 36, height: 36)
                         
                         Image(systemName: "camera.fill")
-                            .font(.system(size: 14))
+                            .font(.custom("Spectral-Regular", size: 14))
                             .foregroundColor(.black)
                     }
                 }
@@ -136,7 +136,7 @@ struct VendorEditProfileView: View {
                     viewModel.profileImageUrl = nil
                 } label: {
                     Text("Remove Photo")
-                        .font(.system(size: 13))
+                        .font(.custom("Spectral-Regular", size: 13))
                         .foregroundColor(.red)
                 }
             }
@@ -157,16 +157,16 @@ struct VendorEditProfileView: View {
     private var basicInfoSection: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text("BASIC INFO")
-                .font(.system(size: 12, weight: .semibold))
+                .font(.custom("Spectral-Bold", size: 12))
                 .foregroundColor(.gray)
             
             VStack(alignment: .leading, spacing: 6) {
                 Text("Business Name")
-                    .font(.system(size: 13, weight: .medium))
+                    .font(.custom("Spectral-Medium", size: 13))
                     .foregroundColor(.gray)
                 
                 TextField("Your business name", text: $viewModel.name)
-                    .font(.system(size: 15))
+                    .font(.custom("Spectral-Regular", size: 15))
                     .padding(12)
                     .background(Color.white)
                     .cornerRadius(10)
@@ -174,14 +174,14 @@ struct VendorEditProfileView: View {
             
             VStack(alignment: .leading, spacing: 6) {
                 Text("Bio")
-                    .font(.system(size: 13, weight: .medium))
+                    .font(.custom("Spectral-Medium", size: 13))
                     .foregroundColor(.gray)
                 
                 TextEditor(text: Binding(
                     get: { viewModel.bio ?? "" },
                     set: { viewModel.bio = $0.isEmpty ? nil : $0 }
                 ))
-                .font(.system(size: 15))
+                .font(.custom("Spectral-Regular", size: 15))
                 .frame(minHeight: 100)
                 .padding(8)
                 .background(Color.white)
@@ -191,14 +191,14 @@ struct VendorEditProfileView: View {
             
             VStack(alignment: .leading, spacing: 6) {
                 Text("Location")
-                    .font(.system(size: 13, weight: .medium))
+                    .font(.custom("Spectral-Medium", size: 13))
                     .foregroundColor(.gray)
                 
                 TextField("City, State", text: Binding(
                     get: { viewModel.location ?? "" },
                     set: { viewModel.location = $0.isEmpty ? nil : $0 }
                 ))
-                .font(.system(size: 15))
+                .font(.custom("Spectral-Regular", size: 15))
                 .padding(12)
                 .background(Color.white)
                 .cornerRadius(10)
@@ -206,14 +206,14 @@ struct VendorEditProfileView: View {
             
             VStack(alignment: .leading, spacing: 6) {
                 Text("Phone Number")
-                    .font(.system(size: 13, weight: .medium))
+                    .font(.custom("Spectral-Medium", size: 13))
                     .foregroundColor(.gray)
                 
                 TextField("(555) 123-4567", text: Binding(
                     get: { viewModel.phoneNumber ?? "" },
                     set: { viewModel.phoneNumber = $0.isEmpty ? nil : $0 }
                 ))
-                .font(.system(size: 15))
+                .font(.custom("Spectral-Regular", size: 15))
                 .keyboardType(.phonePad)
                 .padding(12)
                 .background(Color.white)
@@ -230,11 +230,11 @@ struct VendorEditProfileView: View {
     private var servicesSection: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text("SERVICES")
-                .font(.system(size: 12, weight: .semibold))
+                .font(.custom("Spectral-Bold", size: 12))
                 .foregroundColor(.gray)
             
             Text("Select all that apply")
-                .font(.system(size: 13))
+                .font(.custom("Spectral-Regular", size: 13))
                 .foregroundColor(.gray)
             
             LazyVGrid(columns: [GridItem(.adaptive(minimum: 100))], spacing: 8) {
@@ -262,21 +262,21 @@ struct VendorEditProfileView: View {
     private var pricingSection: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text("PRICING & EXPERIENCE")
-                .font(.system(size: 12, weight: .semibold))
+                .font(.custom("Spectral-Bold", size: 12))
                 .foregroundColor(.gray)
             
             VStack(alignment: .leading, spacing: 6) {
                 Text("Starting Price")
-                    .font(.system(size: 13, weight: .medium))
+                    .font(.custom("Spectral-Medium", size: 13))
                     .foregroundColor(.gray)
                 
                 HStack {
                     Text("$")
-                        .font(.system(size: 18, weight: .semibold))
+                        .font(.custom("Spectral-Bold", size: 18))
                         .foregroundColor(.gray)
                     
                     TextField("e.g., 2500", text: $viewModel.startingPriceText)
-                        .font(.system(size: 18))
+                        .font(.custom("Spectral-Regular", size: 18))
                         .keyboardType(.numberPad)
                 }
                 .padding(12)
@@ -284,22 +284,22 @@ struct VendorEditProfileView: View {
                 .cornerRadius(10)
                 
                 Text("This is your minimum starting price for couples to see")
-                    .font(.system(size: 12))
+                    .font(.custom("Spectral-Regular", size: 12))
                     .foregroundColor(.gray)
             }
             
             VStack(alignment: .leading, spacing: 6) {
                 Text("Years in Business")
-                    .font(.system(size: 13, weight: .medium))
+                    .font(.custom("Spectral-Medium", size: 13))
                     .foregroundColor(.gray)
                 
                 HStack {
                     TextField("e.g., 5", text: $viewModel.yearsInBusinessText)
-                        .font(.system(size: 18))
+                        .font(.custom("Spectral-Regular", size: 18))
                         .keyboardType(.numberPad)
                     
                     Text("years")
-                        .font(.system(size: 15))
+                        .font(.custom("Spectral-Regular", size: 15))
                         .foregroundColor(.gray)
                 }
                 .padding(12)
@@ -317,7 +317,7 @@ struct VendorEditProfileView: View {
     private var linksSection: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text("LINKS")
-                .font(.system(size: 12, weight: .semibold))
+                .font(.custom("Spectral-Bold", size: 12))
                 .foregroundColor(.gray)
             
             VStack(alignment: .leading, spacing: 6) {
@@ -325,7 +325,7 @@ struct VendorEditProfileView: View {
                     Image(systemName: "globe")
                         .foregroundColor(Color(hex: "3B82F6"))
                     Text("Website")
-                        .font(.system(size: 13, weight: .medium))
+                        .font(.custom("Spectral-Medium", size: 13))
                         .foregroundColor(.gray)
                 }
                 
@@ -333,7 +333,7 @@ struct VendorEditProfileView: View {
                     get: { viewModel.websiteUrl ?? "" },
                     set: { viewModel.websiteUrl = $0.isEmpty ? nil : $0 }
                 ))
-                .font(.system(size: 15))
+                .font(.custom("Spectral-Regular", size: 15))
                 .autocapitalization(.none)
                 .autocorrectionDisabled()
                 .padding(12)
@@ -346,7 +346,7 @@ struct VendorEditProfileView: View {
                     Image(systemName: "camera")
                         .foregroundColor(Color(hex: "E1306C"))
                     Text("Instagram Handle")
-                        .font(.system(size: 13, weight: .medium))
+                        .font(.custom("Spectral-Medium", size: 13))
                         .foregroundColor(.gray)
                 }
                 
@@ -357,7 +357,7 @@ struct VendorEditProfileView: View {
                         get: { viewModel.instagramHandle ?? "" },
                         set: { viewModel.instagramHandle = $0.isEmpty ? nil : $0 }
                     ))
-                    .font(.system(size: 15))
+                    .font(.custom("Spectral-Regular", size: 15))
                     .autocapitalization(.none)
                     .autocorrectionDisabled()
                 }
@@ -377,11 +377,11 @@ struct VendorEditProfileView: View {
         VStack(alignment: .leading, spacing: 16) {
             HStack {
                 Text("PORTFOLIO")
-                    .font(.system(size: 12, weight: .semibold))
+                    .font(.custom("Spectral-Bold", size: 12))
                     .foregroundColor(.gray)
                 
                 Text("\(viewModel.portfolioUrls.count) photos")
-                    .font(.system(size: 12))
+                    .font(.custom("Spectral-Regular", size: 12))
                     .foregroundColor(.gray.opacity(0.7))
                 
                 Spacer()
@@ -395,23 +395,23 @@ struct VendorEditProfileView: View {
                         Image(systemName: "plus")
                         Text("Add Photos")
                     }
-                    .font(.system(size: 13, weight: .medium))
+                    .font(.custom("Spectral-Medium", size: 13))
                     .foregroundColor(Color(hex: "3B82F6"))
                 }
             }
             
             Text("Showcase your best work")
-                .font(.system(size: 13))
+                .font(.custom("Spectral-Regular", size: 13))
                 .foregroundColor(.gray)
             
             if viewModel.portfolioUrls.isEmpty {
                 VStack(spacing: 12) {
                     Image(systemName: "photo.on.rectangle.angled")
-                        .font(.system(size: 40))
+                        .font(.custom("Spectral-Regular", size: 40))
                         .foregroundColor(.gray.opacity(0.4))
                     
                     Text("No portfolio photos yet")
-                        .font(.system(size: 14))
+                        .font(.custom("Spectral-Regular", size: 14))
                         .foregroundColor(.gray)
                     
                     PhotosPicker(
@@ -420,7 +420,7 @@ struct VendorEditProfileView: View {
                         matching: .images
                     ) {
                         Text("Upload Photos")
-                            .font(.system(size: 14, weight: .semibold))
+                            .font(.custom("Spectral-Bold", size: 14))
                             .foregroundColor(.white)
                             .padding(.horizontal, 20)
                             .padding(.vertical, 10)
@@ -467,7 +467,7 @@ struct VendorEditProfileView: View {
                                 viewModel.portfolioUrls.removeAll { $0 == urlString }
                             } label: {
                                 Image(systemName: "xmark.circle.fill")
-                                    .font(.system(size: 20))
+                                    .font(.custom("Spectral-Regular", size: 20))
                                     .foregroundColor(.white)
                                     .shadow(radius: 2)
                             }
@@ -498,7 +498,7 @@ private struct EditServiceChip: View {
     var body: some View {
         Button(action: action) {
             Text(title)
-                .font(.system(size: 13, weight: .medium))
+                .font(.custom("Spectral-Medium", size: 13))
                 .foregroundColor(isSelected ? .white : .gray)
                 .padding(.horizontal, 14)
                 .padding(.vertical, 8)

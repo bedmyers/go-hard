@@ -62,7 +62,7 @@ struct RFPDetailView: View {
                     .frame(width: 80, height: 80)
                 
                 Image(systemName: "megaphone.fill")
-                    .font(.system(size: 32))
+                    .font(.custom("Spectral-Regular", size: 32))
                     .foregroundColor(Color(hex: "FFD700"))
             }
             
@@ -76,7 +76,7 @@ struct RFPDetailView: View {
                         .fill(statusColor)
                         .frame(width: 8, height: 8)
                     Text(statusText)
-                        .font(.system(size: 12, weight: .medium))
+                        .font(.custom("Spectral-Medium", size: 12))
                         .foregroundColor(statusColor)
                 }
             }
@@ -105,11 +105,11 @@ struct RFPDetailView: View {
         VStack(spacing: 16) {
             VStack(alignment: .leading, spacing: 8) {
                 Text("Description")
-                    .font(.system(size: 12, weight: .semibold))
+                    .font(.custom("Spectral-Bold", size: 12))
                     .foregroundColor(.gray)
                 
                 Text(viewModel.rfp.description)
-                    .font(.system(size: 15))
+                    .font(.custom("Spectral-Regular", size: 15))
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding()
@@ -145,7 +145,7 @@ struct RFPDetailView: View {
                 Spacer()
                 
                 Text("\(viewModel.rfp.bidCount)")
-                    .font(.system(size: 14, weight: .bold))
+                    .font(.custom("Spectral-Bold", size: 14))
                     .foregroundColor(.white)
                     .padding(.horizontal, 10)
                     .padding(.vertical, 4)
@@ -170,15 +170,15 @@ struct RFPDetailView: View {
             } else {
                 VStack(spacing: 12) {
                     Image(systemName: "envelope.open")
-                        .font(.system(size: 40))
+                        .font(.custom("Spectral-Regular", size: 40))
                         .foregroundColor(.gray.opacity(0.4))
                     
                     Text("No bids yet")
-                        .font(.system(size: 15, weight: .medium))
+                        .font(.custom("Spectral-Medium", size: 15))
                         .foregroundColor(.gray)
                     
                     Text("Vendors will submit bids here")
-                        .font(.system(size: 13))
+                        .font(.custom("Spectral-Regular", size: 13))
                         .foregroundColor(.gray.opacity(0.7))
                 }
                 .frame(maxWidth: .infinity)
@@ -196,7 +196,7 @@ struct RFPDetailView: View {
             Task { await viewModel.closeRFP() }
         } label: {
             Text("Close Request")
-                .font(.system(size: 14, weight: .medium))
+                .font(.custom("Spectral-Medium", size: 14))
                 .foregroundColor(.red)
         }
         .padding(.top, 8)
@@ -214,15 +214,15 @@ private struct DetailCard: View {
         VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 6) {
                 Image(systemName: icon)
-                    .font(.system(size: 12))
+                    .font(.custom("Spectral-Regular", size: 12))
                     .foregroundColor(.gray)
                 Text(title)
-                    .font(.system(size: 11, weight: .medium))
+                    .font(.custom("Spectral-Medium", size: 11))
                     .foregroundColor(.gray)
             }
             
             Text(value)
-                .font(.system(size: 15, weight: .semibold))
+                .font(.custom("Spectral-Bold", size: 15))
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding()
@@ -248,17 +248,17 @@ struct BidCard: View {
                         .frame(width: 44, height: 44)
                     
                     Text(initials)
-                        .font(.system(size: 14, weight: .semibold))
+                        .font(.custom("Spectral-Bold", size: 14))
                         .foregroundColor(.gray)
                 }
                 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(bid.vendor?.name ?? "Vendor")
-                        .font(.system(size: 15, weight: .semibold))
+                        .font(.custom("Spectral-Bold", size: 15))
                     
                     if let email = bid.vendor?.email {
                         Text(email)
-                            .font(.system(size: 12))
+                            .font(.custom("Spectral-Regular", size: 12))
                             .foregroundColor(.gray)
                     }
                 }
@@ -274,7 +274,7 @@ struct BidCard: View {
             }
             
             Text(bid.proposal)
-                .font(.system(size: 14))
+                .font(.custom("Spectral-Regular", size: 14))
                 .foregroundColor(.gray)
             
             if bid.isSubmitted && isRFPOpen {
@@ -283,7 +283,7 @@ struct BidCard: View {
                         onAccept()
                     } label: {
                         Text("ACCEPT")
-                            .font(.system(size: 12, weight: .bold))
+                            .font(.custom("Spectral-Bold", size: 12))
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 12)
@@ -295,7 +295,7 @@ struct BidCard: View {
                         onDecline()
                     } label: {
                         Text("DECLINE")
-                            .font(.system(size: 12, weight: .bold))
+                            .font(.custom("Spectral-Bold", size: 12))
                             .foregroundColor(.gray)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 12)
@@ -329,7 +329,7 @@ private struct BidStatusBadge: View {
     
     var body: some View {
         Text(displayText)
-            .font(.system(size: 9, weight: .bold))
+            .font(.custom("Spectral-Bold", size: 9))
             .foregroundColor(color)
             .padding(.horizontal, 6)
             .padding(.vertical, 2)

@@ -36,9 +36,9 @@ struct RFPListView: View {
                 } label: {
                     HStack(spacing: 4) {
                         Image(systemName: "plus")
-                            .font(.system(size: 12, weight: .bold))
+                            .font(.custom("Spectral-Bold", size: 12))
                         Text("New RFP")
-                            .font(.system(size: 13, weight: .semibold))
+                            .font(.custom("Spectral-Bold", size: 13))
                     }
                     .foregroundColor(.black)
                     .padding(.horizontal, 12)
@@ -70,14 +70,14 @@ struct RFPListView: View {
     private var emptyState: some View {
         VStack(spacing: 20) {
             Image(systemName: "megaphone")
-                .font(.system(size: 60))
+                .font(.custom("Spectral-Regular", size: 60))
                 .foregroundColor(.gray.opacity(0.5))
             
             Text("No requests yet")
                 .font(.custom("DelaGothicOne-Regular", size: 20))
             
             Text("Post a request and let vendors come to you with bids")
-                .font(.system(size: 14))
+                .font(.custom("Spectral-Regular", size: 14))
                 .foregroundColor(.gray)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 40)
@@ -110,7 +110,7 @@ struct RFPListView: View {
         ScrollView {
             VStack(spacing: 16) {
                 Text("Manage your requests for proposals")
-                    .font(.system(size: 14))
+                    .font(.custom("Spectral-Regular", size: 14))
                     .foregroundColor(.gray)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.horizontal)
@@ -173,7 +173,7 @@ struct RFPExpandableCard: View {
                 }
                 
                 Text("Posted \(rfp.createdAt.timeAgoDisplay())")
-                    .font(.system(size: 13))
+                    .font(.custom("Spectral-Regular", size: 13))
                     .foregroundColor(.gray)
             }
             
@@ -181,7 +181,7 @@ struct RFPExpandableCard: View {
             
             Button(action: onToggle) {
                 Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
-                    .font(.system(size: 14, weight: .medium))
+                    .font(.custom("Spectral-Medium", size: 14))
                     .foregroundColor(.gray)
                     .frame(width: 32, height: 32)
             }
@@ -221,7 +221,7 @@ struct RFPExpandableCard: View {
                     Image(systemName: "envelope.open")
                         .foregroundColor(.gray.opacity(0.5))
                     Text("No bids yet")
-                        .font(.system(size: 14))
+                        .font(.custom("Spectral-Regular", size: 14))
                         .foregroundColor(.gray)
                 }
                 .frame(maxWidth: .infinity)
@@ -244,15 +244,15 @@ private struct StatBox: View {
         VStack(alignment: .leading, spacing: 6) {
             HStack(spacing: 4) {
                 Image(systemName: icon)
-                    .font(.system(size: 10))
+                    .font(.custom("Spectral-Regular", size: 10))
                     .foregroundColor(.gray)
                 Text(label)
-                    .font(.system(size: 9, weight: .semibold))
+                    .font(.custom("Spectral-Bold", size: 9))
                     .foregroundColor(.gray)
             }
             
             Text(value)
-                .font(.system(size: 12, weight: .bold))
+                .font(.custom("Spectral-Bold", size: 12))
                 .foregroundColor(valueColor)
                 .lineLimit(1)
                 .minimumScaleFactor(0.8)
@@ -271,7 +271,7 @@ private struct StatusBadge: View {
     
     var body: some View {
         Text(status == .open ? "ACTIVE" : status.rawValue)
-            .font(.system(size: 10, weight: .bold))
+            .font(.custom("Spectral-Bold", size: 10))
             .foregroundColor(color)
             .padding(.horizontal, 10)
             .padding(.vertical, 4)
@@ -306,18 +306,18 @@ private struct BidRow: View {
                         .frame(width: 50, height: 50)
                     
                     Text(initials)
-                        .font(.system(size: 16, weight: .semibold))
+                        .font(.custom("Spectral-Bold", size: 16))
                         .foregroundColor(.gray)
                 }
                 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(bid.vendor?.name ?? "Vendor")
-                        .font(.system(size: 15, weight: .semibold))
+                        .font(.custom("Spectral-Bold", size: 15))
                     
                     HStack(spacing: 2) {
                         ForEach(0..<5) { i in
                             Image(systemName: "star.fill")
-                                .font(.system(size: 10))
+                                .font(.custom("Spectral-Regular", size: 10))
                                 .foregroundColor(i < 4 ? Color(hex: "F59E0B") : Color.gray.opacity(0.3))
                         }
                     }
@@ -334,7 +334,7 @@ private struct BidRow: View {
             }
             
             Text(bid.proposal)
-                .font(.system(size: 13))
+                .font(.custom("Spectral-Regular", size: 13))
                 .foregroundColor(.gray)
                 .lineLimit(2)
             
@@ -344,7 +344,7 @@ private struct BidRow: View {
                         showAcceptConfirm = true
                     } label: {
                         Text("Accept Bid")
-                            .font(.system(size: 13, weight: .semibold))
+                            .font(.custom("Spectral-Bold", size: 13))
                             .foregroundColor(.white)
                             .padding(.horizontal, 16)
                             .padding(.vertical, 10)
@@ -359,7 +359,7 @@ private struct BidRow: View {
                         }
                     } label: {
                         Text("Decline")
-                            .font(.system(size: 13, weight: .medium))
+                            .font(.custom("Spectral-Medium", size: 13))
                             .foregroundColor(.gray)
                     }
                 }
@@ -398,7 +398,7 @@ private struct BidStatusBadge: View {
     
     var body: some View {
         Text(displayText)
-            .font(.system(size: 9, weight: .bold))
+            .font(.custom("Spectral-Bold", size: 9))
             .foregroundColor(color)
             .padding(.horizontal, 6)
             .padding(.vertical, 2)

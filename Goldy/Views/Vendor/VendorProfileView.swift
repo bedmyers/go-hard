@@ -55,7 +55,7 @@ struct VendorProfileView: View {
             } else if let error = viewModel.errorMessage {
                 VStack(spacing: 12) {
                     Image(systemName: "exclamationmark.triangle")
-                        .font(.system(size: 40))
+                        .font(.custom("Spectral-Regular", size: 40))
                         .foregroundColor(.gray)
                     Text(error)
                         .foregroundColor(.gray)
@@ -111,23 +111,23 @@ struct VendorProfileView: View {
                 if vendor.isVerified {
                     Image(systemName: "checkmark.seal.fill")
                         .foregroundColor(Color(hex: "3B82F6"))
-                        .font(.system(size: 18))
+                        .font(.custom("Spectral-Regular", size: 18))
                 }
             }
             
             if let location = vendor.location, !location.isEmpty {
                 HStack(spacing: 4) {
                     Image(systemName: "mappin")
-                        .font(.system(size: 12))
+                        .font(.custom("Spectral-Regular", size: 12))
                     Text(location)
-                        .font(.system(size: 14))
+                        .font(.custom("Spectral-Regular", size: 14))
                 }
                 .foregroundColor(.gray)
             }
             
             if let priceText = vendor.startingPriceFormatted {
                 Text("Starting at \(priceText)")
-                    .font(.system(size: 16, weight: .semibold))
+                    .font(.custom("Spectral-Bold", size: 16))
                     .foregroundColor(Color(hex: "22C55E"))
             }
         }
@@ -168,9 +168,9 @@ struct VendorProfileView: View {
                 .foregroundColor(Color(hex: "8B5CF6"))
             VStack(alignment: .leading, spacing: 2) {
                 Text(value)
-                    .font(.system(size: 18, weight: .bold))
+                    .font(.custom("Spectral-Bold", size: 18))
                 Text(label)
-                    .font(.system(size: 12))
+                    .font(.custom("Spectral-Regular", size: 12))
                     .foregroundColor(.gray)
             }
         }
@@ -182,11 +182,11 @@ struct VendorProfileView: View {
     private func bioSection(_ bio: String) -> some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("ABOUT")
-                .font(.system(size: 12, weight: .semibold))
+                .font(.custom("Spectral-Bold", size: 12))
                 .foregroundColor(.gray)
             
             Text(bio)
-                .font(.system(size: 15))
+                .font(.custom("Spectral-Regular", size: 15))
                 .lineSpacing(4)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -200,13 +200,13 @@ struct VendorProfileView: View {
     private func servicesSection(_ services: [String]) -> some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("SERVICES")
-                .font(.system(size: 12, weight: .semibold))
+                .font(.custom("Spectral-Bold", size: 12))
                 .foregroundColor(.gray)
             
             VendorProfileFlowLayout(spacing: 8) {
                 ForEach(services, id: \.self) { service in
                     Text(service.capitalized)
-                        .font(.system(size: 13, weight: .medium))
+                        .font(.custom("Spectral-Medium", size: 13))
                         .foregroundColor(Color(hex: "8B5CF6"))
                         .padding(.horizontal, 14)
                         .padding(.vertical, 8)
@@ -230,7 +230,7 @@ struct VendorProfileView: View {
     private func linksSection(_ vendor: User) -> some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("LINKS")
-                .font(.system(size: 12, weight: .semibold))
+                .font(.custom("Spectral-Bold", size: 12))
                 .foregroundColor(.gray)
             
             VStack(spacing: 10) {
@@ -241,12 +241,12 @@ struct VendorProfileView: View {
                                 .foregroundColor(Color(hex: "3B82F6"))
                                 .frame(width: 24)
                             Text(vendor.websiteUrl ?? "Website")
-                                .font(.system(size: 14))
+                                .font(.custom("Spectral-Regular", size: 14))
                                 .foregroundColor(Color(hex: "3B82F6"))
                                 .lineLimit(1)
                             Spacer()
                             Image(systemName: "arrow.up.right")
-                                .font(.system(size: 12))
+                                .font(.custom("Spectral-Regular", size: 12))
                                 .foregroundColor(.gray)
                         }
                         .padding(12)
@@ -262,11 +262,11 @@ struct VendorProfileView: View {
                                 .foregroundColor(Color(hex: "E1306C"))
                                 .frame(width: 24)
                             Text("@\(vendor.instagramHandle ?? "")")
-                                .font(.system(size: 14))
+                                .font(.custom("Spectral-Regular", size: 14))
                                 .foregroundColor(Color(hex: "E1306C"))
                             Spacer()
                             Image(systemName: "arrow.up.right")
-                                .font(.system(size: 12))
+                                .font(.custom("Spectral-Regular", size: 12))
                                 .foregroundColor(.gray)
                         }
                         .padding(12)
@@ -288,11 +288,11 @@ struct VendorProfileView: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
                 Text("PORTFOLIO")
-                    .font(.system(size: 12, weight: .semibold))
+                    .font(.custom("Spectral-Bold", size: 12))
                     .foregroundColor(.gray)
                 
                 Text("Tap to view")
-                    .font(.system(size: 11))
+                    .font(.custom("Spectral-Regular", size: 11))
                     .foregroundColor(.gray.opacity(0.7))
             }
             
@@ -488,7 +488,7 @@ struct PhotoGalleryView: View {
                         dismiss()
                     } label: {
                         Image(systemName: "xmark")
-                            .font(.system(size: 18, weight: .semibold))
+                            .font(.custom("Spectral-Bold", size: 18))
                             .foregroundColor(.white)
                             .frame(width: 40, height: 40)
                             .background(Color.black.opacity(0.5))
@@ -498,7 +498,7 @@ struct PhotoGalleryView: View {
                     Spacer()
                     
                     Text("\(currentIndex + 1) / \(photos.count)")
-                        .font(.system(size: 14, weight: .medium))
+                        .font(.custom("Spectral-Medium", size: 14))
                         .foregroundColor(.white)
                         .padding(.horizontal, 12)
                         .padding(.vertical, 6)
@@ -591,7 +591,7 @@ struct ZoomablePhotoView: View {
                             }
                     case .failure(_):
                         Image(systemName: "photo")
-                            .font(.system(size: 50))
+                            .font(.custom("Spectral-Regular", size: 50))
                             .foregroundColor(.gray)
                     case .empty:
                         ProgressView()
@@ -652,12 +652,12 @@ struct VendorInviteToRFPSheet: View {
                 } else if rfps.isEmpty {
                     VStack(spacing: 12) {
                         Image(systemName: "doc.text")
-                            .font(.system(size: 40))
+                            .font(.custom("Spectral-Regular", size: 40))
                             .foregroundColor(.gray)
                         Text("No open RFPs")
-                            .font(.system(size: 16, weight: .medium))
+                            .font(.custom("Spectral-Medium", size: 16))
                         Text("Create an RFP first to invite vendors")
-                            .font(.system(size: 14))
+                            .font(.custom("Spectral-Regular", size: 14))
                             .foregroundColor(.gray)
                     }
                 } else {
@@ -669,11 +669,11 @@ struct VendorInviteToRFPSheet: View {
                             HStack {
                                 VStack(alignment: .leading, spacing: 4) {
                                     Text(rfp.title)
-                                        .font(.system(size: 15, weight: .medium))
+                                        .font(.custom("Spectral-Medium", size: 15))
                                         .foregroundColor(.black)
                                     if let budget = rfp.budget {
                                         Text("$\(budget / 100)")
-                                            .font(.system(size: 13))
+                                            .font(.custom("Spectral-Regular", size: 13))
                                             .foregroundColor(.gray)
                                     }
                                 }

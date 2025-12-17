@@ -189,7 +189,7 @@ struct EscrowCardView: View {
                         
                         if milestone.isReleased {
                             Image(systemName: "checkmark.circle.fill")
-                                .font(.system(size: 10))
+                                .font(.custom("Spectral-Regular", size: 10))
                                 .foregroundColor(.black.opacity(0.4))
                         }
                     }

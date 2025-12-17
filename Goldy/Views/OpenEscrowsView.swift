@@ -148,7 +148,7 @@ struct OpenEscrowsView: View {
                     }
                 }) {
                     Image(systemName: viewMode == .stack ? "square.grid.2x2" : "square.stack.3d.up")
-                        .font(.system(size: 18, weight: .medium))
+                        .font(.custom("Spectral-Medium", size: 18))
                         .foregroundColor(.black)
                         .frame(width: 44, height: 44)
                         .background(Color.white.opacity(0.8))
@@ -158,7 +158,7 @@ struct OpenEscrowsView: View {
                 
                 Button(action: { showCreateEscrow = true }) {
                     Image(systemName: "plus")
-                        .font(.system(size: 20, weight: .medium))
+                        .font(.custom("Spectral-Medium", size: 20))
                         .foregroundColor(.black)
                         .frame(width: 44, height: 44)
                         .background(Color("ActiveColor"))

@@ -101,7 +101,7 @@ struct CreateRFPView: View {
                         withAnimation { viewModel.currentStep -= 1 }
                     } label: {
                         Text("Back")
-                            .font(.system(size: 16, weight: .medium))
+                            .font(.custom("Spectral-Medium", size: 16))
                             .foregroundColor(.gray)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 16)
@@ -160,11 +160,11 @@ private struct Step1BasicsView: View {
             VStack(alignment: .leading, spacing: 24) {
                 VStack(spacing: 8) {
                     Image(systemName: "megaphone.fill")
-                        .font(.system(size: 40))
+                        .font(.custom("Spectral-Regular", size: 40))
                         .foregroundColor(Color(hex: "FFD700"))
                     
                     Text("Tell vendors what you're looking for")
-                        .font(.system(size: 14))
+                        .font(.custom("Spectral-Regular", size: 14))
                         .foregroundColor(.gray)
                 }
                 .frame(maxWidth: .infinity)
@@ -172,7 +172,7 @@ private struct Step1BasicsView: View {
                 
                 VStack(alignment: .leading, spacing: 8) {
                     Text("CATEGORY")
-                        .font(.system(size: 12, weight: .semibold))
+                        .font(.custom("Spectral-Bold", size: 12))
                         .foregroundColor(.gray)
                     
                     ScrollView(.horizontal, showsIndicators: false) {
@@ -194,11 +194,11 @@ private struct Step1BasicsView: View {
                 
                 VStack(alignment: .leading, spacing: 6) {
                     Text("TITLE")
-                        .font(.system(size: 12, weight: .semibold))
+                        .font(.custom("Spectral-Bold", size: 12))
                         .foregroundColor(.gray)
                     
                     TextField("e.g., Wedding Photographer for June Wedding", text: $viewModel.title)
-                        .font(.system(size: 15))
+                        .font(.custom("Spectral-Regular", size: 15))
                         .padding()
                         .background(Color.white)
                         .cornerRadius(10)
@@ -206,18 +206,18 @@ private struct Step1BasicsView: View {
 
                 VStack(alignment: .leading, spacing: 6) {
                     Text("DESCRIPTION")
-                        .font(.system(size: 12, weight: .semibold))
+                        .font(.custom("Spectral-Bold", size: 12))
                         .foregroundColor(.gray)
                     
                     TextEditor(text: $viewModel.description)
-                        .font(.system(size: 15))
+                        .font(.custom("Spectral-Regular", size: 15))
                         .frame(minHeight: 120)
                         .padding(8)
                         .background(Color.white)
                         .cornerRadius(10)
                     
                     Text("What style are you looking for? Any specific needs?")
-                        .font(.system(size: 12))
+                        .font(.custom("Spectral-Regular", size: 12))
                         .foregroundColor(.gray)
                 }
                 
@@ -239,9 +239,9 @@ private struct CategoryPill: View {
         Button(action: action) {
             HStack(spacing: 6) {
                 Image(systemName: category.icon)
-                    .font(.system(size: 12))
+                    .font(.custom("Spectral-Regular", size: 12))
                 Text(category.rawValue)
-                    .font(.system(size: 13, weight: .medium))
+                    .font(.custom("Spectral-Medium", size: 13))
             }
             .foregroundColor(isSelected ? .black : .gray)
             .padding(.horizontal, 14)
@@ -265,14 +265,14 @@ private struct Step2EventView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
                 Text("Help vendors know if they're available")
-                    .font(.system(size: 14))
+                    .font(.custom("Spectral-Regular", size: 14))
                     .foregroundColor(.gray)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 16)
                 
                 VStack(alignment: .leading, spacing: 6) {
                     Text("EVENT DATE")
-                        .font(.system(size: 12, weight: .semibold))
+                        .font(.custom("Spectral-Bold", size: 12))
                         .foregroundColor(.gray)
                     
                     DatePicker(
@@ -291,11 +291,11 @@ private struct Step2EventView: View {
                 
                 VStack(alignment: .leading, spacing: 6) {
                     Text("LOCATION")
-                        .font(.system(size: 12, weight: .semibold))
+                        .font(.custom("Spectral-Bold", size: 12))
                         .foregroundColor(.gray)
                     
                     TextField("e.g., Detroit, MI", text: $viewModel.location)
-                        .font(.system(size: 15))
+                        .font(.custom("Spectral-Regular", size: 15))
                         .padding()
                         .background(Color.white)
                         .cornerRadius(10)
@@ -303,12 +303,12 @@ private struct Step2EventView: View {
                 
                 VStack(alignment: .leading, spacing: 6) {
                     Text("GUEST COUNT")
-                        .font(.system(size: 12, weight: .semibold))
+                        .font(.custom("Spectral-Bold", size: 12))
                         .foregroundColor(.gray)
                     
                     HStack {
                         TextField("e.g., 150", text: $viewModel.guestCountText)
-                            .font(.system(size: 15))
+                            .font(.custom("Spectral-Regular", size: 15))
                             .keyboardType(.numberPad)
                         Text("guests")
                             .foregroundColor(.gray)
@@ -323,7 +323,7 @@ private struct Step2EventView: View {
                                 viewModel.guestCountText = count
                             } label: {
                                 Text(count)
-                                    .font(.system(size: 12, weight: .medium))
+                                    .font(.custom("Spectral-Medium", size: 12))
                                     .foregroundColor(viewModel.guestCountText == count ? .black : .gray)
                                     .padding(.horizontal, 12)
                                     .padding(.vertical, 8)
@@ -350,7 +350,7 @@ private struct Step3StyleView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
                 Text("Share your vision with vendors")
-                    .font(.system(size: 14))
+                    .font(.custom("Spectral-Regular", size: 14))
                     .foregroundColor(.gray)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 16)
@@ -358,11 +358,11 @@ private struct Step3StyleView: View {
                 VStack(alignment: .leading, spacing: 6) {
                     HStack {
                         Text("PINTEREST MOOD BOARD")
-                            .font(.system(size: 12, weight: .semibold))
+                            .font(.custom("Spectral-Bold", size: 12))
                             .foregroundColor(.gray)
                         
                         Text("Optional")
-                            .font(.system(size: 10))
+                            .font(.custom("Spectral-Regular", size: 10))
                             .foregroundColor(.gray.opacity(0.6))
                             .padding(.horizontal, 6)
                             .padding(.vertical, 2)
@@ -374,7 +374,7 @@ private struct Step3StyleView: View {
                         Image(systemName: "link")
                             .foregroundColor(.gray)
                         TextField("Paste Pinterest board URL", text: $viewModel.inspirationUrl)
-                            .font(.system(size: 15))
+                            .font(.custom("Spectral-Regular", size: 15))
                             .autocapitalization(.none)
                     }
                     .padding()
@@ -382,13 +382,13 @@ private struct Step3StyleView: View {
                     .cornerRadius(10)
                     
                     Text("Share a link to your Pinterest board so vendors can see your style")
-                        .font(.system(size: 12))
+                        .font(.custom("Spectral-Regular", size: 12))
                         .foregroundColor(.gray)
                 }
                 
                 VStack(alignment: .leading, spacing: 12) {
                     Text("STYLE TAGS")
-                        .font(.system(size: 12, weight: .semibold))
+                        .font(.custom("Spectral-Bold", size: 12))
                         .foregroundColor(.gray)
                     
                     FlowLayout(spacing: 8) {
@@ -407,7 +407,7 @@ private struct Step3StyleView: View {
                     }
                     
                     Text("Select all that apply")
-                        .font(.system(size: 12))
+                        .font(.custom("Spectral-Regular", size: 12))
                         .foregroundColor(.gray)
                 }
                 
@@ -429,9 +429,9 @@ private struct StyleTagPill: View {
         Button(action: action) {
             HStack(spacing: 4) {
                 Image(systemName: tag.icon)
-                    .font(.system(size: 10))
+                    .font(.custom("Spectral-Regular", size: 10))
                 Text(tag.displayName)
-                    .font(.system(size: 12, weight: .medium))
+                    .font(.custom("Spectral-Medium", size: 12))
             }
             .foregroundColor(isSelected ? .black : .gray)
             .padding(.horizontal, 12)
@@ -455,7 +455,7 @@ private struct Step4RequirementsView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
                 Text("What's essential vs. nice-to-have?")
-                    .font(.system(size: 14))
+                    .font(.custom("Spectral-Regular", size: 14))
                     .foregroundColor(.gray)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 16)
@@ -466,10 +466,10 @@ private struct Step4RequirementsView: View {
                         Image(systemName: "star.fill")
                             .foregroundColor(Color(hex: "FF6B35"))
                         Text("MUST HAVES")
-                            .font(.system(size: 12, weight: .semibold))
+                            .font(.custom("Spectral-Bold", size: 12))
                             .foregroundColor(.gray)
                         Text("(up to 3)")
-                            .font(.system(size: 10))
+                            .font(.custom("Spectral-Regular", size: 10))
                             .foregroundColor(.gray.opacity(0.6))
                     }
                     
@@ -480,7 +480,7 @@ private struct Step4RequirementsView: View {
                                 .frame(width: 20)
                             
                             TextField(placeholders[index], text: binding(for: index, in: \.mustHaves))
-                                .font(.system(size: 15))
+                                .font(.custom("Spectral-Regular", size: 15))
                         }
                         .padding()
                         .background(Color.white)
@@ -494,10 +494,10 @@ private struct Step4RequirementsView: View {
                         Image(systemName: "heart.fill")
                             .foregroundColor(Color(hex: "22C55E"))
                         Text("NICE TO HAVES")
-                            .font(.system(size: 12, weight: .semibold))
+                            .font(.custom("Spectral-Bold", size: 12))
                             .foregroundColor(.gray)
                         Text("(up to 3)")
-                            .font(.system(size: 10))
+                            .font(.custom("Spectral-Regular", size: 10))
                             .foregroundColor(.gray.opacity(0.6))
                     }
                     
@@ -508,7 +508,7 @@ private struct Step4RequirementsView: View {
                                 .frame(width: 20)
                             
                             TextField("Optional", text: binding(for: index, in: \.niceToHaves))
-                                .font(.system(size: 15))
+                                .font(.custom("Spectral-Regular", size: 15))
                         }
                         .padding()
                         .background(Color.white)
@@ -550,7 +550,7 @@ private struct Step5BudgetView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
                 Text("Set expectations for vendors")
-                    .font(.system(size: 14))
+                    .font(.custom("Spectral-Regular", size: 14))
                     .foregroundColor(.gray)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 16)
@@ -559,11 +559,11 @@ private struct Step5BudgetView: View {
                 VStack(alignment: .leading, spacing: 6) {
                     HStack {
                         Text("BUDGET")
-                            .font(.system(size: 12, weight: .semibold))
+                            .font(.custom("Spectral-Bold", size: 12))
                             .foregroundColor(.gray)
                         
                         Text("Optional")
-                            .font(.system(size: 10))
+                            .font(.custom("Spectral-Regular", size: 10))
                             .foregroundColor(.gray.opacity(0.6))
                             .padding(.horizontal, 6)
                             .padding(.vertical, 2)
@@ -573,10 +573,10 @@ private struct Step5BudgetView: View {
                     
                     HStack {
                         Text("$")
-                            .font(.system(size: 18, weight: .semibold))
+                            .font(.custom("Spectral-Bold", size: 18))
                             .foregroundColor(.gray)
                         TextField("e.g., 5000", text: $viewModel.budgetText)
-                            .font(.system(size: 18))
+                            .font(.custom("Spectral-Regular", size: 18))
                             .keyboardType(.numberPad)
                     }
                     .padding()
@@ -590,7 +590,7 @@ private struct Step5BudgetView: View {
                                 viewModel.budgetText = amount
                             } label: {
                                 Text("$\(Int(amount)!/1000)K")
-                                    .font(.system(size: 12, weight: .medium))
+                                    .font(.custom("Spectral-Medium", size: 12))
                                     .foregroundColor(viewModel.budgetText == amount ? .black : .gray)
                                     .padding(.horizontal, 14)
                                     .padding(.vertical, 8)
@@ -604,7 +604,7 @@ private struct Step5BudgetView: View {
                 // Proposals Due
                 VStack(alignment: .leading, spacing: 6) {
                     Text("PROPOSALS DUE BY")
-                        .font(.system(size: 12, weight: .semibold))
+                        .font(.custom("Spectral-Bold", size: 12))
                         .foregroundColor(.gray)
                     
                     DatePicker(
@@ -624,7 +624,7 @@ private struct Step5BudgetView: View {
                 // Decision Date
                 VStack(alignment: .leading, spacing: 6) {
                     Text("WHEN WILL YOU DECIDE?")
-                        .font(.system(size: 12, weight: .semibold))
+                        .font(.custom("Spectral-Bold", size: 12))
                         .foregroundColor(.gray)
                     
                     DatePicker(
@@ -641,7 +641,7 @@ private struct Step5BudgetView: View {
                     .cornerRadius(10)
                     
                     Text("Let vendors know when to expect your decision")
-                        .font(.system(size: 12))
+                        .font(.custom("Spectral-Regular", size: 12))
                         .foregroundColor(.gray)
                 }
                 
@@ -661,7 +661,7 @@ private struct Step6VisibilityView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
                 Text("Who can see this request?")
-                    .font(.system(size: 14))
+                    .font(.custom("Spectral-Regular", size: 14))
                     .foregroundColor(.gray)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 16)
@@ -689,11 +689,11 @@ private struct Step6VisibilityView: View {
                 if viewModel.visibility == .private {
                     VStack(alignment: .leading, spacing: 8) {
                         Text("INVITE VENDORS")
-                            .font(.system(size: 12, weight: .semibold))
+                            .font(.custom("Spectral-Bold", size: 12))
                             .foregroundColor(.gray)
                         
                         Text("You can invite specific vendors after creating this request")
-                            .font(.system(size: 13))
+                            .font(.custom("Spectral-Regular", size: 13))
                             .foregroundColor(.gray)
                             .padding()
                             .frame(maxWidth: .infinity, alignment: .leading)
@@ -705,7 +705,7 @@ private struct Step6VisibilityView: View {
                 // Summary
                 VStack(alignment: .leading, spacing: 12) {
                     Text("SUMMARY")
-                        .font(.system(size: 12, weight: .semibold))
+                        .font(.custom("Spectral-Bold", size: 12))
                         .foregroundColor(.gray)
                     
                     VStack(alignment: .leading, spacing: 8) {
@@ -745,24 +745,24 @@ private struct VisibilityOption: View {
                         .frame(width: 44, height: 44)
                     
                     Image(systemName: icon)
-                        .font(.system(size: 18))
+                        .font(.custom("Spectral-Regular", size: 18))
                         .foregroundColor(isSelected ? .black : .gray)
                 }
                 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(title)
-                        .font(.system(size: 16, weight: .semibold))
+                        .font(.custom("Spectral-Bold", size: 16))
                         .foregroundColor(.black)
                     
                     Text(description)
-                        .font(.system(size: 13))
+                        .font(.custom("Spectral-Regular", size: 13))
                         .foregroundColor(.gray)
                 }
                 
                 Spacer()
                 
                 Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
-                    .font(.system(size: 24))
+                    .font(.custom("Spectral-Regular", size: 24))
                     .foregroundColor(isSelected ? Color(hex: "22C55E") : .gray.opacity(0.3))
             }
             .padding()
@@ -785,11 +785,11 @@ private struct SummaryRow: View {
     var body: some View {
         HStack {
             Text(label)
-                .font(.system(size: 13))
+                .font(.custom("Spectral-Regular", size: 13))
                 .foregroundColor(.gray)
             Spacer()
             Text(value)
-                .font(.system(size: 13, weight: .medium))
+                .font(.custom("Spectral-Medium", size: 13))
                 .foregroundColor(.black)
         }
     }

@@ -96,7 +96,7 @@ struct VendorMarketplaceView: View {
                             .lineLimit(1)
                     }
                 }
-                .font(.system(size: 14, weight: .medium))
+                .font(.custom("Spectral-Medium", size: 14))
                 .foregroundColor(viewModel.selectedLocation != nil ? .white : Color(hex: "3B82F6"))
                 .padding(.horizontal, 12)
                 .padding(.vertical, 12)
@@ -142,7 +142,7 @@ struct VendorMarketplaceView: View {
         ScrollView {
             LazyVStack(spacing: 16) {
                 Text("\(viewModel.vendors.count) vendor\(viewModel.vendors.count == 1 ? "" : "s") found")
-                    .font(.system(size: 14))
+                    .font(.custom("Spectral-Regular", size: 14))
                     .foregroundColor(.gray)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.horizontal)
@@ -169,14 +169,14 @@ struct VendorMarketplaceView: View {
             Spacer()
             
             Image(systemName: "person.2.slash")
-                .font(.system(size: 60))
+                .font(.custom("Spectral-Regular", size: 60))
                 .foregroundColor(.gray.opacity(0.4))
             
             Text("No Vendors Found")
                 .font(.custom("DelaGothicOne-Regular", size: 20))
             
             Text("Try adjusting your filters or search terms")
-                .font(.system(size: 14))
+                .font(.custom("Spectral-Regular", size: 14))
                 .foregroundColor(.gray)
                 .multilineTextAlignment(.center)
             
@@ -185,7 +185,7 @@ struct VendorMarketplaceView: View {
                 Task { await viewModel.search() }
             } label: {
                 Text("Clear Filters")
-                    .font(.system(size: 14, weight: .semibold))
+                    .font(.custom("Spectral-Bold", size: 14))
                     .foregroundColor(Color(hex: "3B82F6"))
             }
             
@@ -207,9 +207,9 @@ private struct CategoryPill: View {
         Button(action: action) {
             HStack(spacing: 6) {
                 Image(systemName: icon)
-                    .font(.system(size: 12))
+                    .font(.custom("Spectral-Regular", size: 12))
                 Text(title)
-                    .font(.system(size: 13, weight: .medium))
+                    .font(.custom("Spectral-Medium", size: 13))
             }
             .foregroundColor(isSelected ? .black : .gray)
             .padding(.horizontal, 14)
@@ -247,7 +247,7 @@ private struct VendorCard: View {
                 
                 if let services = vendor.services, !services.isEmpty {
                     Text(services.prefix(2).joined(separator: " • "))
-                        .font(.system(size: 13))
+                        .font(.custom("Spectral-Regular", size: 13))
                         .foregroundColor(Color(hex: "8B5CF6"))
                         .lineLimit(1)
                 }
@@ -255,16 +255,16 @@ private struct VendorCard: View {
                 if let location = vendor.location {
                     HStack(spacing: 4) {
                         Image(systemName: "mappin")
-                            .font(.system(size: 10))
+                            .font(.custom("Spectral-Regular", size: 10))
                         Text(location)
-                            .font(.system(size: 12))
+                            .font(.custom("Spectral-Regular", size: 12))
                     }
                     .foregroundColor(.gray)
                 }
                 
                 if let bio = vendor.bio, !bio.isEmpty {
                     Text(bio)
-                        .font(.system(size: 12))
+                        .font(.custom("Spectral-Regular", size: 12))
                         .foregroundColor(.gray)
                         .lineLimit(2)
                 }
@@ -273,7 +273,7 @@ private struct VendorCard: View {
             Spacer()
             
             Image(systemName: "chevron.right")
-                .font(.system(size: 14, weight: .medium))
+                .font(.custom("Spectral-Medium", size: 14))
                 .foregroundColor(.gray.opacity(0.5))
         }
         .padding(16)

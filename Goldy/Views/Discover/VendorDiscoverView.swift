@@ -78,14 +78,14 @@ private struct VendorBrowseContent: View {
     private var emptyState: some View {
         VStack(spacing: 20) {
             Image(systemName: "doc.text.magnifyingglass")
-                .font(.system(size: 60))
+                .font(.custom("Spectral-Regular", size: 60))
                 .foregroundColor(.gray.opacity(0.4))
             
             Text("No Open Requests")
                 .font(.custom("DelaGothicOne-Regular", size: 20))
             
             Text("Check back soon - couples post new requests all the time")
-                .font(.system(size: 14))
+                .font(.custom("Spectral-Regular", size: 14))
                 .foregroundColor(.gray)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 40)
@@ -97,7 +97,7 @@ private struct VendorBrowseContent: View {
         ScrollView {
             VStack(spacing: 16) {
                 Text("\(rfps.count) open request\(rfps.count == 1 ? "" : "s")")
-                    .font(.system(size: 14))
+                    .font(.custom("Spectral-Regular", size: 14))
                     .foregroundColor(.gray)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.horizontal)
@@ -143,12 +143,12 @@ private struct OpenRFPCard: View {
                     HStack(spacing: 12) {
                         if let location = rfp.location, !location.isEmpty {
                             Label(location, systemImage: "mappin")
-                                .font(.system(size: 12))
+                                .font(.custom("Spectral-Regular", size: 12))
                                 .foregroundColor(.gray)
                         }
                         
                         Label("Posted \(rfp.createdAt.timeAgoDisplay())", systemImage: "clock")
-                            .font(.system(size: 12))
+                            .font(.custom("Spectral-Regular", size: 12))
                             .foregroundColor(.gray)
                     }
                 }
@@ -160,14 +160,14 @@ private struct OpenRFPCard: View {
                         .font(.custom("DelaGothicOne-Regular", size: 18))
                         .foregroundColor(Color(hex: "22C55E"))
                     Text("budget")
-                        .font(.system(size: 10))
+                        .font(.custom("Spectral-Regular", size: 10))
                         .foregroundColor(.gray)
                 }
             }
             
             // Description
             Text(rfp.description)
-                .font(.system(size: 14))
+                .font(.custom("Spectral-Regular", size: 14))
                 .foregroundColor(.gray)
                 .lineLimit(3)
             
@@ -178,7 +178,7 @@ private struct OpenRFPCard: View {
                         Image(systemName: "calendar.badge.clock")
                         Text(eventDate.formatted(date: .abbreviated, time: .omitted))
                     }
-                    .font(.system(size: 12))
+                    .font(.custom("Spectral-Regular", size: 12))
                     .foregroundColor(Color(hex: "3B82F6"))
                 }
                 
@@ -187,7 +187,7 @@ private struct OpenRFPCard: View {
                         Image(systemName: "person.2")
                         Text("\(guestCount) guests")
                     }
-                    .font(.system(size: 12))
+                    .font(.custom("Spectral-Regular", size: 12))
                     .foregroundColor(.gray)
                 }
                 
@@ -200,7 +200,7 @@ private struct OpenRFPCard: View {
                     HStack(spacing: 6) {
                         ForEach(tags, id: \.self) { tag in
                             Text("#\(tag)")
-                                .font(.system(size: 11, weight: .medium))
+                                .font(.custom("Spectral-Medium", size: 11))
                                 .foregroundColor(Color(hex: "8B5CF6"))
                                 .padding(.horizontal, 8)
                                 .padding(.vertical, 4)
@@ -215,16 +215,16 @@ private struct OpenRFPCard: View {
             if let mustHaves = rfp.mustHaves, !mustHaves.isEmpty {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Must haves:")
-                        .font(.system(size: 11, weight: .semibold))
+                        .font(.custom("Spectral-Bold", size: 11))
                         .foregroundColor(Color(hex: "FF6B35"))
                     
                     ForEach(mustHaves.prefix(2), id: \.self) { item in
                         HStack(spacing: 4) {
                             Image(systemName: "checkmark.circle.fill")
-                                .font(.system(size: 10))
+                                .font(.custom("Spectral-Regular", size: 10))
                                 .foregroundColor(Color(hex: "FF6B35"))
                             Text(item)
-                                .font(.system(size: 12))
+                                .font(.custom("Spectral-Regular", size: 12))
                                 .foregroundColor(.gray)
                         }
                     }
@@ -236,11 +236,11 @@ private struct OpenRFPCard: View {
                 Link(destination: url) {
                     HStack(spacing: 4) {
                         Image(systemName: "link")
-                            .font(.system(size: 10))
+                            .font(.custom("Spectral-Regular", size: 10))
                         Text("View mood board")
-                            .font(.system(size: 11, weight: .medium))
+                            .font(.custom("Spectral-Medium", size: 11))
                         Image(systemName: "arrow.up.right")
-                            .font(.system(size: 9))
+                            .font(.custom("Spectral-Regular", size: 9))
                     }
                     .foregroundColor(Color(hex: "E60023"))
                 }
@@ -253,7 +253,7 @@ private struct OpenRFPCard: View {
                         Image(systemName: "hourglass")
                         Text("Due \(deadline.formatted(date: .abbreviated, time: .omitted))")
                     }
-                    .font(.system(size: 12))
+                    .font(.custom("Spectral-Regular", size: 12))
                     .foregroundColor(Color(hex: "FF6B35"))
                 }
                 
@@ -261,7 +261,7 @@ private struct OpenRFPCard: View {
                     Image(systemName: "doc.text")
                     Text("\(rfp.bidCount) bid\(rfp.bidCount == 1 ? "" : "s")")
                 }
-                .font(.system(size: 12))
+                .font(.custom("Spectral-Regular", size: 12))
                 .foregroundColor(.gray)
                 
                 Spacer()
@@ -316,14 +316,14 @@ private struct VendorBidsContent: View {
     private var emptyState: some View {
         VStack(spacing: 20) {
             Image(systemName: "paperplane")
-                .font(.system(size: 60))
+                .font(.custom("Spectral-Regular", size: 60))
                 .foregroundColor(.gray.opacity(0.4))
             
             Text("No Bids Yet")
                 .font(.custom("DelaGothicOne-Regular", size: 20))
             
             Text("Browse open requests and submit your first bid")
-                .font(.system(size: 14))
+                .font(.custom("Spectral-Regular", size: 14))
                 .foregroundColor(.gray)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 40)
@@ -379,7 +379,7 @@ private struct StatCard: View {
                 .font(.custom("DelaGothicOne-Regular", size: 24))
                 .foregroundColor(color)
             Text(label)
-                .font(.system(size: 11, weight: .medium))
+                .font(.custom("Spectral-Medium", size: 11))
                 .foregroundColor(.gray)
         }
         .frame(maxWidth: .infinity)
@@ -402,7 +402,7 @@ private struct MyBidCard: View {
                         .font(.custom("DelaGothicOne-Regular", size: 16))
                     
                     Text("Submitted \(bid.createdAt.timeAgoDisplay())")
-                        .font(.system(size: 12))
+                        .font(.custom("Spectral-Regular", size: 12))
                         .foregroundColor(.gray)
                 }
                 
@@ -413,7 +413,7 @@ private struct MyBidCard: View {
             
             HStack {
                 Text("Your bid:")
-                    .font(.system(size: 14))
+                    .font(.custom("Spectral-Regular", size: 14))
                     .foregroundColor(.gray)
                 Text(bid.amountFormatted)
                     .font(.custom("DelaGothicOne-Regular", size: 18))
@@ -421,7 +421,7 @@ private struct MyBidCard: View {
             }
             
             Text(bid.proposal)
-                .font(.system(size: 14))
+                .font(.custom("Spectral-Regular", size: 14))
                 .foregroundColor(.gray)
                 .lineLimit(2)
             
@@ -445,7 +445,7 @@ private struct MyBidCard: View {
                 Image(systemName: "clock")
                 Text("Waiting for response")
             }
-            .font(.system(size: 12))
+            .font(.custom("Spectral-Regular", size: 12))
             .foregroundColor(Color(hex: "F59E0B"))
             .padding(.horizontal, 12)
             .padding(.vertical, 8)
@@ -457,7 +457,7 @@ private struct MyBidCard: View {
                 Image(systemName: "checkmark.circle.fill")
                 Text("You got the job!")
             }
-            .font(.system(size: 12))
+            .font(.custom("Spectral-Regular", size: 12))
             .foregroundColor(Color(hex: "22C55E"))
             .padding(.horizontal, 12)
             .padding(.vertical, 8)
@@ -469,7 +469,7 @@ private struct MyBidCard: View {
                 Image(systemName: "xmark.circle.fill")
                 Text("Not selected")
             }
-            .font(.system(size: 12))
+            .font(.custom("Spectral-Regular", size: 12))
             .foregroundColor(.gray)
             .padding(.horizontal, 12)
             .padding(.vertical, 8)
@@ -486,7 +486,7 @@ private struct BidStatusBadge: View {
     
     var body: some View {
         Text(displayText)
-            .font(.system(size: 10, weight: .bold))
+            .font(.custom("Spectral-Bold", size: 10))
             .foregroundColor(color)
             .padding(.horizontal, 10)
             .padding(.vertical, 4)

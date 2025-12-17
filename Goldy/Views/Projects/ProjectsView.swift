@@ -15,19 +15,11 @@ struct ProjectsView: View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 20) {
-                    StatsRow(
-                        projectCount: viewModel.totalProjects,
-                        escrowAmount: viewModel.totalInEscrow,
-                        dueSoon: viewModel.projectsDueSoon
-                    )
-                    .padding(.horizontal)
-                    .padding(.top, 8)
-                    
                     VStack(alignment: .leading, spacing: 16) {
                         Text("YOUR PROJECTS")
                             .font(.custom("DelaGothicOne-Regular", size: 16))
                             .padding(.horizontal)
-                        
+
                         if viewModel.isLoading {
                             ProgressView()
                                 .scaleEffect(1.5)
@@ -41,9 +33,9 @@ struct ProjectsView: View {
                                 showCreateProject = true
                             }
                         } else {
-                            ForEach(viewModel.allProjects) { project in
+                            ForEach(Array(viewModel.allProjects.enumerated()), id: \.element.id) { index, project in
                                 NavigationLink(destination: ProjectDetailView(project: project)) {
-                                    ProjectCard(project: project)
+                                    ProjectCard(project: project, colorIndex: index)
                                 }
                                 .buttonStyle(.plain)
                                 .padding(.horizontal)
@@ -62,7 +54,7 @@ struct ProjectsView: View {
                         showCreateProject = true
                     } label: {
                         Image(systemName: "plus")
-                            .font(.system(size: 18, weight: .semibold))
+                            .font(.custom("Spectral-Bold", size: 18))
                     }
                 }
             }
@@ -128,7 +120,7 @@ private struct StatCard: View {
                 .foregroundColor(.black)
             
             Text(label)
-                .font(.system(size: 10, weight: .medium))
+                .font(.custom("Spectral-Medium", size: 10))
                 .foregroundColor(.gray)
                 .multilineTextAlignment(.center)
         }
@@ -144,128 +136,108 @@ private struct StatCard: View {
 
 private struct ProjectCard: View {
     let project: Project
-    
+    let colorIndex: Int
+
+    private static let cardColors: [Color] = [
+        Color(hex: "FFD700"), // Gold
+        Color(hex: "8B5CF6"), // Purple
+        Color(hex: "FF6B35"), // Orange
+        Color(hex: "22C55E"), // Green
+        Color(hex: "3B82F6"), // Blue
+        Color(hex: "E60023"), // Pinterest Red
+    ]
+
+    private var cardColor: Color {
+        Self.cardColors[colorIndex % Self.cardColors.count]
+    }
+
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            ZStack(alignment: .bottomLeading) {
-                if let imageURL = project.imageURL {
-                    AsyncImage(url: imageURL) { image in
-                        image
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                    } placeholder: {
-                        projectGradient
-                    }
-                } else {
-                    projectGradient
+        VStack(alignment: .leading, spacing: 16) {
+            // Header with title and date
+            VStack(alignment: .leading, spacing: 4) {
+                Text(project.title)
+                    .font(.custom("DelaGothicOne-Regular", size: 18))
+                    .foregroundColor(.black)
+
+                if let eventDate = project.eventDate {
+                    Text(eventDate, style: .date)
+                        .font(.custom("Spectral-Regular", size: 13))
+                        .foregroundColor(.black.opacity(0.6))
                 }
-                
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(project.title)
-                        .font(.custom("DelaGothicOne-Regular", size: 16))
-                        .foregroundColor(.white)
-                    
-                    if let eventDate = project.eventDate {
-                        Text(eventDate, style: .date)
-                            .font(.system(size: 12))
-                            .foregroundColor(.white.opacity(0.8))
-                    }
-                }
-                .padding(12)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .background(
-                    LinearGradient(
-                        colors: [.black.opacity(0.7), .clear],
-                        startPoint: .bottom,
-                        endPoint: .top
-                    )
-                )
             }
-            .frame(height: 140)
-            .clipped()
-            
-            VStack(alignment: .leading, spacing: 12) {
-                HStack {
-                    Text("\(project.vendors.count) vendors")
-                        .font(.system(size: 12))
-                        .foregroundColor(.gray)
-                    
-                    Spacer()
-                    
-                    Text("\(project.progressPercentage)%")
-                        .font(.custom("DelaGothicOne-Regular", size: 14))
+
+            // Progress section
+            HStack {
+                Text("\(project.vendors.count) vendors")
+                    .font(.custom("Spectral-Regular", size: 12))
+                    .foregroundColor(.black.opacity(0.6))
+
+                Spacer()
+
+                Text("\(project.progressPercentage)%")
+                    .font(.custom("DelaGothicOne-Regular", size: 14))
+                    .foregroundColor(.black)
+            }
+
+            GeometryReader { geometry in
+                ZStack(alignment: .leading) {
+                    Rectangle()
+                        .fill(Color.black.opacity(0.15))
+                        .frame(height: 6)
+                        .cornerRadius(3)
+
+                    Rectangle()
+                        .fill(Color.black.opacity(0.5))
+                        .frame(width: geometry.size.width * CGFloat(project.progressPercentage) / 100, height: 6)
+                        .cornerRadius(3)
+                }
+            }
+            .frame(height: 6)
+
+            // Escrow and budget
+            HStack {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("IN ESCROW")
+                        .font(.custom("Spectral-Bold", size: 9))
+                        .foregroundColor(.black.opacity(0.5))
+
+                    Text(formatCurrency(project.totalAmountInEscrow))
+                        .font(.custom("DelaGothicOne-Regular", size: 16))
                         .foregroundColor(.black)
                 }
-                
-                GeometryReader { geometry in
-                    ZStack(alignment: .leading) {
-                        Rectangle()
-                            .fill(Color.gray.opacity(0.2))
-                            .frame(height: 6)
-                            .cornerRadius(3)
-                        
-                        Rectangle()
-                            .fill(project.statusColor)
-                            .frame(width: geometry.size.width * CGFloat(project.progressPercentage) / 100, height: 6)
-                            .cornerRadius(3)
-                    }
-                }
-                .frame(height: 6)
-                
-                HStack {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("IN ESCROW")
-                            .font(.system(size: 9, weight: .semibold))
-                            .foregroundColor(.gray)
-                        
-                        Text(formatCurrency(project.totalAmountInEscrow))
+
+                Spacer()
+
+                if let totalBudget = project.totalBudgetDollars {
+                    VStack(alignment: .trailing, spacing: 4) {
+                        Text("TOTAL BUDGET")
+                            .font(.custom("Spectral-Bold", size: 9))
+                            .foregroundColor(.black.opacity(0.5))
+
+                        Text(formatCurrency(totalBudget))
                             .font(.custom("DelaGothicOne-Regular", size: 16))
+                            .foregroundColor(.black)
                     }
-                    
-                    Spacer()
-                    
-                    if let totalBudget = project.totalBudgetDollars {
-                        VStack(alignment: .trailing, spacing: 4) {
-                            Text("TOTAL BUDGET")
-                                .font(.system(size: 9, weight: .semibold))
-                                .foregroundColor(.gray)
-                            
-                            Text(formatCurrency(totalBudget))
-                                .font(.custom("DelaGothicOne-Regular", size: 16))
-                        }
-                    }
-                }
-                
-                HStack(spacing: 6) {
-                    Image(systemName: "arrow.right.circle.fill")
-                        .foregroundColor(project.statusColor)
-                        .font(.system(size: 14))
-                    
-                    Text(project.nextMilestone)
-                        .font(.system(size: 12))
-                        .foregroundColor(.gray)
                 }
             }
-            .padding(16)
-            .background(project.statusColor.opacity(0.2))
+
+            // Next milestone
+            HStack(spacing: 6) {
+                Image(systemName: "arrow.right.circle.fill")
+                    .foregroundColor(.black.opacity(0.6))
+                    .font(.custom("Spectral-Regular", size: 14))
+
+                Text(project.nextMilestone)
+                    .font(.custom("Spectral-Regular", size: 12))
+                    .foregroundColor(.black.opacity(0.6))
+            }
         }
+        .padding(16)
+        .background(cardColor)
         .cornerRadius(16)
-        .shadow(color: .black.opacity(0.06), radius: 8, x: 0, y: 4)
+        .shadow(color: .black.opacity(0.1), radius: 8, x: 0, y: 4)
     }
-    
-    private var projectGradient: some View {
-        LinearGradient(
-            colors: [Color(hex: "3A3A3A"), Color(hex: "5A5A5A")],
-            startPoint: .topLeading,
-            endPoint: .bottomTrailing
-        )
-        .overlay(
-            Image(systemName: "heart.fill")
-                .font(.system(size: 32))
-                .foregroundColor(.white.opacity(0.2))
-        )
-    }
-    
+
     private func formatCurrency(_ amount: Double) -> String {
         let formatter = NumberFormatter()
         formatter.numberStyle = .currency
@@ -284,14 +256,14 @@ private struct EmptyProjectsView: View {
             Spacer()
             
             Image(systemName: "folder.fill")
-                .font(.system(size: 56))
+                .font(.custom("Spectral-Regular", size: 56))
                 .foregroundColor(.gray.opacity(0.4))
             
             Text("No Projects Yet")
                 .font(.custom("DelaGothicOne-Regular", size: 22))
             
             Text("Your active projects will appear here")
-                .font(.system(size: 14))
+                .font(.custom("Spectral-Regular", size: 14))
                 .foregroundColor(.gray)
                 .multilineTextAlignment(.center)
             
@@ -321,14 +293,14 @@ private struct ErrorView: View {
     var body: some View {
         VStack(spacing: 20) {
             Image(systemName: "exclamationmark.triangle.fill")
-                .font(.system(size: 48))
+                .font(.custom("Spectral-Regular", size: 48))
                 .foregroundColor(.orange)
             
             Text("Something Went Wrong")
                 .font(.custom("DelaGothicOne-Regular", size: 20))
             
             Text(message)
-                .font(.system(size: 14))
+                .font(.custom("Spectral-Regular", size: 14))
                 .foregroundColor(.gray)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal)

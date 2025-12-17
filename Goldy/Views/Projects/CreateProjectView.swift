@@ -42,7 +42,7 @@ struct CreateProjectView: View {
                             .font(.custom("DelaGothicOne-Regular", size: 28))
                         
                         Text("Start planning your event by adding the basic details")
-                            .font(.system(size: 14))
+                            .font(.custom("Spectral-Regular", size: 14))
                             .foregroundColor(.gray)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -52,11 +52,11 @@ struct CreateProjectView: View {
                     VStack(spacing: 20) {
                         VStack(alignment: .leading, spacing: 8) {
                             Label("PROJECT NAME", systemImage: "folder.fill")
-                                .font(.system(size: 11, weight: .semibold))
+                                .font(.custom("Spectral-Bold", size: 11))
                                 .foregroundColor(.gray)
                             
                             TextField("e.g., Sarah & Mike's Wedding", text: $title)
-                                .font(.system(size: 16))
+                                .font(.custom("Spectral-Regular", size: 16))
                                 .padding()
                                 .background(Color.white)
                                 .cornerRadius(12)
@@ -66,7 +66,7 @@ struct CreateProjectView: View {
                         
                         VStack(alignment: .leading, spacing: 8) {
                             Label("EVENT DATE", systemImage: "calendar")
-                                .font(.system(size: 11, weight: .semibold))
+                                .font(.custom("Spectral-Bold", size: 11))
                                 .foregroundColor(.gray)
                             
                             DatePicker(
@@ -84,11 +84,11 @@ struct CreateProjectView: View {
                         
                         VStack(alignment: .leading, spacing: 8) {
                             Label("LOCATION", systemImage: "location.fill")
-                                .font(.system(size: 11, weight: .semibold))
+                                .font(.custom("Spectral-Bold", size: 11))
                                 .foregroundColor(.gray)
                             
                             TextField("e.g., Detroit, MI", text: $location)
-                                .font(.system(size: 16))
+                                .font(.custom("Spectral-Regular", size: 16))
                                 .padding()
                                 .background(Color.white)
                                 .cornerRadius(12)
@@ -99,21 +99,21 @@ struct CreateProjectView: View {
                         VStack(alignment: .leading, spacing: 8) {
                             HStack {
                                 Label("TOTAL BUDGET", systemImage: "dollarsign.circle.fill")
-                                    .font(.system(size: 11, weight: .semibold))
+                                    .font(.custom("Spectral-Bold", size: 11))
                                     .foregroundColor(.gray)
                                 
                                 Text("OPTIONAL")
-                                    .font(.system(size: 9, weight: .semibold))
+                                    .font(.custom("Spectral-Bold", size: 9))
                                     .foregroundColor(.gray.opacity(0.6))
                             }
                             
                             HStack(spacing: 12) {
                                 Text("$")
-                                    .font(.system(size: 18, weight: .medium))
+                                    .font(.custom("Spectral-Medium", size: 18))
                                     .foregroundColor(.gray)
                                 
                                 TextField("5000", text: $budget)
-                                    .font(.system(size: 16))
+                                    .font(.custom("Spectral-Regular", size: 16))
                                     .keyboardType(.numberPad)
                                     .focused($focusedField, equals: .budget)
                             }
@@ -126,18 +126,18 @@ struct CreateProjectView: View {
                         VStack(alignment: .leading, spacing: 8) {
                             HStack {
                                 Label("DESCRIPTION", systemImage: "text.alignleft")
-                                    .font(.system(size: 11, weight: .semibold))
+                                    .font(.custom("Spectral-Bold", size: 11))
                                     .foregroundColor(.gray)
                                 
                                 Text("OPTIONAL")
-                                    .font(.system(size: 9, weight: .semibold))
+                                    .font(.custom("Spectral-Bold", size: 9))
                                     .foregroundColor(.gray.opacity(0.6))
                             }
                             
                             ZStack(alignment: .topLeading) {
                                 if description.isEmpty {
                                     Text("Describe your vision, style preferences, or any important notes for vendors...")
-                                        .font(.system(size: 16))
+                                        .font(.custom("Spectral-Regular", size: 16))
                                         .foregroundColor(.gray.opacity(0.5))
                                         .padding(.horizontal, 16)
                                         .padding(.vertical, 12)
@@ -145,7 +145,7 @@ struct CreateProjectView: View {
                                 }
                                 
                                 TextEditor(text: $description)
-                                    .font(.system(size: 16))
+                                    .font(.custom("Spectral-Regular", size: 16))
                                     .frame(minHeight: 100)
                                     .padding(8)
                                     .scrollContentBackground(.hidden)
@@ -159,16 +159,16 @@ struct CreateProjectView: View {
                         VStack(alignment: .leading, spacing: 8) {
                             HStack {
                                 Label("PINTEREST BOARD", systemImage: "link")
-                                    .font(.system(size: 11, weight: .semibold))
+                                    .font(.custom("Spectral-Bold", size: 11))
                                     .foregroundColor(.gray)
                                 
                                 Text("OPTIONAL")
-                                    .font(.system(size: 9, weight: .semibold))
+                                    .font(.custom("Spectral-Bold", size: 9))
                                     .foregroundColor(.gray.opacity(0.6))
                             }
                             
                             TextField("https://pinterest.com/...", text: $pinterestBoard)
-                                .font(.system(size: 16))
+                                .font(.custom("Spectral-Regular", size: 16))
                                 .keyboardType(.URL)
                                 .textInputAutocapitalization(.never)
                                 .autocorrectionDisabled()
@@ -179,7 +179,7 @@ struct CreateProjectView: View {
                                 .focused($focusedField, equals: .pinterest)
                             
                             Text("Share your inspiration board to help vendors understand your style")
-                                .font(.system(size: 11))
+                                .font(.custom("Spectral-Regular", size: 11))
                                 .foregroundColor(.gray.opacity(0.7))
                                 .padding(.horizontal, 4)
                         }
@@ -187,10 +187,10 @@ struct CreateProjectView: View {
                         HStack(spacing: 12) {
                             Image(systemName: "info.circle.fill")
                                 .foregroundColor(Color(hex: "E9D5FF"))
-                                .font(.system(size: 20))
+                                .font(.custom("Spectral-Regular", size: 20))
                             
                             Text("You'll be able to add vendors and set individual budgets after creating your project")
-                                .font(.system(size: 12))
+                                .font(.custom("Spectral-Regular", size: 12))
                                 .foregroundColor(.gray)
                                 .fixedSize(horizontal: false, vertical: true)
                         }

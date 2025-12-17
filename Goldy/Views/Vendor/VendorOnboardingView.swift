@@ -64,7 +64,7 @@ private struct OnboardingNeededView: View {
             
             // Icon
             Image(systemName: "dollarsign.circle.fill")
-                .font(.system(size: 80, weight: .light))
+                .font(.custom("Spectral-Light", size: 80))
                 .foregroundColor(Color(hex: "22C55E"))
             
             // Title & subtitle
@@ -75,7 +75,7 @@ private struct OnboardingNeededView: View {
                     .lineSpacing(4)
                 
                 Text("Get paid directly by Stripe in 2 business days")
-                    .font(.system(size: 15))
+                    .font(.custom("Spectral-Regular", size: 15))
                     .foregroundColor(.gray)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 32)
@@ -136,7 +136,7 @@ private struct ConnectedView: View {
             Spacer()
             
             Image(systemName: "checkmark.circle.fill")
-                .font(.system(size: 80, weight: .light))
+                .font(.custom("Spectral-Light", size: 80))
                 .foregroundColor(Color(hex: "22C55E"))
             
             VStack(spacing: 12) {
@@ -146,13 +146,13 @@ private struct ConnectedView: View {
                     .lineSpacing(4)
                 
                 Text("You're ready to receive payments!")
-                    .font(.system(size: 15))
+                    .font(.custom("Spectral-Regular", size: 15))
                     .foregroundColor(.gray)
             }
             
             if let accountId = viewModel.status?.accountId {
                 Text("Account: \(String(accountId.suffix(8)))")
-                    .font(.system(size: 12, weight: .medium))
+                    .font(.custom("Spectral-Medium", size: 12))
                     .foregroundColor(.gray)
                     .padding(.horizontal, 16)
                     .padding(.vertical, 8)
@@ -193,11 +193,11 @@ private struct InfoCard: View {
     var body: some View {
         HStack(spacing: 12) {
             Image(systemName: icon)
-                .font(.system(size: 20, weight: .medium))
+                .font(.custom("Spectral-Medium", size: 20))
                 .foregroundColor(.black)
             
             Text(text)
-                .font(.system(size: 14, weight: .medium))
+                .font(.custom("Spectral-Medium", size: 14))
                 .foregroundColor(.black)
             
             Spacer()
@@ -217,7 +217,7 @@ private struct ErrorView: View {
     var body: some View {
         VStack(spacing: 24) {
             Image(systemName: "exclamationmark.triangle.fill")
-                .font(.system(size: 60, weight: .light))
+                .font(.custom("Spectral-Light", size: 60))
                 .foregroundColor(.orange)
             
             VStack(spacing: 8) {
@@ -225,7 +225,7 @@ private struct ErrorView: View {
                     .font(.custom("DelaGothicOne-Regular", size: 20))
                 
                 Text(message)
-                    .font(.system(size: 14))
+                    .font(.custom("Spectral-Regular", size: 14))
                     .foregroundColor(.gray)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 32)

@@ -16,14 +16,14 @@ struct RFPsView: View {
                 
                 VStack(spacing: 16) {
                     Image(systemName: "doc.text.magnifyingglass")
-                        .font(.system(size: 48))
+                        .font(.custom("Spectral-Regular", size: 48))
                         .foregroundColor(.gray)
                     
                     Text("Browse RFPs")
                         .font(.custom("DelaGothicOne-Regular", size: 20))
                     
                     Text("Available projects you can bid on")
-                        .font(.system(size: 14))
+                        .font(.custom("Spectral-Regular", size: 14))
                         .foregroundColor(.gray)
                 }
             }

@@ -71,7 +71,7 @@ struct AddVendorView: View {
                         Image(systemName: "arrow.left")
                         Text("Back")
                     }
-                    .font(.system(size: 14, weight: .medium))
+                    .font(.custom("Spectral-Medium", size: 14))
                     .foregroundColor(.black)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 16)
@@ -143,7 +143,7 @@ private struct ProgressHeader: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
             
             Text(currentStep.subtitle)
-                .font(.system(size: 14))
+                .font(.custom("Spectral-Regular", size: 14))
                 .foregroundColor(.gray)
                 .frame(maxWidth: .infinity, alignment: .leading)
         }
@@ -163,7 +163,7 @@ private struct StepIndicator: View {
                 .frame(height: 4)
             
             Text(step.shortTitle)
-                .font(.system(size: 9, weight: isActive ? .semibold : .medium))
+                .font(.custom(isActive ? "Spectral-Bold" : "Spectral-Medium", size: 9))
                 .foregroundColor(isActive ? .black : .gray)
         }
     }
@@ -189,11 +189,11 @@ private struct VendorInfoStep: View {
                 // Vendor Name
                 VStack(alignment: .leading, spacing: 8) {
                     Label("VENDOR NAME", systemImage: "building.2.fill")
-                        .font(.system(size: 11, weight: .semibold))
+                        .font(.custom("Spectral-Bold", size: 11))
                         .foregroundColor(.gray)
                     
                     TextField("e.g., Bella Vista Events", text: $viewModel.vendorName)
-                        .font(.system(size: 16))
+                        .font(.custom("Spectral-Regular", size: 16))
                         .padding()
                         .background(Color.white)
                         .cornerRadius(12)
@@ -204,11 +204,11 @@ private struct VendorInfoStep: View {
                 // Vendor Email
                 VStack(alignment: .leading, spacing: 8) {
                     Label("VENDOR EMAIL", systemImage: "envelope.fill")
-                        .font(.system(size: 11, weight: .semibold))
+                        .font(.custom("Spectral-Bold", size: 11))
                         .foregroundColor(.gray)
                     
                     TextField("vendor@example.com", text: $viewModel.vendorEmail)
-                        .font(.system(size: 16))
+                        .font(.custom("Spectral-Regular", size: 16))
                         .keyboardType(.emailAddress)
                         .textInputAutocapitalization(.never)
                         .autocorrectionDisabled()
@@ -219,14 +219,14 @@ private struct VendorInfoStep: View {
                         .focused($focusedField, equals: .email)
                     
                     Text("We'll send them an invite to accept the agreement")
-                        .font(.system(size: 11))
+                        .font(.custom("Spectral-Regular", size: 11))
                         .foregroundColor(.gray)
                 }
                 
                 // Role Selection
                 VStack(alignment: .leading, spacing: 8) {
                     Label("SERVICE TYPE", systemImage: "tag.fill")
-                        .font(.system(size: 11, weight: .semibold))
+                        .font(.custom("Spectral-Bold", size: 11))
                         .foregroundColor(.gray)
                     
                     LazyVGrid(columns: [
@@ -249,16 +249,16 @@ private struct VendorInfoStep: View {
                 VStack(alignment: .leading, spacing: 8) {
                     HStack {
                         Label("NOTES", systemImage: "text.alignleft")
-                            .font(.system(size: 11, weight: .semibold))
+                            .font(.custom("Spectral-Bold", size: 11))
                             .foregroundColor(.gray)
                         
                         Text("OPTIONAL")
-                            .font(.system(size: 9, weight: .semibold))
+                            .font(.custom("Spectral-Bold", size: 9))
                             .foregroundColor(.gray.opacity(0.6))
                     }
                     
                     TextField("Any specific details about this vendor...", text: $viewModel.vendorDescription, axis: .vertical)
-                        .font(.system(size: 16))
+                        .font(.custom("Spectral-Regular", size: 16))
                         .lineLimit(3...5)
                         .padding()
                         .background(Color.white)
@@ -281,7 +281,7 @@ private struct RoleChip: View {
     var body: some View {
         Button(action: action) {
             Text(role)
-                .font(.system(size: 12, weight: isSelected ? .semibold : .medium))
+                .font(.custom(isSelected ? "Spectral-Bold" : "Spectral-Medium", size: 12))
                 .foregroundColor(isSelected ? .white : .black)
                 .padding(.horizontal, 12)
                 .padding(.vertical, 10)
@@ -307,12 +307,12 @@ private struct PaymentSetupStep: View {
                 // Total Amount
                 VStack(alignment: .leading, spacing: 8) {
                     Label("TOTAL AMOUNT", systemImage: "dollarsign.circle.fill")
-                        .font(.system(size: 11, weight: .semibold))
+                        .font(.custom("Spectral-Bold", size: 11))
                         .foregroundColor(.gray)
                     
                     HStack(spacing: 12) {
                         Text("$")
-                            .font(.system(size: 20, weight: .medium))
+                            .font(.custom("Spectral-Medium", size: 20))
                             .foregroundColor(.gray)
                         
                         TextField("0", text: $viewModel.totalAmount)
@@ -329,7 +329,7 @@ private struct PaymentSetupStep: View {
                 VStack(alignment: .leading, spacing: 12) {
                     HStack {
                         Label("PAYMENT MILESTONES", systemImage: "flag.fill")
-                            .font(.system(size: 11, weight: .semibold))
+                            .font(.custom("Spectral-Bold", size: 11))
                             .foregroundColor(.gray)
                         
                         Spacer()
@@ -341,7 +341,7 @@ private struct PaymentSetupStep: View {
                                 Image(systemName: "plus")
                                 Text("Add")
                             }
-                            .font(.system(size: 12, weight: .semibold))
+                            .font(.custom("Spectral-Bold", size: 12))
                             .foregroundColor(.black)
                             .padding(.horizontal, 12)
                             .padding(.vertical, 6)
@@ -371,7 +371,7 @@ private struct PaymentSetupStep: View {
                 // Quick templates
                 VStack(alignment: .leading, spacing: 12) {
                     Text("QUICK TEMPLATES")
-                        .font(.system(size: 11, weight: .semibold))
+                        .font(.custom("Spectral-Bold", size: 11))
                         .foregroundColor(.gray)
                     
                     HStack(spacing: 10) {
@@ -398,14 +398,14 @@ private struct PaymentSetupStep: View {
     private var emptyMilestonesHint: some View {
         VStack(spacing: 12) {
             Image(systemName: "calendar.badge.plus")
-                .font(.system(size: 32))
+                .font(.custom("Spectral-Regular", size: 32))
                 .foregroundColor(.gray.opacity(0.4))
             
             Text("Break payments into milestones")
-                .font(.system(size: 14, weight: .medium))
+                .font(.custom("Spectral-Medium", size: 14))
             
             Text("e.g., deposit now, balance before event")
-                .font(.system(size: 12))
+                .font(.custom("Spectral-Regular", size: 12))
                 .foregroundColor(.gray)
         }
         .frame(maxWidth: .infinity)
@@ -426,15 +426,15 @@ private struct PaymentSetupStep: View {
             
             if isMatched {
                 Text("Milestones match total")
-                    .font(.system(size: 13, weight: .medium))
+                    .font(.custom("Spectral-Medium", size: 13))
                     .foregroundColor(Color(hex: "22C55E"))
             } else if difference > 0 {
                 Text("$\(difference) remaining to allocate")
-                    .font(.system(size: 13, weight: .medium))
+                    .font(.custom("Spectral-Medium", size: 13))
                     .foregroundColor(Color(hex: "F59E0B"))
             } else {
                 Text("$\(abs(difference)) over total amount")
-                    .font(.system(size: 13, weight: .medium))
+                    .font(.custom("Spectral-Medium", size: 13))
                     .foregroundColor(Color(hex: "EF4444"))
             }
             
@@ -457,7 +457,7 @@ private struct MilestoneCard: View {
             // Header
             HStack {
                 Text("Milestone \(index + 1)")
-                    .font(.system(size: 13, weight: .semibold))
+                    .font(.custom("Spectral-Bold", size: 13))
                 
                 Spacer()
                 
@@ -473,7 +473,7 @@ private struct MilestoneCard: View {
                     .foregroundColor(.gray)
                 TextField("Amount", text: $milestone.amount)
                     .keyboardType(.numberPad)
-                    .font(.system(size: 16, weight: .medium))
+                    .font(.custom("Spectral-Medium", size: 16))
             }
             .padding(12)
             .background(Color("Background"))
@@ -481,7 +481,7 @@ private struct MilestoneCard: View {
             
             // Description
             TextField("Description (e.g., Deposit)", text: $milestone.description)
-                .font(.system(size: 14))
+                .font(.custom("Spectral-Regular", size: 14))
                 .padding(12)
                 .background(Color("Background"))
                 .cornerRadius(8)
@@ -489,7 +489,7 @@ private struct MilestoneCard: View {
             // Due Date
             HStack {
                 Text("Due Date")
-                    .font(.system(size: 13))
+                    .font(.custom("Spectral-Regular", size: 13))
                     .foregroundColor(.gray)
                 
                 Spacer()
@@ -510,7 +510,7 @@ private struct MilestoneCard: View {
             
             // Release Condition
             TextField("Release condition (e.g., After venue walkthrough)", text: $milestone.releaseCondition)
-                .font(.system(size: 14))
+                .font(.custom("Spectral-Regular", size: 14))
                 .padding(12)
                 .background(Color("Background"))
                 .cornerRadius(8)
@@ -529,7 +529,7 @@ private struct TemplateButton: View {
     var body: some View {
         Button(action: action) {
             Text(title)
-                .font(.system(size: 11, weight: .medium))
+                .font(.custom("Spectral-Medium", size: 11))
                 .foregroundColor(.black)
                 .padding(.horizontal, 12)
                 .padding(.vertical, 8)
@@ -555,13 +555,13 @@ private struct TermsStep: View {
                 HStack(spacing: 12) {
                     Image(systemName: "sparkles")
                         .foregroundColor(Color(hex: "8B5CF6"))
-                        .font(.system(size: 20))
+                        .font(.custom("Spectral-Regular", size: 20))
                     
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Auto-Generated Terms")
-                            .font(.system(size: 14, weight: .semibold))
+                            .font(.custom("Spectral-Bold", size: 14))
                         Text("Based on your vendor type and payment schedule")
-                            .font(.system(size: 12))
+                            .font(.custom("Spectral-Regular", size: 12))
                             .foregroundColor(.gray)
                     }
                     
@@ -582,7 +582,7 @@ private struct TermsStep: View {
                         .foregroundColor(.gray)
                     
                     Text("These terms are provided as a starting point. For large contracts, we recommend consulting with a legal professional.")
-                        .font(.system(size: 11))
+                        .font(.custom("Spectral-Regular", size: 11))
                         .foregroundColor(.gray)
                 }
                 .padding()
@@ -617,13 +617,13 @@ private struct TermsSectionCard: View {
                         .scaleEffect(0.8)
                     
                     Text(section.title)
-                        .font(.system(size: 14, weight: .semibold))
+                        .font(.custom("Spectral-Bold", size: 14))
                         .foregroundColor(.black)
                     
                     Spacer()
                     
                     Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
-                        .font(.system(size: 12, weight: .medium))
+                        .font(.custom("Spectral-Medium", size: 12))
                         .foregroundColor(.gray)
                 }
                 .padding()
@@ -634,7 +634,7 @@ private struct TermsSectionCard: View {
                 Divider()
                 
                 TextEditor(text: $section.content)
-                    .font(.system(size: 13))
+                    .font(.custom("Spectral-Regular", size: 13))
                     .frame(minHeight: 100)
                     .padding(12)
                     .scrollContentBackground(.hidden)
@@ -676,11 +676,11 @@ private struct ReviewStep: View {
                         HStack {
                             VStack(alignment: .leading, spacing: 2) {
                                 Text(milestone.description.isEmpty ? "Milestone \(index + 1)" : milestone.description)
-                                    .font(.system(size: 13))
+                                    .font(.custom("Spectral-Regular", size: 13))
                                 
                                 if let date = milestone.dueDate {
                                     Text(date, style: .date)
-                                        .font(.system(size: 11))
+                                        .font(.custom("Spectral-Regular", size: 11))
                                         .foregroundColor(.gray)
                                 }
                             }
@@ -688,7 +688,7 @@ private struct ReviewStep: View {
                             Spacer()
                             
                             Text("$\(milestone.amount)")
-                                .font(.system(size: 13, weight: .medium))
+                                .font(.custom("Spectral-Medium", size: 13))
                         }
                         .padding(.vertical, 4)
                     }
@@ -702,10 +702,10 @@ private struct ReviewStep: View {
                         HStack(spacing: 8) {
                             Image(systemName: "checkmark.circle.fill")
                                 .foregroundColor(Color(hex: "22C55E"))
-                                .font(.system(size: 14))
+                                .font(.custom("Spectral-Regular", size: 14))
                             
                             Text(enabledSections[index].title)
-                                .font(.system(size: 13))
+                                .font(.custom("Spectral-Regular", size: 13))
                         }
                     }
                 }
@@ -713,7 +713,7 @@ private struct ReviewStep: View {
                 // What happens next
                 VStack(alignment: .leading, spacing: 12) {
                     Text("WHAT HAPPENS NEXT")
-                        .font(.system(size: 11, weight: .semibold))
+                        .font(.custom("Spectral-Bold", size: 11))
                         .foregroundColor(.gray)
                     
                     TimelineItem(
@@ -759,7 +759,7 @@ private struct SummaryCard<Content: View>: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text(title.uppercased())
-                .font(.system(size: 11, weight: .semibold))
+                .font(.custom("Spectral-Bold", size: 11))
                 .foregroundColor(.gray)
             
             VStack(alignment: .leading, spacing: 8) {
@@ -781,7 +781,7 @@ private struct SummaryRow: View {
     var body: some View {
         HStack {
             Text(label)
-                .font(.system(size: 13))
+                .font(.custom("Spectral-Regular", size: 13))
                 .foregroundColor(.gray)
             
             Spacer()
@@ -801,15 +801,15 @@ private struct TimelineItem: View {
         HStack(alignment: .top, spacing: 12) {
             Image(systemName: icon)
                 .foregroundColor(Color(hex: "8B5CF6"))
-                .font(.system(size: 16))
+                .font(.custom("Spectral-Regular", size: 16))
                 .frame(width: 24)
             
             VStack(alignment: .leading, spacing: 2) {
                 Text(title)
-                    .font(.system(size: 14, weight: .semibold))
+                    .font(.custom("Spectral-Bold", size: 14))
                 
                 Text(description)
-                    .font(.system(size: 12))
+                    .font(.custom("Spectral-Regular", size: 12))
                     .foregroundColor(.gray)
             }
         }

@@ -54,10 +54,10 @@ struct ChatView: View {
             ToolbarItem(placement: .principal) {
                 VStack(spacing: 2) {
                     Text(partner.name)
-                        .font(.system(size: 16, weight: .semibold))
+                        .font(.custom("Spectral-Bold", size: 16))
                     if let userType = partner.userType {
                         Text(userType.capitalized)
-                            .font(.system(size: 11))
+                            .font(.custom("Spectral-Regular", size: 11))
                             .foregroundColor(.gray)
                     }
                 }
@@ -75,7 +75,7 @@ struct ChatView: View {
     private var inputBar: some View {
         HStack(spacing: 12) {
             TextField("Type a message...", text: $viewModel.newMessage, axis: .vertical)
-                .font(.system(size: 16))
+                .font(.custom("Spectral-Regular", size: 16))
                 .padding(.horizontal, 16)
                 .padding(.vertical, 10)
                 .background(Color.white)
@@ -89,7 +89,7 @@ struct ChatView: View {
                 }
             } label: {
                 Image(systemName: "paperplane.fill")
-                    .font(.system(size: 18))
+                    .font(.custom("Spectral-Regular", size: 18))
                     .foregroundColor(viewModel.canSend ? .black : .gray)
                     .frame(width: 44, height: 44)
                     .background(viewModel.canSend ? Color(hex: "FFD700") : Color.gray.opacity(0.2))
@@ -116,7 +116,7 @@ private struct MessageBubble: View {
             
             VStack(alignment: message.isFromCurrentUser ? .trailing : .leading, spacing: 4) {
                 Text(message.content)
-                    .font(.system(size: 15))
+                    .font(.custom("Spectral-Regular", size: 15))
                     .foregroundColor(message.isFromCurrentUser ? .white : .black)
                     .padding(.horizontal, 14)
                     .padding(.vertical, 10)
@@ -129,7 +129,7 @@ private struct MessageBubble: View {
                     .cornerRadius(4, corners: message.isFromCurrentUser ? .bottomRight : .bottomLeft)
                 
                 Text(message.timeDisplay)
-                    .font(.system(size: 10))
+                    .font(.custom("Spectral-Regular", size: 10))
                     .foregroundColor(.gray)
                     .padding(.horizontal, 4)
             }

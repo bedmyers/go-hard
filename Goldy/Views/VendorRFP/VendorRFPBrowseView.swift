@@ -48,14 +48,14 @@ struct VendorRFPBrowseView: View {
     private var emptyState: some View {
         VStack(spacing: 20) {
             Image(systemName: "doc.text.magnifyingglass")
-                .font(.system(size: 60))
+                .font(.custom("Spectral-Regular", size: 60))
                 .foregroundColor(.gray.opacity(0.4))
             
             Text("No Open Requests")
                 .font(.custom("DelaGothicOne-Regular", size: 20))
             
             Text("Check back soon - couples are posting new requests all the time")
-                .font(.system(size: 14))
+                .font(.custom("Spectral-Regular", size: 14))
                 .foregroundColor(.gray)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 40)
@@ -68,7 +68,7 @@ struct VendorRFPBrowseView: View {
         ScrollView {
             VStack(spacing: 16) {
                 Text("\(rfps.count) open request\(rfps.count == 1 ? "" : "s")")
-                    .font(.system(size: 14))
+                    .font(.custom("Spectral-Regular", size: 14))
                     .foregroundColor(.gray)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.horizontal)
@@ -118,12 +118,12 @@ private struct OpenRFPCard: View {
                     HStack(spacing: 12) {
                         if let project = rfp.project {
                             Label(project.title, systemImage: "heart.fill")
-                                .font(.system(size: 12))
+                                .font(.custom("Spectral-Regular", size: 12))
                                 .foregroundColor(.pink)
                         }
                         
                         Label("Posted \(rfp.createdAt.timeAgoDisplay())", systemImage: "clock")
-                            .font(.system(size: 12))
+                            .font(.custom("Spectral-Regular", size: 12))
                             .foregroundColor(.gray)
                     }
                 }
@@ -136,14 +136,14 @@ private struct OpenRFPCard: View {
                         .font(.custom("DelaGothicOne-Regular", size: 18))
                         .foregroundColor(Color(hex: "22C55E"))
                     Text("budget")
-                        .font(.system(size: 10))
+                        .font(.custom("Spectral-Regular", size: 10))
                         .foregroundColor(.gray)
                 }
             }
             
             // Description
             Text(rfp.description)
-                .font(.system(size: 14))
+                .font(.custom("Spectral-Regular", size: 14))
                 .foregroundColor(.gray)
                 .lineLimit(3)
             
@@ -152,18 +152,18 @@ private struct OpenRFPCard: View {
                 if let deadline = rfp.deadline {
                     HStack(spacing: 4) {
                         Image(systemName: "calendar")
-                            .font(.system(size: 12))
+                            .font(.custom("Spectral-Regular", size: 12))
                         Text("Due \(deadline.formatted(date: .abbreviated, time: .omitted))")
-                            .font(.system(size: 12))
+                            .font(.custom("Spectral-Regular", size: 12))
                     }
                     .foregroundColor(Color(hex: "FF6B35"))
                 }
                 
                 HStack(spacing: 4) {
                     Image(systemName: "person.2")
-                        .font(.system(size: 12))
+                        .font(.custom("Spectral-Regular", size: 12))
                     Text("\(rfp.bidCount) bid\(rfp.bidCount == 1 ? "" : "s")")
-                        .font(.system(size: 12))
+                        .font(.custom("Spectral-Regular", size: 12))
                 }
                 .foregroundColor(.gray)
                 
@@ -256,7 +256,7 @@ struct RFPBidSheet: View {
                 .font(.custom("DelaGothicOne-Regular", size: 18))
             
             Text(rfp.description)
-                .font(.system(size: 14))
+                .font(.custom("Spectral-Regular", size: 14))
                 .foregroundColor(.gray)
             
             HStack(spacing: 16) {
@@ -264,7 +264,7 @@ struct RFPBidSheet: View {
                     Image(systemName: "dollarsign.circle.fill")
                         .foregroundColor(Color(hex: "22C55E"))
                     Text("Budget: \(rfp.budgetFormatted)")
-                        .font(.system(size: 13, weight: .medium))
+                        .font(.custom("Spectral-Medium", size: 13))
                 }
                 
                 if let deadline = rfp.deadline {
@@ -272,7 +272,7 @@ struct RFPBidSheet: View {
                         Image(systemName: "calendar")
                             .foregroundColor(Color(hex: "FF6B35"))
                         Text(deadline.formatted(date: .abbreviated, time: .omitted))
-                            .font(.system(size: 13, weight: .medium))
+                            .font(.custom("Spectral-Medium", size: 13))
                     }
                 }
             }
@@ -288,20 +288,20 @@ struct RFPBidSheet: View {
     private var bidForm: some View {
         VStack(alignment: .leading, spacing: 20) {
             Text("YOUR BID")
-                .font(.system(size: 12, weight: .semibold))
+                .font(.custom("Spectral-Bold", size: 12))
                 .foregroundColor(.gray)
             
             // Amount
             VStack(alignment: .leading, spacing: 6) {
                 Text("Bid Amount")
-                    .font(.system(size: 13, weight: .medium))
+                    .font(.custom("Spectral-Medium", size: 13))
                 
                 HStack {
                     Text("$")
-                        .font(.system(size: 18, weight: .semibold))
+                        .font(.custom("Spectral-Bold", size: 18))
                         .foregroundColor(.gray)
                     TextField("0", text: $amount)
-                        .font(.system(size: 24, weight: .bold))
+                        .font(.custom("Spectral-Bold", size: 24))
                         .keyboardType(.numberPad)
                 }
                 .padding()
@@ -314,7 +314,7 @@ struct RFPBidSheet: View {
                 
                 if let budget = rfp.budget {
                     Text("Client budget: \(rfp.budgetFormatted)")
-                        .font(.system(size: 12))
+                        .font(.custom("Spectral-Regular", size: 12))
                         .foregroundColor(.gray)
                 }
             }
@@ -322,10 +322,10 @@ struct RFPBidSheet: View {
             // Proposal
             VStack(alignment: .leading, spacing: 6) {
                 Text("Your Proposal")
-                    .font(.system(size: 13, weight: .medium))
+                    .font(.custom("Spectral-Medium", size: 13))
                 
                 TextEditor(text: $proposal)
-                    .font(.system(size: 15))
+                    .font(.custom("Spectral-Regular", size: 15))
                     .frame(minHeight: 150)
                     .padding(12)
                     .background(Color.white)
@@ -336,7 +336,7 @@ struct RFPBidSheet: View {
                     )
                 
                 Text("Introduce yourself, describe your experience, and explain why you're a great fit")
-                    .font(.system(size: 12))
+                    .font(.custom("Spectral-Regular", size: 12))
                     .foregroundColor(.gray)
             }
         }

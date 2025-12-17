@@ -82,6 +82,21 @@
 		187B1C8B2EEB37150090DE18 /* VendorEditProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 187B1C8A2EEB37110090DE18 /* VendorEditProfileView.swift */; };
 		187B1C8D2EEB51E10090DE18 /* FlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 187B1C8C2EEB51DF0090DE18 /* FlowLayout.swift */; };
 		187B1C972EEB75760090DE18 /* CloudinaryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 187B1C962EEB75720090DE18 /* CloudinaryService.swift */; };
+		187B1CA82EEFCF2D0090DE18 /* Spectral-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 187B1C9F2EEFCF2D0090DE18 /* Spectral-Italic.ttf */; };
+		187B1CA92EEFCF2D0090DE18 /* Spectral-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 187B1CA52EEFCF2D0090DE18 /* Spectral-SemiBold.ttf */; };
+		187B1CAA2EEFCF2D0090DE18 /* Spectral-SemiBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 187B1CA62EEFCF2D0090DE18 /* Spectral-SemiBoldItalic.ttf */; };
+		187B1CAB2EEFCF2D0090DE18 /* Spectral-MediumItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 187B1CA32EEFCF2D0090DE18 /* Spectral-MediumItalic.ttf */; };
+		187B1CAC2EEFCF2D0090DE18 /* Spectral-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 187B1CA22EEFCF2D0090DE18 /* Spectral-Medium.ttf */; };
+		187B1CAD2EEFCF2D0090DE18 /* Spectral-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 187B1C9A2EEFCF2D0090DE18 /* Spectral-BoldItalic.ttf */; };
+		187B1CAE2EEFCF2D0090DE18 /* Spectral-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 187B1C992EEFCF2D0090DE18 /* Spectral-Bold.ttf */; };
+		187B1CAF2EEFCF2D0090DE18 /* Spectral-ExtraLightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 187B1C9E2EEFCF2D0090DE18 /* Spectral-ExtraLightItalic.ttf */; };
+		187B1CB02EEFCF2D0090DE18 /* Spectral-ExtraLight.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 187B1C9D2EEFCF2D0090DE18 /* Spectral-ExtraLight.ttf */; };
+		187B1CB12EEFCF2D0090DE18 /* Spectral-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 187B1CA02EEFCF2D0090DE18 /* Spectral-Light.ttf */; };
+		187B1CB22EEFCF2D0090DE18 /* Spectral-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 187B1CA42EEFCF2D0090DE18 /* Spectral-Regular.ttf */; };
+		187B1CB32EEFCF2D0090DE18 /* Spectral-ExtraBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 187B1C9C2EEFCF2D0090DE18 /* Spectral-ExtraBoldItalic.ttf */; };
+		187B1CB42EEFCF2D0090DE18 /* Spectral-LightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 187B1CA12EEFCF2D0090DE18 /* Spectral-LightItalic.ttf */; };
+		187B1CB52EEFCF2D0090DE18 /* OFL.txt in Resources */ = {isa = PBXBuildFile; fileRef = 187B1C982EEFCF2D0090DE18 /* OFL.txt */; };
+		187B1CB62EEFCF2D0090DE18 /* Spectral-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 187B1C9B2EEFCF2D0090DE18 /* Spectral-ExtraBold.ttf */; };
 		18FC98012D6EE2910053CFD3 /* DelaGothicOne-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 18FC98002D6EE2910053CFD3 /* DelaGothicOne-Regular.ttf */; };
 		18FC98052D737EFC0053CFD3 /* IBMPlexMono-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 18FC98042D737EFC0053CFD3 /* IBMPlexMono-Regular.ttf */; };
 /* End PBXBuildFile section */
@@ -155,6 +170,21 @@
 		187B1C8A2EEB37110090DE18 /* VendorEditProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VendorEditProfileView.swift; sourceTree = "<group>"; };
 		187B1C8C2EEB51DF0090DE18 /* FlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowLayout.swift; sourceTree = "<group>"; };
 		187B1C962EEB75720090DE18 /* CloudinaryService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudinaryService.swift; sourceTree = "<group>"; };
+		187B1C982EEFCF2D0090DE18 /* OFL.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = OFL.txt; sourceTree = "<group>"; };
+		187B1C992EEFCF2D0090DE18 /* Spectral-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Spectral-Bold.ttf"; sourceTree = "<group>"; };
+		187B1C9A2EEFCF2D0090DE18 /* Spectral-BoldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Spectral-BoldItalic.ttf"; sourceTree = "<group>"; };
+		187B1C9B2EEFCF2D0090DE18 /* Spectral-ExtraBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Spectral-ExtraBold.ttf"; sourceTree = "<group>"; };
+		187B1C9C2EEFCF2D0090DE18 /* Spectral-ExtraBoldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Spectral-ExtraBoldItalic.ttf"; sourceTree = "<group>"; };
+		187B1C9D2EEFCF2D0090DE18 /* Spectral-ExtraLight.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Spectral-ExtraLight.ttf"; sourceTree = "<group>"; };
+		187B1C9E2EEFCF2D0090DE18 /* Spectral-ExtraLightItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Spectral-ExtraLightItalic.ttf"; sourceTree = "<group>"; };
+		187B1C9F2EEFCF2D0090DE18 /* Spectral-Italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Spectral-Italic.ttf"; sourceTree = "<group>"; };
+		187B1CA02EEFCF2D0090DE18 /* Spectral-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Spectral-Light.ttf"; sourceTree = "<group>"; };
+		187B1CA12EEFCF2D0090DE18 /* Spectral-LightItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Spectral-LightItalic.ttf"; sourceTree = "<group>"; };
+		187B1CA22EEFCF2D0090DE18 /* Spectral-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Spectral-Medium.ttf"; sourceTree = "<group>"; };
+		187B1CA32EEFCF2D0090DE18 /* Spectral-MediumItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Spectral-MediumItalic.ttf"; sourceTree = "<group>"; };
+		187B1CA42EEFCF2D0090DE18 /* Spectral-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Spectral-Regular.ttf"; sourceTree = "<group>"; };
+		187B1CA52EEFCF2D0090DE18 /* Spectral-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Spectral-SemiBold.ttf"; sourceTree = "<group>"; };
+		187B1CA62EEFCF2D0090DE18 /* Spectral-SemiBoldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Spectral-SemiBoldItalic.ttf"; sourceTree = "<group>"; };
 		18FC97FD2D6EE0E90053CFD3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		18FC98002D6EE2910053CFD3 /* DelaGothicOne-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "DelaGothicOne-Regular.ttf"; sourceTree = "<group>"; };
 		18FC98042D737EFC0053CFD3 /* IBMPlexMono-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "IBMPlexMono-Regular.ttf"; sourceTree = "<group>"; };
@@ -220,6 +250,7 @@
 				18FC98002D6EE2910053CFD3 /* DelaGothicOne-Regular.ttf */,
 				18FC98042D737EFC0053CFD3 /* IBMPlexMono-Regular.ttf */,
 				1818BD762DA1FE540078BCAB /* DaysOne-Regular.ttf */,
+				187B1CA72EEFCF2D0090DE18 /* Spectral */,
 				186326652D5B05BC00759DC1 /* Goldy.entitlements */,
 				186326662D5B05BC00759DC1 /* Preview Content */,
 			);
@@ -465,6 +496,28 @@
 			path = "New Group";
 			sourceTree = "<group>";
 		};
+		187B1CA72EEFCF2D0090DE18 /* Spectral */ = {
+			isa = PBXGroup;
+			children = (
+				187B1C982EEFCF2D0090DE18 /* OFL.txt */,
+				187B1C992EEFCF2D0090DE18 /* Spectral-Bold.ttf */,
+				187B1C9A2EEFCF2D0090DE18 /* Spectral-BoldItalic.ttf */,
+				187B1C9B2EEFCF2D0090DE18 /* Spectral-ExtraBold.ttf */,
+				187B1C9C2EEFCF2D0090DE18 /* Spectral-ExtraBoldItalic.ttf */,
+				187B1C9D2EEFCF2D0090DE18 /* Spectral-ExtraLight.ttf */,
+				187B1C9E2EEFCF2D0090DE18 /* Spectral-ExtraLightItalic.ttf */,
+				187B1C9F2EEFCF2D0090DE18 /* Spectral-Italic.ttf */,
+				187B1CA02EEFCF2D0090DE18 /* Spectral-Light.ttf */,
+				187B1CA12EEFCF2D0090DE18 /* Spectral-LightItalic.ttf */,
+				187B1CA22EEFCF2D0090DE18 /* Spectral-Medium.ttf */,
+				187B1CA32EEFCF2D0090DE18 /* Spectral-MediumItalic.ttf */,
+				187B1CA42EEFCF2D0090DE18 /* Spectral-Regular.ttf */,
+				187B1CA52EEFCF2D0090DE18 /* Spectral-SemiBold.ttf */,
+				187B1CA62EEFCF2D0090DE18 /* Spectral-SemiBoldItalic.ttf */,
+			);
+			path = Spectral;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -531,6 +584,21 @@
 				1818BD772DA1FE540078BCAB /* DaysOne-Regular.ttf in Resources */,
 				186326642D5B05BC00759DC1 /* Assets.xcassets in Resources */,
 				18FC98012D6EE2910053CFD3 /* DelaGothicOne-Regular.ttf in Resources */,
+				187B1CA82EEFCF2D0090DE18 /* Spectral-Italic.ttf in Resources */,
+				187B1CA92EEFCF2D0090DE18 /* Spectral-SemiBold.ttf in Resources */,
+				187B1CAA2EEFCF2D0090DE18 /* Spectral-SemiBoldItalic.ttf in Resources */,
+				187B1CAB2EEFCF2D0090DE18 /* Spectral-MediumItalic.ttf in Resources */,
+				187B1CAC2EEFCF2D0090DE18 /* Spectral-Medium.ttf in Resources */,
+				187B1CAD2EEFCF2D0090DE18 /* Spectral-BoldItalic.ttf in Resources */,
+				187B1CAE2EEFCF2D0090DE18 /* Spectral-Bold.ttf in Resources */,
+				187B1CAF2EEFCF2D0090DE18 /* Spectral-ExtraLightItalic.ttf in Resources */,
+				187B1CB02EEFCF2D0090DE18 /* Spectral-ExtraLight.ttf in Resources */,
+				187B1CB12EEFCF2D0090DE18 /* Spectral-Light.ttf in Resources */,
+				187B1CB22EEFCF2D0090DE18 /* Spectral-Regular.ttf in Resources */,
+				187B1CB32EEFCF2D0090DE18 /* Spectral-ExtraBoldItalic.ttf in Resources */,
+				187B1CB42EEFCF2D0090DE18 /* Spectral-LightItalic.ttf in Resources */,
+				187B1CB52EEFCF2D0090DE18 /* OFL.txt in Resources */,
+				187B1CB62EEFCF2D0090DE18 /* Spectral-ExtraBold.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

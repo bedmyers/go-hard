@@ -38,7 +38,7 @@ struct VendorQuickProfileView: View {
                                 .font(.custom("DelaGothicOne-Regular", size: 28))
                             
                             Text("This helps customers find you")
-                                .font(.system(size: 15))
+                                .font(.custom("Spectral-Regular", size: 15))
                                 .foregroundColor(.gray)
                         }
                         .padding(.top, 8)
@@ -109,7 +109,7 @@ struct VendorQuickProfileView: View {
                         dismiss()
                     } label: {
                         Text("Skip")
-                            .font(.system(size: 16, weight: .medium))
+                            .font(.custom("Spectral-Medium", size: 16))
                             .foregroundColor(.gray)
                     }
                 }
@@ -120,7 +120,7 @@ struct VendorQuickProfileView: View {
                         dismiss()
                     } label: {
                         Text("Done")
-                            .font(.system(size: 16, weight: .bold))
+                            .font(.custom("Spectral-Bold", size: 16))
                             .foregroundColor(canContinue ? .black : .gray)
                     }
                     .disabled(!canContinue)
@@ -157,7 +157,7 @@ private struct SectionHeader: View {
             }
             
             Text(subtitle)
-                .font(.system(size: 13))
+                .font(.custom("Spectral-Regular", size: 13))
                 .foregroundColor(.gray)
         }
     }

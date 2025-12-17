@@ -55,12 +55,11 @@ struct FundEscrowView: View {
         do {
             let pm = try await createPaymentMethod(with: pmParams)
 
-            var req = URLRequest(url: URL(string: "https://go-hard-backend-production.up.railway.app/escrow/fund")!)
+            var req = URLRequest(url: URL(string: "https://go-hard-backend-production.up.railway.app/escrow/\(escrowId)/fund")!)
             req.httpMethod = "POST"
             req.setValue("application/json", forHTTPHeaderField: "Content-Type")
             req.setValue("Bearer \(authToken)", forHTTPHeaderField: "Authorization")
             req.httpBody = try JSONSerialization.data(withJSONObject: [
-                "escrowId": escrowId,
                 "paymentMethodId": pm.stripeId
             ])
 

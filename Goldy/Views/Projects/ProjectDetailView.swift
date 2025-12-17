@@ -74,7 +74,7 @@ struct ProjectDetailView: View {
                     HStack(spacing: 6) {
                         Image(systemName: "arrow.left")
                         Text("Back to Boards")
-                            .font(.system(size: 14, weight: .medium))
+                            .font(.custom("Spectral-Medium", size: 14))
                     }
                     .foregroundColor(.white)
                     .padding(.horizontal, 12)
@@ -95,7 +95,7 @@ struct ProjectDetailView: View {
                             Image(systemName: "calendar")
                             Text(eventDate, style: .date)
                         }
-                        .font(.system(size: 14, weight: .medium))
+                        .font(.custom("Spectral-Medium", size: 14))
                         .foregroundColor(.white.opacity(0.9))
                     }
                     
@@ -104,7 +104,7 @@ struct ProjectDetailView: View {
                             Image(systemName: "dollarsign")
                             Text(formatCurrency(budget) + " Budget")
                         }
-                        .font(.system(size: 14, weight: .medium))
+                        .font(.custom("Spectral-Medium", size: 14))
                         .foregroundColor(.white.opacity(0.9))
                     }
                 }
@@ -135,7 +135,7 @@ struct ProjectDetailView: View {
                     } label: {
                         VStack(spacing: 8) {
                             Text(tab.rawValue)
-                                .font(.system(size: 14, weight: selectedTab == tab ? .semibold : .medium))
+                                .font(.custom(selectedTab == tab ? "Spectral-Bold" : "Spectral-Medium", size: 14))
                                 .foregroundColor(selectedTab == tab ? .black : .gray)
                             
                             Rectangle()
@@ -217,7 +217,7 @@ private struct OverviewTab: View {
                         .frame(width: 56, height: 56)
                     
                     Image(systemName: "megaphone.fill")
-                        .font(.system(size: 24))
+                        .font(.custom("Spectral-Regular", size: 24))
                         .foregroundColor(Color(hex: "FFD700"))
                 }
                 
@@ -227,14 +227,14 @@ private struct OverviewTab: View {
                         .foregroundColor(.black)
                     
                     Text("Post RFPs and get vendor bids")
-                        .font(.system(size: 13))
+                        .font(.custom("Spectral-Regular", size: 13))
                         .foregroundColor(.gray)
                 }
                 
                 Spacer()
                 
                 Image(systemName: "chevron.right")
-                    .font(.system(size: 14, weight: .medium))
+                    .font(.custom("Spectral-Medium", size: 14))
                     .foregroundColor(.gray)
             }
             .padding(16)
@@ -252,10 +252,10 @@ private struct OverviewTab: View {
             if project.vendors.isEmpty {
                 VStack(spacing: 12) {
                     Image(systemName: "chart.pie")
-                        .font(.system(size: 40))
+                        .font(.custom("Spectral-Regular", size: 40))
                         .foregroundColor(.gray.opacity(0.4))
                     Text("Add vendors to see breakdown")
-                        .font(.system(size: 13))
+                        .font(.custom("Spectral-Regular", size: 13))
                         .foregroundColor(.gray)
                 }
                 .frame(maxWidth: .infinity)
@@ -300,10 +300,10 @@ private struct OverviewTab: View {
             if upcomingMilestones.isEmpty {
                 HStack(spacing: 12) {
                     Image(systemName: "checkmark.circle")
-                        .font(.system(size: 24))
+                        .font(.custom("Spectral-Regular", size: 24))
                         .foregroundColor(.gray.opacity(0.4))
                     Text("No upcoming milestones")
-                        .font(.system(size: 14))
+                        .font(.custom("Spectral-Regular", size: 14))
                         .foregroundColor(.gray)
                 }
                 .padding(.vertical, 8)
@@ -440,7 +440,7 @@ private struct VendorsTab: View {
                     showAddVendor = true
                 } label: {
                     Image(systemName: "plus")
-                        .font(.system(size: 16, weight: .semibold))
+                        .font(.custom("Spectral-Bold", size: 16))
                         .foregroundColor(.white)
                         .frame(width: 32, height: 32)
                         .background(Color.black)
@@ -479,14 +479,14 @@ private struct VendorsTab: View {
     private var emptyVendorsState: some View {
         VStack(spacing: 16) {
             Image(systemName: "person.2.fill")
-                .font(.system(size: 48))
+                .font(.custom("Spectral-Regular", size: 48))
                 .foregroundColor(.gray.opacity(0.4))
             
             Text("No Vendors Yet")
                 .font(.custom("DelaGothicOne-Regular", size: 18))
             
             Text("Add vendors to start managing payments")
-                .font(.system(size: 14))
+                .font(.custom("Spectral-Regular", size: 14))
                 .foregroundColor(.gray)
             
             Button {
@@ -509,7 +509,7 @@ private struct VendorsTab: View {
         HStack {
             VStack(alignment: .leading, spacing: 4) {
                 Text("Total Spent")
-                    .font(.system(size: 11, weight: .medium))
+                    .font(.custom("Spectral-Medium", size: 11))
                     .foregroundColor(.gray)
                 Text(formatCurrency(totalSpent))
                     .font(.custom("DelaGothicOne-Regular", size: 16))
@@ -519,7 +519,7 @@ private struct VendorsTab: View {
             
             VStack(alignment: .leading, spacing: 4) {
                 Text("In Escrow")
-                    .font(.system(size: 11, weight: .medium))
+                    .font(.custom("Spectral-Medium", size: 11))
                     .foregroundColor(.gray)
                 Text(formatCurrency(project.totalAmountInEscrow))
                     .font(.custom("DelaGothicOne-Regular", size: 16))
@@ -529,7 +529,7 @@ private struct VendorsTab: View {
             
             VStack(alignment: .leading, spacing: 4) {
                 Text("Remaining")
-                    .font(.system(size: 11, weight: .medium))
+                    .font(.custom("Spectral-Medium", size: 11))
                     .foregroundColor(.gray)
                 Text(formatCurrency(remainingBudget))
                     .font(.custom("DelaGothicOne-Regular", size: 16))
@@ -595,7 +595,7 @@ private struct VendorCard: View {
                 
                 // Category badge
                 Text(vendor.role.uppercased())
-                    .font(.system(size: 9, weight: .bold))
+                    .font(.custom("Spectral-Bold", size: 9))
                     .foregroundColor(.white)
                     .padding(.horizontal, 8)
                     .padding(.vertical, 4)
@@ -615,7 +615,7 @@ private struct VendorCard: View {
                 HStack(spacing: 8) {
                     VStack(alignment: .leading, spacing: 2) {
                         Text("TOTAL")
-                            .font(.system(size: 8, weight: .semibold))
+                            .font(.custom("Spectral-Bold", size: 8))
                             .foregroundColor(.gray)
                         Text(formatCurrency(Double(vendor.amountCents) / 100.0))
                             .font(.custom("DelaGothicOne-Regular", size: 13))
@@ -625,7 +625,7 @@ private struct VendorCard: View {
                     
                     VStack(alignment: .trailing, spacing: 2) {
                         Text("IN ESCROW")
-                            .font(.system(size: 8, weight: .semibold))
+                            .font(.custom("Spectral-Bold", size: 8))
                             .foregroundColor(.gray)
                         Text(formatCurrency(Double(vendor.escrow?.amountCents ?? 0) / 100.0))
                             .font(.custom("DelaGothicOne-Regular", size: 13))
@@ -634,7 +634,7 @@ private struct VendorCard: View {
                 
                 // Status pill
                 Text(displayStatus.uppercased())
-                    .font(.system(size: 10, weight: .bold))
+                    .font(.custom("Spectral-Bold", size: 10))
                     .foregroundColor(statusTextColor)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 10)
@@ -656,7 +656,7 @@ private struct VendorCard: View {
         )
         .overlay(
             Image(systemName: iconForRole)
-                .font(.system(size: 28))
+                .font(.custom("Spectral-Regular", size: 28))
                 .foregroundColor(.white.opacity(0.6))
         )
     }
@@ -733,7 +733,7 @@ private struct BudgetDonutChart: View {
                     Text("\(vendors.count)")
                         .font(.custom("DelaGothicOne-Regular", size: size * 0.22))
                     Text("vendors")
-                        .font(.system(size: size * 0.1))
+                        .font(.custom("Spectral-Regular", size: size * 0.1))
                         .foregroundColor(.gray)
                 }
             }
@@ -782,11 +782,11 @@ private struct LegendItem: View {
                 .cornerRadius(2)
             
             Text(label + ":")
-                .font(.system(size: 11))
+                .font(.custom("Spectral-Regular", size: 11))
                 .foregroundColor(.gray)
             
             Text(formatCurrency(amount))
-                .font(.system(size: 11, weight: .medium))
+                .font(.custom("Spectral-Medium", size: 11))
         }
     }
     
@@ -808,10 +808,10 @@ private struct MilestoneRow: View {
         HStack {
             VStack(alignment: .leading, spacing: 4) {
                 Text(title)
-                    .font(.system(size: 14, weight: .semibold))
+                    .font(.custom("Spectral-Bold", size: 14))
                 
                 Text(vendorName)
-                    .font(.system(size: 12))
+                    .font(.custom("Spectral-Regular", size: 12))
                     .foregroundColor(.gray)
             }
             
@@ -820,12 +820,12 @@ private struct MilestoneRow: View {
             VStack(alignment: .trailing, spacing: 4) {
                 if let amount = amount {
                     Text(formatCurrency(amount))
-                        .font(.system(size: 14, weight: .semibold))
+                        .font(.custom("Spectral-Bold", size: 14))
                 }
                 
                 if let dueDate = dueDate {
                     Text(dueDate, style: .date)
-                        .font(.system(size: 11))
+                        .font(.custom("Spectral-Regular", size: 11))
                         .foregroundColor(Color(hex: "FF6B35"))
                 }
             }
@@ -850,7 +850,7 @@ private struct StatItem: View {
     var body: some View {
         VStack(spacing: 4) {
             Text(label)
-                .font(.system(size: 11, weight: .medium))
+                .font(.custom("Spectral-Medium", size: 11))
                 .foregroundColor(.gray)
             Text(value)
                 .font(.custom("DelaGothicOne-Regular", size: 16))
@@ -866,14 +866,14 @@ private struct PlaceholderTab: View {
     var body: some View {
         VStack(spacing: 16) {
             Image(systemName: icon)
-                .font(.system(size: 48))
+                .font(.custom("Spectral-Regular", size: 48))
                 .foregroundColor(.gray.opacity(0.4))
             
             Text(title)
                 .font(.custom("DelaGothicOne-Regular", size: 20))
             
             Text("Coming Soon")
-                .font(.system(size: 14))
+                .font(.custom("Spectral-Regular", size: 14))
                 .foregroundColor(.gray)
         }
         .frame(maxWidth: .infinity)

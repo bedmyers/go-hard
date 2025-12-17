@@ -9,6 +9,9 @@
 		<string>DelaGothicOne-Regular.ttf</string>
 		<string>IBMPlexMono-Regular.ttf</string>
 		<string>DaysOne-Regular.ttf</string>
+		<string>Spectral-Regular.ttf</string>
+		<string>Spectral-Medium.ttf</string>
+		<string>Spectral-Bold.ttf</string>
 	</array>
 	<key>NSCameraUsageDescription</key>
 	<string>Take photos for your vendor profile and portfolio</string>

@@ -54,7 +54,7 @@ struct UserSearchSheetView: View {
                 Image(systemName: "magnifyingglass")
                     .foregroundColor(.black)
                     .opacity(0.6)
-                    .font(.system(size: 16))
+                    .font(.custom("Spectral-Regular", size: 16))
                 
                 TextField("Search name or email", text: $query)
                     .font(.custom("IBMPlexMono-Regular", size: 16))
@@ -65,7 +65,7 @@ struct UserSearchSheetView: View {
                         Image(systemName: "xmark.circle.fill")
                             .foregroundColor(.black)
                             .opacity(0.6)
-                            .font(.system(size: 16))
+                            .font(.custom("Spectral-Regular", size: 16))
                     }
                 }
             }
@@ -94,7 +94,7 @@ struct UserSearchSheetView: View {
             Spacer()
             
             Image(systemName: "person.2.badge.plus")
-                .font(.system(size: 48))
+                .font(.custom("Spectral-Regular", size: 48))
                 .foregroundColor(.black)
                 .opacity(0.4)
             
@@ -137,7 +137,7 @@ struct UserSearchSheetView: View {
             Spacer()
             
             Image(systemName: "person.crop.circle.badge.questionmark")
-                .font(.system(size: 48))
+                .font(.custom("Spectral-Regular", size: 48))
                 .foregroundColor(.black)
                 .opacity(0.4)
             

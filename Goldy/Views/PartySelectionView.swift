@@ -32,7 +32,7 @@ struct PartySelectionView: View {
 
                 Button(action: { showUserSearch = true }) {
                     Image(systemName: selectedUsers.isEmpty ? "plus.circle" : "plus")
-                        .font(.system(size: selectedUsers.isEmpty ? 28 : 20, weight: .medium))
+                        .font(.custom("Spectral-Medium", size: selectedUsers.isEmpty ? 28 : 20))
                         .foregroundColor(selectedUsers.isEmpty ? .blue : .secondary)
                         .frame(width: 50, height: 50)
                         .background(
@@ -122,7 +122,7 @@ private struct UserAvatarView: View {
                     Spacer()
                     Button(action: onRemove) {
                         Image(systemName: "xmark.circle.fill")
-                            .font(.system(size: 20))
+                            .font(.custom("Spectral-Regular", size: 20))
                             .foregroundColor(.red)
                             .background(
                                 Circle()
