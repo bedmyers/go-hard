@@ -105,24 +105,61 @@ struct ProfileView: View {
     }
     
     // MARK: - Account Section
-    
+
+    private var isVendor: Bool {
+        appState.currentUser?.userType == .vendor || appState.currentUser?.userType == .both
+    }
+
     private var accountSection: some View {
         VStack(alignment: .leading, spacing: 12) {
             SectionHeader(title: "Account")
-            
+
             VStack(spacing: 0) {
                 ProfileRow(icon: "person.fill", title: "Edit Profile", showChevron: true) {
                     showEditProfile = true
                 }
-                
+
                 Divider().padding(.leading, 52)
-                
+
                 ProfileRow(icon: "creditcard.fill", title: "Payment Methods", showChevron: true) {
                     // TODO: Payment methods
                 }
-                
+
+                if isVendor {
+                    Divider().padding(.leading, 52)
+
+                    NavigationLink {
+                        VendorOnboardingView()
+                    } label: {
+                        HStack(spacing: 16) {
+                            Image(systemName: "building.columns.fill")
+                                .font(.system(size: 16))
+                                .foregroundColor(Color(hex: "FFD700"))
+                                .frame(width: 24)
+
+                            Text("Bank Account")
+                                .font(.custom("Spectral-Regular", size: 15))
+                                .foregroundColor(.black)
+
+                            Spacer()
+
+                            if appState.currentUser?.stripeAccountId != nil {
+                                Text("Connected")
+                                    .font(.custom("Spectral-Medium", size: 12))
+                                    .foregroundColor(Color(hex: "22C55E"))
+                            }
+
+                            Image(systemName: "chevron.right")
+                                .font(.system(size: 13))
+                                .foregroundColor(.gray.opacity(0.5))
+                        }
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 14)
+                    }
+                }
+
                 Divider().padding(.leading, 52)
-                
+
                 ProfileRow(icon: "bell.fill", title: "Notifications", showChevron: true) {
                     // TODO: Notifications
                 }

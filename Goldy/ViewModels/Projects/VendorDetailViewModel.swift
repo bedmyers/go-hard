@@ -83,6 +83,10 @@ class VendorDetailViewModel: ObservableObject {
         isLoading = false
     }
     
+    func refreshData() async {
+        await refreshEscrow()
+    }
+
     private func refreshEscrow() async {
         guard let escrow = projectVendor.escrow else { return }
         

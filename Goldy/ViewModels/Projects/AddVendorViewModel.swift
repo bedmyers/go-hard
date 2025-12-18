@@ -66,6 +66,11 @@ enum MilestoneTemplate {
     case depositFinal
 }
 
+enum VendorInputMode {
+    case search  // Search for existing vendor on platform
+    case manual  // Enter email manually (invite new vendor)
+}
+
 // MARK: - ViewModel
 
 @MainActor
@@ -82,6 +87,14 @@ class AddVendorViewModel: ObservableObject {
     @Published var vendorEmail: String = ""
     @Published var vendorRole: String = ""
     @Published var vendorDescription: String = ""
+
+    // MARK: - Vendor Search
+    @Published var selectedVendor: User? = nil
+    @Published var vendorSearchQuery: String = ""
+    @Published var vendorSearchResults: [User] = []
+    @Published var isSearchingVendors = false
+    @Published var showVendorSearch = false
+    @Published var vendorInputMode: VendorInputMode = .search // Default to search
     
     // MARK: - Step 2: Payment Setup
     @Published var totalAmount: String = ""
@@ -108,9 +121,16 @@ class AddVendorViewModel: ObservableObject {
     }
     
     private var isValidVendorInfo: Bool {
-        !vendorName.trimmingCharacters(in: .whitespaces).isEmpty &&
-        isValidEmail(vendorEmail) &&
-        !vendorRole.isEmpty
+        switch vendorInputMode {
+        case .search:
+            // Must have selected a vendor and chosen a role
+            return selectedVendor != nil && !vendorRole.isEmpty
+        case .manual:
+            // Must have name, valid email, and role
+            return !vendorName.trimmingCharacters(in: .whitespaces).isEmpty &&
+                   isValidEmail(vendorEmail) &&
+                   !vendorRole.isEmpty
+        }
     }
     
     private var isValidPaymentSetup: Bool {
@@ -126,8 +146,75 @@ class AddVendorViewModel: ObservableObject {
         return email.range(of: emailRegex, options: .regularExpression) != nil
     }
     
+    // MARK: - Vendor Search
+
+    func searchVendors() async {
+        let query = vendorSearchQuery.trimmingCharacters(in: .whitespaces)
+        guard !query.isEmpty else {
+            vendorSearchResults = []
+            return
+        }
+
+        isSearchingVendors = true
+        print("🔍 Searching vendors with query: '\(query)'")
+
+        do {
+            let results = try await api.searchVendors(query: query, service: nil, location: nil)
+            print("✅ Found \(results.count) vendors")
+            vendorSearchResults = results
+        } catch {
+            print("❌ Error searching vendors: \(error)")
+            errorMessage = "Failed to search vendors: \(error.localizedDescription)"
+            showError = true
+            vendorSearchResults = []
+        }
+
+        isSearchingVendors = false
+    }
+
+    func selectVendor(_ vendor: User) {
+        selectedVendor = vendor
+        vendorName = vendor.name
+        vendorEmail = vendor.email
+        showVendorSearch = false
+
+        // Auto-select role if vendor has services
+        if let firstService = vendor.services?.first, vendorRole.isEmpty {
+            // Try to map service to role
+            let serviceToRole: [String: String] = [
+                "photography": "Photography",
+                "videography": "Videography",
+                "catering": "Catering",
+                "venue": "Venue",
+                "florals": "Florals",
+                "florist": "Florals",
+                "dj": "Music/DJ",
+                "music": "Music/DJ",
+                "planner": "Wedding Planner",
+                "coordinator": "Wedding Planner",
+                "makeup": "Hair & Makeup",
+                "hair": "Hair & Makeup"
+            ]
+
+            for (key, role) in serviceToRole {
+                if firstService.lowercased().contains(key) {
+                    vendorRole = role
+                    break
+                }
+            }
+        }
+    }
+
+    func clearSelectedVendor() {
+        selectedVendor = nil
+        vendorName = ""
+        vendorEmail = ""
+        vendorSearchQuery = ""
+        vendorSearchResults = []
+    }
+
     // MARK: - Navigation
-    
+
     func goNext() {
         guard canProceed else { return }
         
@@ -388,19 +475,25 @@ class AddVendorViewModel: ObservableObject {
     
     func submitVendor(projectId: Int) async {
         guard isValidVendorInfo && isValidPaymentSetup else { return }
-        
+
         isSubmitting = true
         errorMessage = nil
-        
+
         do {
-            let vendorBody: [String: Any] = [
-                "vendorEmail": vendorEmail.trimmingCharacters(in: .whitespaces).lowercased(),
+            var vendorBody: [String: Any] = [
                 "role": vendorRole,
                 "description": vendorDescription.isEmpty ? NSNull() : vendorDescription,
                 "amountCents": (Int(totalAmount) ?? 0) * 100,
                 "dueDate": milestones.last?.dueDate.map { ISO8601DateFormatter().string(from: $0) } ?? NSNull()
             ]
-            
+
+            // If we selected an existing vendor, use their ID; otherwise use email
+            if let selectedVendor = selectedVendor {
+                vendorBody["vendorId"] = selectedVendor.id
+            } else {
+                vendorBody["vendorEmail"] = vendorEmail.trimmingCharacters(in: .whitespaces).lowercased()
+            }
+
             let projectVendor: ProjectVendorResponse = try await api.addVendorToProject(
                 projectId: projectId,
                 body: vendorBody

@@ -12,6 +12,10 @@ import StripePaymentsUI
 
 struct FundEscrowView: View {
     let escrowId: Int
+    let amountCents: Int
+    let vendorName: String
+    var onSuccess: (() -> Void)?
+
     @AppStorage("authToken") private var authToken = ""
 
     @State private var cardFormRef: STPCardFormView?
@@ -19,25 +23,140 @@ struct FundEscrowView: View {
     @State private var errorText = ""
     @Environment(\.dismiss) var dismiss
 
+    init(escrowId: Int, amountCents: Int = 0, vendorName: String = "", onSuccess: (() -> Void)? = nil) {
+        self.escrowId = escrowId
+        self.amountCents = amountCents
+        self.vendorName = vendorName
+        self.onSuccess = onSuccess
+    }
+
+    private var formattedAmount: String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .currency
+        formatter.maximumFractionDigits = 0
+        return formatter.string(from: NSNumber(value: Double(amountCents) / 100.0)) ?? "$0"
+    }
+
     var body: some View {
-        VStack(spacing: 16) {
-            CardFormRepresentable(formRef: $cardFormRef)
-                .frame(height: 200)
+        NavigationStack {
+            ScrollView {
+                VStack(spacing: 24) {
+                    // Header
+                    VStack(spacing: 8) {
+                        Image(systemName: "lock.shield.fill")
+                            .font(.system(size: 48))
+                            .foregroundColor(Color(hex: "22C55E"))
 
-            Button(isLoading ? "Processing..." : "Fund Escrow") {
-                Task { await fund() }
+                        Text("Fund Escrow")
+                            .font(.custom("DelaGothicOne-Regular", size: 24))
+
+                        Text("Securely hold funds until milestones are completed")
+                            .font(.custom("Spectral-Regular", size: 14))
+                            .foregroundColor(.gray)
+                            .multilineTextAlignment(.center)
+                    }
+                    .padding(.top, 20)
+
+                    // Amount summary
+                    if amountCents > 0 {
+                        VStack(spacing: 16) {
+                            if !vendorName.isEmpty {
+                                HStack {
+                                    Text("Vendor")
+                                        .font(.custom("Spectral-Regular", size: 14))
+                                        .foregroundColor(.gray)
+                                    Spacer()
+                                    Text(vendorName)
+                                        .font(.custom("Spectral-Medium", size: 14))
+                                }
+                            }
+
+                            Divider()
+
+                            HStack {
+                                Text("Total Amount")
+                                    .font(.custom("Spectral-Regular", size: 14))
+                                    .foregroundColor(.gray)
+                                Spacer()
+                                Text(formattedAmount)
+                                    .font(.custom("DelaGothicOne-Regular", size: 20))
+                            }
+                        }
+                        .padding()
+                        .background(Color(hex: "F9FAFB"))
+                        .cornerRadius(12)
+                    }
+
+                    // Card input
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text("CARD DETAILS")
+                            .font(.custom("Spectral-Bold", size: 12))
+                            .foregroundColor(.gray)
+
+                        CardFormRepresentable(formRef: $cardFormRef)
+                            .frame(height: 200)
+                            .background(Color.white)
+                            .cornerRadius(12)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .stroke(Color.gray.opacity(0.2), lineWidth: 1)
+                            )
+                    }
+
+                    if !errorText.isEmpty {
+                        Text(errorText)
+                            .font(.custom("Spectral-Regular", size: 14))
+                            .foregroundColor(.red)
+                            .padding()
+                            .background(Color.red.opacity(0.1))
+                            .cornerRadius(8)
+                    }
+
+                    Spacer(minLength: 20)
+
+                    // Submit button
+                    VStack(spacing: 12) {
+                        Button {
+                            Task { await fund() }
+                        } label: {
+                            HStack {
+                                if isLoading {
+                                    ProgressView()
+                                        .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                                } else {
+                                    Image(systemName: "lock.fill")
+                                    Text(amountCents > 0 ? "FUND \(formattedAmount)" : "FUND ESCROW")
+                                        .font(.custom("DelaGothicOne-Regular", size: 14))
+                                }
+                            }
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 16)
+                            .background(Color.black)
+                            .cornerRadius(12)
+                        }
+                        .disabled(isLoading)
+
+                        HStack(spacing: 4) {
+                            Image(systemName: "lock.fill")
+                                .font(.system(size: 10))
+                            Text("Funds held securely until you release them")
+                                .font(.custom("Spectral-Regular", size: 11))
+                        }
+                        .foregroundColor(.gray)
+                    }
+                }
+                .padding()
             }
-            .disabled(isLoading)
-            .frame(maxWidth: .infinity)
-            .padding()
-            .background(Color.black)
-            .foregroundColor(.white)
-            .cornerRadius(12)
-
-            if !errorText.isEmpty { Text(errorText).foregroundColor(.red) }
-            Spacer()
+            .background(Color("Background"))
+            .navigationTitle("")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") { dismiss() }
+                }
+            }
         }
-        .padding()
     }
 
     func fund() async {
@@ -53,9 +172,14 @@ struct FundEscrowView: View {
         pmParams.billingDetails = billing
 
         do {
+            print("💳 Creating payment method...")
             let pm = try await createPaymentMethod(with: pmParams)
+            print("✅ Payment method created: \(pm.stripeId)")
 
-            var req = URLRequest(url: URL(string: "https://go-hard-backend-production.up.railway.app/escrow/\(escrowId)/fund")!)
+            let url = URL(string: "https://go-hard-backend-production.up.railway.app/escrow/\(escrowId)/fund")!
+            print("🌐 Funding escrow at: \(url)")
+
+            var req = URLRequest(url: url)
             req.httpMethod = "POST"
             req.setValue("application/json", forHTTPHeaderField: "Content-Type")
             req.setValue("Bearer \(authToken)", forHTTPHeaderField: "Authorization")
@@ -63,12 +187,27 @@ struct FundEscrowView: View {
                 "paymentMethodId": pm.stripeId
             ])
 
-            let (_, resp) = try await URLSession.shared.data(for: req)
-            guard let http = resp as? HTTPURLResponse, (200...299).contains(http.statusCode) else {
-                throw URLError(.badServerResponse)
+            let (data, resp) = try await URLSession.shared.data(for: req)
+            let http = resp as? HTTPURLResponse
+            let statusCode = http?.statusCode ?? -1
+            let responseBody = String(data: data, encoding: .utf8) ?? "nil"
+
+            print("📦 Response [\(statusCode)]: \(responseBody)")
+
+            guard (200...299).contains(statusCode) else {
+                // Try to parse error message from response
+                if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+                   let errorMsg = json["error"] as? String {
+                    errorText = errorMsg
+                } else {
+                    errorText = "Server error (\(statusCode)): \(responseBody)"
+                }
+                return
             }
+            onSuccess?()
             dismiss()
         } catch {
+            print("❌ Fund error: \(error)")
             errorText = error.localizedDescription
         }
     }

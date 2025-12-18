@@ -319,14 +319,27 @@ class APIService {
         var request = URLRequest(url: components.url!)
         request.httpMethod = "GET"
         // Note: /vendors/search doesn't require auth based on current backend
-        
+
+        print("🌐 Vendor search URL: \(components.url!.absoluteString)")
+
         let (data, response) = try await URLSession.shared.data(for: request)
-        
+
         guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+            let statusCode = (response as? HTTPURLResponse)?.statusCode ?? -1
+            print("❌ Vendor search failed with status: \(statusCode)")
             throw APIError.serverError("Failed to search vendors")
         }
-        
-        return try JSONDecoder().decode([User].self, from: data)
+
+        print("📦 Vendor search response: \(String(data: data, encoding: .utf8) ?? "nil")")
+
+        do {
+            let result = try JSONDecoder().decode([User].self, from: data)
+            print("✅ Decoded \(result.count) vendors")
+            return result
+        } catch {
+            print("❌ Decoding error: \(error)")
+            throw error
+        }
     }
 
     func getVendorProfile(vendorId: Int) async throws -> User {

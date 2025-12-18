@@ -70,7 +70,16 @@ struct VendorDetailView: View {
             Text(error)
         }
         .sheet(isPresented: $viewModel.showFundEscrow) {
-            FundEscrowSheet(viewModel: viewModel)
+            if let escrow = viewModel.projectVendor.escrow {
+                FundEscrowView(
+                    escrowId: escrow.id,
+                    amountCents: viewModel.projectVendor.amountCents,
+                    vendorName: viewModel.projectVendor.vendor.name,
+                    onSuccess: {
+                        Task { await viewModel.refreshData() }
+                    }
+                )
+            }
         }
     }
     
@@ -503,133 +512,6 @@ private struct MilestoneCard: View {
                 Text("Pending")
                     .font(.custom("Spectral-Regular", size: 13))
                     .foregroundColor(.gray)
-            }
-        }
-    }
-    
-    private func formatCurrency(_ amount: Double) -> String {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .currency
-        formatter.maximumFractionDigits = 0
-        return formatter.string(from: NSNumber(value: amount)) ?? "$0"
-    }
-}
-
-// MARK: - Fund Escrow Sheet
-
-private struct FundEscrowSheet: View {
-    @ObservedObject var viewModel: VendorDetailViewModel
-    @Environment(\.dismiss) var dismiss
-    
-    var body: some View {
-        NavigationStack {
-            VStack(spacing: 24) {
-                VStack(spacing: 8) {
-                    Image(systemName: "lock.shield.fill")
-                        .font(.custom("Spectral-Regular", size: 48))
-                        .foregroundColor(Color(hex: "22C55E"))
-                    
-                    Text("Fund Escrow")
-                        .font(.custom("DelaGothicOne-Regular", size: 24))
-                    
-                    Text("Securely hold funds until milestones are completed")
-                        .font(.custom("Spectral-Regular", size: 14))
-                        .foregroundColor(.gray)
-                        .multilineTextAlignment(.center)
-                }
-                .padding(.top, 20)
-                
-                VStack(spacing: 16) {
-                    HStack {
-                        Text("Vendor")
-                            .foregroundColor(.gray)
-                        Spacer()
-                        Text(viewModel.projectVendor.vendor.name)
-                            .fontWeight(.medium)
-                    }
-                    
-                    Divider()
-                    
-                    HStack {
-                        Text("Total Amount")
-                            .foregroundColor(.gray)
-                        Spacer()
-                        Text(formatCurrency(Double(viewModel.projectVendor.amountCents) / 100.0))
-                            .font(.custom("DelaGothicOne-Regular", size: 20))
-                    }
-                }
-                .padding()
-                .background(Color(hex: "F9FAFB"))
-                .cornerRadius(12)
-                
-                VStack(alignment: .leading, spacing: 12) {
-                    Text("Payment Method")
-                        .font(.custom("Spectral-Bold", size: 13))
-                        .foregroundColor(.gray)
-                    
-                    HStack {
-                        Image(systemName: "creditcard.fill")
-                            .foregroundColor(.gray)
-                        Text("•••• •••• •••• 4242")
-                            .font(.custom("Spectral-Regular", size: 16))
-                        Spacer()
-                        Text("Change")
-                            .font(.custom("Spectral-Regular", size: 14))
-                            .foregroundColor(Color(hex: "8B5CF6"))
-                    }
-                    .padding()
-                    .background(Color.white)
-                    .cornerRadius(12)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 12)
-                            .stroke(Color.gray.opacity(0.2), lineWidth: 1)
-                    )
-                }
-                
-                Spacer()
-                
-                VStack(spacing: 12) {
-                    Button {
-                        Task {
-                            await viewModel.fundEscrow()
-                            dismiss()
-                        }
-                    } label: {
-                        HStack {
-                            if viewModel.isLoading {
-                                ProgressView()
-                                    .progressViewStyle(CircularProgressViewStyle(tint: .white))
-                            } else {
-                                Image(systemName: "lock.fill")
-                                Text("FUND \(formatCurrency(Double(viewModel.projectVendor.amountCents) / 100.0))")
-                                    .font(.custom("DelaGothicOne-Regular", size: 14))
-                            }
-                        }
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 16)
-                        .background(Color.black)
-                        .cornerRadius(12)
-                    }
-                    .disabled(viewModel.isLoading)
-                    
-                    HStack(spacing: 4) {
-                        Image(systemName: "lock.fill")
-                            .font(.custom("Spectral-Regular", size: 10))
-                        Text("Funds held securely until you release them")
-                            .font(.custom("Spectral-Regular", size: 11))
-                    }
-                    .foregroundColor(.gray)
-                }
-            }
-            .padding()
-            .background(Color("Background"))
-            .navigationTitle("")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
-                }
             }
         }
     }

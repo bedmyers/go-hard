@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>STRIPE_PUBLISHABLE_KEY</key>
-	<string>pk_test_XXXXXXXXXXXXXXXX</string>
+	<string>pk_test_51SfTwcLtrWIf14vNFufl4tzZQemSMthESEkSfGKI55sS6HSi2RAFKZPPTrDBq9T0wcz99i7tt8M7hOfyaP3jFhZH00nYqMwUXE</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>DelaGothicOne-Regular.ttf</string>

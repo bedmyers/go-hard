@@ -174,61 +174,54 @@ private struct StepIndicator: View {
 private struct VendorInfoStep: View {
     @ObservedObject var viewModel: AddVendorViewModel
     @FocusState private var focusedField: Field?
-    
-    enum Field { case name, email }
-    
+
+    enum Field { case search, name, email }
+
     let vendorRoles = [
         "Venue", "Catering", "Photography", "Videography",
         "Florals", "Music/DJ", "Wedding Planner", "Hair & Makeup",
         "Cake/Desserts", "Transportation", "Rentals", "Other"
     ]
-    
+
     var body: some View {
         ScrollView {
             VStack(spacing: 20) {
-                // Vendor Name
-                VStack(alignment: .leading, spacing: 8) {
-                    Label("VENDOR NAME", systemImage: "building.2.fill")
-                        .font(.custom("Spectral-Bold", size: 11))
-                        .foregroundColor(.gray)
-                    
-                    TextField("e.g., Bella Vista Events", text: $viewModel.vendorName)
-                        .font(.custom("Spectral-Regular", size: 16))
-                        .padding()
-                        .background(Color.white)
-                        .cornerRadius(12)
-                        .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
-                        .focused($focusedField, equals: .name)
+                // Mode selector
+                HStack(spacing: 0) {
+                    ModeTab(
+                        title: "Find Vendor",
+                        icon: "magnifyingglass",
+                        isSelected: viewModel.vendorInputMode == .search
+                    ) {
+                        withAnimation { viewModel.vendorInputMode = .search }
+                        viewModel.clearSelectedVendor()
+                    }
+
+                    ModeTab(
+                        title: "Invite New",
+                        icon: "envelope",
+                        isSelected: viewModel.vendorInputMode == .manual
+                    ) {
+                        withAnimation { viewModel.vendorInputMode = .manual }
+                        viewModel.clearSelectedVendor()
+                    }
                 }
-                
-                // Vendor Email
-                VStack(alignment: .leading, spacing: 8) {
-                    Label("VENDOR EMAIL", systemImage: "envelope.fill")
-                        .font(.custom("Spectral-Bold", size: 11))
-                        .foregroundColor(.gray)
-                    
-                    TextField("vendor@example.com", text: $viewModel.vendorEmail)
-                        .font(.custom("Spectral-Regular", size: 16))
-                        .keyboardType(.emailAddress)
-                        .textInputAutocapitalization(.never)
-                        .autocorrectionDisabled()
-                        .padding()
-                        .background(Color.white)
-                        .cornerRadius(12)
-                        .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
-                        .focused($focusedField, equals: .email)
-                    
-                    Text("We'll send them an invite to accept the agreement")
-                        .font(.custom("Spectral-Regular", size: 11))
-                        .foregroundColor(.gray)
+                .background(Color.white)
+                .cornerRadius(12)
+                .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+
+                if viewModel.vendorInputMode == .search {
+                    searchModeContent
+                } else {
+                    manualModeContent
                 }
-                
-                // Role Selection
+
+                // Role Selection (shown for both modes)
                 VStack(alignment: .leading, spacing: 8) {
                     Label("SERVICE TYPE", systemImage: "tag.fill")
                         .font(.custom("Spectral-Bold", size: 11))
                         .foregroundColor(.gray)
-                    
+
                     LazyVGrid(columns: [
                         GridItem(.flexible()),
                         GridItem(.flexible()),
@@ -244,19 +237,19 @@ private struct VendorInfoStep: View {
                         }
                     }
                 }
-                
+
                 // Description (optional)
                 VStack(alignment: .leading, spacing: 8) {
                     HStack {
                         Label("NOTES", systemImage: "text.alignleft")
                             .font(.custom("Spectral-Bold", size: 11))
                             .foregroundColor(.gray)
-                        
+
                         Text("OPTIONAL")
                             .font(.custom("Spectral-Bold", size: 9))
                             .foregroundColor(.gray.opacity(0.6))
                     }
-                    
+
                     TextField("Any specific details about this vendor...", text: $viewModel.vendorDescription, axis: .vertical)
                         .font(.custom("Spectral-Regular", size: 16))
                         .lineLimit(3...5)
@@ -265,10 +258,273 @@ private struct VendorInfoStep: View {
                         .cornerRadius(12)
                         .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
                 }
-                
+
                 Spacer(minLength: 100)
             }
             .padding()
+        }
+    }
+
+    // MARK: - Search Mode
+
+    private var searchModeContent: some View {
+        VStack(spacing: 16) {
+            // Selected vendor card or search field
+            if let vendor = viewModel.selectedVendor {
+                selectedVendorCard(vendor)
+            } else {
+                // Search field
+                VStack(alignment: .leading, spacing: 8) {
+                    Label("SEARCH VENDORS", systemImage: "magnifyingglass")
+                        .font(.custom("Spectral-Bold", size: 11))
+                        .foregroundColor(.gray)
+
+                    HStack {
+                        TextField("Search by name...", text: $viewModel.vendorSearchQuery)
+                            .font(.custom("Spectral-Regular", size: 16))
+                            .focused($focusedField, equals: .search)
+                            .onSubmit {
+                                Task { await viewModel.searchVendors() }
+                            }
+
+                        if viewModel.isSearchingVendors {
+                            ProgressView()
+                                .scaleEffect(0.8)
+                        } else if !viewModel.vendorSearchQuery.isEmpty {
+                            Button {
+                                Task { await viewModel.searchVendors() }
+                            } label: {
+                                Image(systemName: "arrow.right.circle.fill")
+                                    .foregroundColor(.black)
+                            }
+                        }
+                    }
+                    .padding()
+                    .background(Color.white)
+                    .cornerRadius(12)
+                    .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+                }
+
+                // Search results
+                if !viewModel.vendorSearchResults.isEmpty {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("\(viewModel.vendorSearchResults.count) vendors found")
+                            .font(.custom("Spectral-Medium", size: 12))
+                            .foregroundColor(.gray)
+
+                        ForEach(viewModel.vendorSearchResults) { vendor in
+                            VendorSearchResultCard(vendor: vendor) {
+                                viewModel.selectVendor(vendor)
+                            }
+                        }
+                    }
+                } else if !viewModel.vendorSearchQuery.isEmpty && !viewModel.isSearchingVendors {
+                    VStack(spacing: 12) {
+                        Image(systemName: "person.crop.circle.badge.questionmark")
+                            .font(.system(size: 32))
+                            .foregroundColor(.gray)
+
+                        Text("No vendors found")
+                            .font(.custom("Spectral-Medium", size: 14))
+                            .foregroundColor(.gray)
+
+                        Button {
+                            viewModel.vendorInputMode = .manual
+                        } label: {
+                            Text("Invite them instead")
+                                .font(.custom("Spectral-Medium", size: 13))
+                                .foregroundColor(Color(hex: "8B5CF6"))
+                        }
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 24)
+                }
+            }
+        }
+    }
+
+    private func selectedVendorCard(_ vendor: User) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Text("SELECTED VENDOR")
+                    .font(.custom("Spectral-Bold", size: 11))
+                    .foregroundColor(.gray)
+
+                Spacer()
+
+                Button {
+                    viewModel.clearSelectedVendor()
+                } label: {
+                    Text("Change")
+                        .font(.custom("Spectral-Medium", size: 12))
+                        .foregroundColor(Color(hex: "8B5CF6"))
+                }
+            }
+
+            HStack(spacing: 12) {
+                ZStack {
+                    Circle()
+                        .fill(Color(hex: "22C55E").opacity(0.15))
+                        .frame(width: 50, height: 50)
+
+                    Text(vendor.name.prefix(1).uppercased())
+                        .font(.custom("DelaGothicOne-Regular", size: 18))
+                        .foregroundColor(Color(hex: "22C55E"))
+                }
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(vendor.name)
+                        .font(.custom("Spectral-Bold", size: 16))
+
+                    Text(vendor.email)
+                        .font(.custom("Spectral-Regular", size: 13))
+                        .foregroundColor(.gray)
+
+                    if let services = vendor.services, !services.isEmpty {
+                        Text(services.joined(separator: ", "))
+                            .font(.custom("Spectral-Regular", size: 12))
+                            .foregroundColor(Color(hex: "8B5CF6"))
+                    }
+                }
+
+                Spacer()
+
+                Image(systemName: "checkmark.circle.fill")
+                    .foregroundColor(Color(hex: "22C55E"))
+                    .font(.system(size: 24))
+            }
+            .padding()
+            .background(Color(hex: "22C55E").opacity(0.08))
+            .cornerRadius(12)
+            .overlay(
+                RoundedRectangle(cornerRadius: 12)
+                    .stroke(Color(hex: "22C55E").opacity(0.3), lineWidth: 1)
+            )
+        }
+    }
+
+    // MARK: - Manual Mode
+
+    private var manualModeContent: some View {
+        VStack(spacing: 16) {
+            // Vendor Name
+            VStack(alignment: .leading, spacing: 8) {
+                Label("VENDOR NAME", systemImage: "building.2.fill")
+                    .font(.custom("Spectral-Bold", size: 11))
+                    .foregroundColor(.gray)
+
+                TextField("e.g., Bella Vista Events", text: $viewModel.vendorName)
+                    .font(.custom("Spectral-Regular", size: 16))
+                    .padding()
+                    .background(Color.white)
+                    .cornerRadius(12)
+                    .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+                    .focused($focusedField, equals: .name)
+            }
+
+            // Vendor Email
+            VStack(alignment: .leading, spacing: 8) {
+                Label("VENDOR EMAIL", systemImage: "envelope.fill")
+                    .font(.custom("Spectral-Bold", size: 11))
+                    .foregroundColor(.gray)
+
+                TextField("vendor@example.com", text: $viewModel.vendorEmail)
+                    .font(.custom("Spectral-Regular", size: 16))
+                    .keyboardType(.emailAddress)
+                    .textInputAutocapitalization(.never)
+                    .autocorrectionDisabled()
+                    .padding()
+                    .background(Color.white)
+                    .cornerRadius(12)
+                    .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+                    .focused($focusedField, equals: .email)
+
+                Text("We'll send them an invite to accept the agreement")
+                    .font(.custom("Spectral-Regular", size: 11))
+                    .foregroundColor(.gray)
+            }
+        }
+    }
+}
+
+// MARK: - Mode Tab
+
+private struct ModeTab: View {
+    let title: String
+    let icon: String
+    let isSelected: Bool
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 6) {
+                Image(systemName: icon)
+                    .font(.system(size: 12))
+                Text(title)
+                    .font(.custom("Spectral-Medium", size: 13))
+            }
+            .foregroundColor(isSelected ? .white : .black)
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 12)
+            .background(isSelected ? Color.black : Color.clear)
+            .cornerRadius(10)
+        }
+        .padding(2)
+    }
+}
+
+// MARK: - Vendor Search Result Card
+
+private struct VendorSearchResultCard: View {
+    let vendor: User
+    let onSelect: () -> Void
+
+    var body: some View {
+        Button(action: onSelect) {
+            HStack(spacing: 12) {
+                ZStack {
+                    Circle()
+                        .fill(Color(hex: "8B5CF6").opacity(0.15))
+                        .frame(width: 44, height: 44)
+
+                    Text(vendor.name.prefix(1).uppercased())
+                        .font(.custom("DelaGothicOne-Regular", size: 16))
+                        .foregroundColor(Color(hex: "8B5CF6"))
+                }
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(vendor.name)
+                        .font(.custom("Spectral-Bold", size: 15))
+                        .foregroundColor(.black)
+
+                    if let services = vendor.services, !services.isEmpty {
+                        Text(services.joined(separator: ", "))
+                            .font(.custom("Spectral-Regular", size: 12))
+                            .foregroundColor(.gray)
+                            .lineLimit(1)
+                    }
+
+                    if let location = vendor.location {
+                        HStack(spacing: 4) {
+                            Image(systemName: "mappin")
+                                .font(.system(size: 10))
+                            Text(location)
+                                .font(.custom("Spectral-Regular", size: 11))
+                        }
+                        .foregroundColor(.gray)
+                    }
+                }
+
+                Spacer()
+
+                Image(systemName: "plus.circle.fill")
+                    .font(.system(size: 22))
+                    .foregroundColor(Color(hex: "8B5CF6"))
+            }
+            .padding(12)
+            .background(Color.white)
+            .cornerRadius(12)
+            .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
         }
     }
 }
