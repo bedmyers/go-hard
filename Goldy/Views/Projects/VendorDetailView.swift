@@ -41,12 +41,39 @@ struct VendorDetailView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
-                Button {
-                    viewModel.showContactOptions = true
-                } label: {
-                    Image(systemName: "envelope.fill")
-                        .font(.custom("Spectral-Regular", size: 14))
+                HStack(spacing: 16) {
+                    if viewModel.canRemoveVendor {
+                        Button {
+                            viewModel.showRemoveConfirm = true
+                        } label: {
+                            Image(systemName: "trash")
+                                .font(.system(size: 14))
+                                .foregroundColor(.red)
+                        }
+                    }
+
+                    Button {
+                        viewModel.showContactOptions = true
+                    } label: {
+                        Image(systemName: "envelope.fill")
+                            .font(.system(size: 14))
+                    }
                 }
+            }
+        }
+        .confirmationDialog("Remove Vendor", isPresented: $viewModel.showRemoveConfirm) {
+            Button("Remove Vendor", role: .destructive) {
+                Task {
+                    await viewModel.removeVendor()
+                }
+            }
+            Button("Cancel", role: .cancel) { }
+        } message: {
+            Text("Are you sure you want to remove \(viewModel.projectVendor.vendor.name) from this project? This cannot be undone.")
+        }
+        .onChange(of: viewModel.didRemoveVendor) { _, removed in
+            if removed {
+                dismiss()
             }
         }
         .confirmationDialog("Contact Vendor", isPresented: $viewModel.showContactOptions) {

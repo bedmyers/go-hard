@@ -1089,7 +1089,8 @@ private struct TimelineItem: View {
             customer: User(id: 1, email: "test@test.com", name: "Test", userType: User.UserType.customer),
             vendors: [],
             createdAt: Date(),
-            updatedAt: Date()
+            updatedAt: Date(),
+            myVendorRole: nil
         )
     )
 }

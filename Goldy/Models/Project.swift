@@ -23,6 +23,9 @@ struct Project: Identifiable, Codable {
     let vendors: [ProjectVendor]
     let createdAt: Date
     let updatedAt: Date
+
+    // For vendor projects - contains the vendor's own role info
+    let myVendorRole: MyVendorRole?
     
     // Computed properties for UI
     var progressPercentage: Int {
@@ -126,4 +129,28 @@ struct Milestone: Codable, Identifiable {
     let released: Bool
     let createdAt: Date
     let updatedAt: Date
+}
+
+// MARK: - My Vendor Role (for vendor's view of projects they're part of)
+struct MyVendorRole: Codable {
+    let id: Int  // This is the projectVendorId
+    let role: String
+    let amountCents: Int
+    let status: String
+    let escrow: Escrow?
+
+    var isPending: Bool {
+        status == "INVITED" || status == "PENDING"
+    }
+
+    var isAccepted: Bool {
+        status == "ACCEPTED"
+    }
+
+    var amountFormatted: String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .currency
+        formatter.maximumFractionDigits = 0
+        return formatter.string(from: NSNumber(value: Double(amountCents) / 100.0)) ?? "$0"
+    }
 }

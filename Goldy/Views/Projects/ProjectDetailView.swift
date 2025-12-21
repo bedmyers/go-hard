@@ -38,6 +38,9 @@ struct ProjectDetailView: View {
         .refreshable {
             await viewModel.refresh()
         }
+        .onAppear {
+            Task { await viewModel.refresh() }
+        }
     }
     
     // MARK: - Header
@@ -899,7 +902,8 @@ private struct PlaceholderTab: View {
                 customer: User(id: 1, email: "test@test.com", name: "Test User", userType: User.UserType.customer),
                 vendors: [],
                 createdAt: Date(),
-                updatedAt: Date()
+                updatedAt: Date(),
+                myVendorRole: nil
             )
         )
     }

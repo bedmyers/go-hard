@@ -15,6 +15,22 @@ struct ProjectsView: View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 20) {
+                    // Pending Invitations Section
+                    if !viewModel.pendingInvitations.isEmpty {
+                        VStack(alignment: .leading, spacing: 12) {
+                            Text("PENDING INVITATIONS")
+                                .font(.custom("DelaGothicOne-Regular", size: 14))
+                                .foregroundColor(Color(hex: "8B5CF6"))
+                                .padding(.horizontal)
+
+                            ForEach(viewModel.pendingInvitations) { project in
+                                InvitationCard(project: project, viewModel: viewModel)
+                                    .padding(.horizontal)
+                            }
+                        }
+                    }
+
+                    // Projects Section
                     VStack(alignment: .leading, spacing: 16) {
                         Text("YOUR PROJECTS")
                             .font(.custom("DelaGothicOne-Regular", size: 16))
@@ -28,17 +44,31 @@ struct ProjectsView: View {
                             ErrorView(message: error) {
                                 Task { await viewModel.fetchProjects() }
                             }
-                        } else if viewModel.allProjects.isEmpty {
+                        } else if viewModel.allProjects.isEmpty && viewModel.pendingInvitations.isEmpty {
                             EmptyProjectsView {
                                 showCreateProject = true
                             }
+                        } else if viewModel.allProjects.isEmpty {
+                            Text("No active projects yet")
+                                .font(.custom("Spectral-Regular", size: 14))
+                                .foregroundColor(.gray)
+                                .frame(maxWidth: .infinity, minHeight: 100)
                         } else {
                             ForEach(Array(viewModel.allProjects.enumerated()), id: \.element.id) { index, project in
-                                NavigationLink(destination: ProjectDetailView(project: project)) {
-                                    ProjectCard(project: project, colorIndex: index)
+                                // Route vendors to their agreement view, customers to full project view
+                                if project.myVendorRole != nil {
+                                    NavigationLink(destination: VendorAgreementView(project: project)) {
+                                        ProjectCard(project: project, colorIndex: index)
+                                    }
+                                    .buttonStyle(.plain)
+                                    .padding(.horizontal)
+                                } else {
+                                    NavigationLink(destination: ProjectDetailView(project: project)) {
+                                        ProjectCard(project: project, colorIndex: index)
+                                    }
+                                    .buttonStyle(.plain)
+                                    .padding(.horizontal)
                                 }
-                                .buttonStyle(.plain)
-                                .padding(.horizontal)
                             }
                         }
                     }
@@ -58,14 +88,145 @@ struct ProjectsView: View {
                     }
                 }
             }
-            .task {
-                await viewModel.fetchProjects()
+            .onAppear {
+                Task { await viewModel.fetchProjects() }
             }
             .refreshable {
                 await viewModel.fetchProjects()
             }
             .sheet(isPresented: $showCreateProject) {
                 CreateProjectView(viewModel: viewModel)
+            }
+        }
+    }
+}
+
+// MARK: - Invitation Card
+
+private struct InvitationCard: View {
+    let project: Project
+    @ObservedObject var viewModel: ProjectsViewModel
+    @State private var isProcessing = false
+    @State private var showDetails = false
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            // Header
+            HStack {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(project.title)
+                        .font(.custom("DelaGothicOne-Regular", size: 16))
+
+                    Text("from \(project.customer.name)")
+                        .font(.custom("Spectral-Regular", size: 13))
+                        .foregroundColor(.gray)
+                }
+
+                Spacer()
+
+                Text("NEW")
+                    .font(.custom("Spectral-Bold", size: 10))
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(Color(hex: "8B5CF6"))
+                    .cornerRadius(4)
+            }
+
+            // Role and amount
+            if let role = project.myVendorRole {
+                HStack {
+                    Label(role.role, systemImage: "tag.fill")
+                        .font(.custom("Spectral-Medium", size: 13))
+                        .foregroundColor(.gray)
+
+                    Spacer()
+
+                    Text(role.amountFormatted)
+                        .font(.custom("DelaGothicOne-Regular", size: 16))
+                }
+            }
+
+            // Event date
+            if let eventDate = project.eventDate {
+                HStack(spacing: 4) {
+                    Image(systemName: "calendar")
+                        .font(.system(size: 12))
+                    Text(eventDate, style: .date)
+                        .font(.custom("Spectral-Regular", size: 12))
+                }
+                .foregroundColor(.gray)
+            }
+
+            // Action buttons
+            HStack(spacing: 12) {
+                Button {
+                    guard let projectVendorId = project.myVendorRole?.id else { return }
+                    isProcessing = true
+                    Task {
+                        do {
+                            try await viewModel.declineAgreement(projectVendorId: projectVendorId)
+                        } catch {
+                            print("Error declining: \(error)")
+                        }
+                        isProcessing = false
+                    }
+                } label: {
+                    Text("DECLINE")
+                        .font(.custom("Spectral-Bold", size: 12))
+                        .foregroundColor(.gray)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 12)
+                        .background(Color.gray.opacity(0.1))
+                        .cornerRadius(8)
+                }
+                .disabled(isProcessing)
+
+                Button {
+                    guard let projectVendorId = project.myVendorRole?.id else { return }
+                    isProcessing = true
+                    Task {
+                        do {
+                            try await viewModel.acceptAgreement(projectVendorId: projectVendorId)
+                        } catch {
+                            print("Error accepting: \(error)")
+                        }
+                        isProcessing = false
+                    }
+                } label: {
+                    HStack {
+                        if isProcessing {
+                            ProgressView()
+                                .scaleEffect(0.8)
+                                .tint(.white)
+                        } else {
+                            Text("ACCEPT")
+                                .font(.custom("Spectral-Bold", size: 12))
+                        }
+                    }
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 12)
+                    .background(Color(hex: "22C55E"))
+                    .cornerRadius(8)
+                }
+                .disabled(isProcessing)
+            }
+        }
+        .padding(16)
+        .background(Color.white)
+        .cornerRadius(12)
+        .overlay(
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(Color(hex: "8B5CF6").opacity(0.3), lineWidth: 2)
+        )
+        .shadow(color: .black.opacity(0.05), radius: 8, x: 0, y: 4)
+        .onTapGesture {
+            showDetails = true
+        }
+        .sheet(isPresented: $showDetails) {
+            NavigationStack {
+                VendorAgreementView(project: project)
             }
         }
     }

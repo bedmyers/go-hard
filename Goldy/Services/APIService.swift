@@ -179,7 +179,21 @@ class APIService {
     func updateProjectVendor(projectId: Int, vendorId: Int, body: [String: Any]) async throws -> ProjectVendorResponse {
         return try await makeRequest(endpoint: "/projects/\(projectId)/vendors/\(vendorId)", method: "PATCH", body: body)
     }
-    
+
+    func removeVendorFromProject(projectId: Int, vendorId: Int) async throws -> GenericSuccessResponse {
+        return try await makeRequest(endpoint: "/projects/\(projectId)/vendors/\(vendorId)", method: "DELETE")
+    }
+
+    // MARK: - Agreement Acceptance
+
+    func acceptAgreement(projectVendorId: Int) async throws -> AcceptAgreementResponse {
+        return try await makeRequest(endpoint: "/project-vendors/\(projectVendorId)/accept", method: "POST")
+    }
+
+    func declineAgreement(projectVendorId: Int) async throws -> AcceptAgreementResponse {
+        return try await makeRequest(endpoint: "/project-vendors/\(projectVendorId)/decline", method: "POST")
+    }
+
     // MARK: - Escrow Methods
     
     func createEscrow(projectVendorId: Int, body: [String: Any]) async throws -> EscrowResponse {

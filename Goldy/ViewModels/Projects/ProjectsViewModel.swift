@@ -17,9 +17,17 @@ class ProjectsViewModel: ObservableObject {
     private let api = APIService.shared
     
     // MARK: - Computed Properties
-    
+
+    var pendingInvitations: [Project] {
+        vendorProjects.filter { $0.myVendorRole?.isPending == true }
+    }
+
+    var acceptedVendorProjects: [Project] {
+        vendorProjects.filter { $0.myVendorRole?.isPending != true }
+    }
+
     var allProjects: [Project] {
-        ownedProjects + vendorProjects
+        ownedProjects + acceptedVendorProjects
     }
     
     var totalProjects: Int {
@@ -102,11 +110,25 @@ class ProjectsViewModel: ObservableObject {
     
     func deleteProject(_ projectId: Int) async throws {
         try await api.deleteProject(projectId)
-        
+
         // Remove from local state
         ownedProjects.removeAll { $0.id == projectId }
         vendorProjects.removeAll { $0.id == projectId }
-        
+
         print("Deleted project: \(projectId)")
+    }
+
+    // MARK: - Agreement Actions
+
+    func acceptAgreement(projectVendorId: Int) async throws {
+        let _ = try await api.acceptAgreement(projectVendorId: projectVendorId)
+        print("✅ Accepted agreement: \(projectVendorId)")
+        await fetchProjects()
+    }
+
+    func declineAgreement(projectVendorId: Int) async throws {
+        let _ = try await api.declineAgreement(projectVendorId: projectVendorId)
+        print("❌ Declined agreement: \(projectVendorId)")
+        await fetchProjects()
     }
 }

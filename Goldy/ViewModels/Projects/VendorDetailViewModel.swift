@@ -17,7 +17,9 @@ class VendorDetailViewModel: ObservableObject {
     @Published var showFundEscrow = false
     @Published var showTerms = false
     @Published var selectedMilestone: Milestone?
-    
+    @Published var showRemoveConfirm = false
+    @Published var didRemoveVendor = false
+
     private let api = APIService.shared
     
     init(projectVendor: ProjectVendor) {
@@ -85,6 +87,32 @@ class VendorDetailViewModel: ObservableObject {
     
     func refreshData() async {
         await refreshEscrow()
+    }
+
+    var canRemoveVendor: Bool {
+        // Can only remove if escrow hasn't been funded
+        guard let escrow = projectVendor.escrow else { return true }
+        return escrow.status == "PENDING"
+    }
+
+    func removeVendor() async {
+        isLoading = true
+        errorMessage = nil
+
+        do {
+            let _ = try await api.removeVendorFromProject(
+                projectId: projectVendor.projectId,
+                vendorId: projectVendor.vendorId
+            )
+            print("✅ Vendor removed")
+            didRemoveVendor = true
+        } catch {
+            errorMessage = error.localizedDescription
+            showError = true
+            print("❌ Error removing vendor: \(error)")
+        }
+
+        isLoading = false
     }
 
     private func refreshEscrow() async {
