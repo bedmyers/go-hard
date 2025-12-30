@@ -75,7 +75,6 @@
 		187B1C762EDCF5F70090DE18 /* VendorDiscoverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 187B1C752EDCF5F30090DE18 /* VendorDiscoverView.swift */; };
 		187B1C782EDCF6670090DE18 /* VendorRFPBrowseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 187B1C772EDCF6620090DE18 /* VendorRFPBrowseView.swift */; };
 		187B1C7A2EE62C8F0090DE18 /* VendorProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 187B1C792EE62C8A0090DE18 /* VendorProfileView.swift */; };
-		187B1CBA2EF4A0000090DE18 /* VendorAgreementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 187B1CB92EF4A0000090DE18 /* VendorAgreementView.swift */; };
 		187B1C7D2EE62CF90090DE18 /* VendorMarketplaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 187B1C7C2EE62CF50090DE18 /* VendorMarketplaceView.swift */; };
 		187B1C802EE62D1F0090DE18 /* VendorMarketplaceViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 187B1C7F2EE62D190090DE18 /* VendorMarketplaceViewModel.swift */; };
 		187B1C822EE681D60090DE18 /* Messages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 187B1C812EE681D40090DE18 /* Messages.swift */; };
@@ -98,6 +97,7 @@
 		187B1CB42EEFCF2D0090DE18 /* Spectral-LightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 187B1CA12EEFCF2D0090DE18 /* Spectral-LightItalic.ttf */; };
 		187B1CB52EEFCF2D0090DE18 /* OFL.txt in Resources */ = {isa = PBXBuildFile; fileRef = 187B1C982EEFCF2D0090DE18 /* OFL.txt */; };
 		187B1CB62EEFCF2D0090DE18 /* Spectral-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 187B1C9B2EEFCF2D0090DE18 /* Spectral-ExtraBold.ttf */; };
+		187B1CBA2EF4A0000090DE18 /* VendorAgreementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 187B1CB92EF4A0000090DE18 /* VendorAgreementView.swift */; };
 		18FC98012D6EE2910053CFD3 /* DelaGothicOne-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 18FC98002D6EE2910053CFD3 /* DelaGothicOne-Regular.ttf */; };
 		18FC98052D737EFC0053CFD3 /* IBMPlexMono-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 18FC98042D737EFC0053CFD3 /* IBMPlexMono-Regular.ttf */; };
 /* End PBXBuildFile section */
@@ -164,7 +164,6 @@
 		187B1C752EDCF5F30090DE18 /* VendorDiscoverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VendorDiscoverView.swift; sourceTree = "<group>"; };
 		187B1C772EDCF6620090DE18 /* VendorRFPBrowseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VendorRFPBrowseView.swift; sourceTree = "<group>"; };
 		187B1C792EE62C8A0090DE18 /* VendorProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VendorProfileView.swift; sourceTree = "<group>"; };
-		187B1CB92EF4A0000090DE18 /* VendorAgreementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VendorAgreementView.swift; sourceTree = "<group>"; };
 		187B1C7C2EE62CF50090DE18 /* VendorMarketplaceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VendorMarketplaceView.swift; sourceTree = "<group>"; };
 		187B1C7F2EE62D190090DE18 /* VendorMarketplaceViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VendorMarketplaceViewModel.swift; sourceTree = "<group>"; };
 		187B1C812EE681D40090DE18 /* Messages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Messages.swift; sourceTree = "<group>"; };
@@ -187,6 +186,7 @@
 		187B1CA42EEFCF2D0090DE18 /* Spectral-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Spectral-Regular.ttf"; sourceTree = "<group>"; };
 		187B1CA52EEFCF2D0090DE18 /* Spectral-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Spectral-SemiBold.ttf"; sourceTree = "<group>"; };
 		187B1CA62EEFCF2D0090DE18 /* Spectral-SemiBoldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Spectral-SemiBoldItalic.ttf"; sourceTree = "<group>"; };
+		187B1CB92EF4A0000090DE18 /* VendorAgreementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VendorAgreementView.swift; sourceTree = "<group>"; };
 		18FC97FD2D6EE0E90053CFD3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		18FC98002D6EE2910053CFD3 /* DelaGothicOne-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "DelaGothicOne-Regular.ttf"; sourceTree = "<group>"; };
 		18FC98042D737EFC0053CFD3 /* IBMPlexMono-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "IBMPlexMono-Regular.ttf"; sourceTree = "<group>"; };
@@ -806,7 +806,7 @@
 				CODE_SIGN_ENTITLEMENTS = Goldy/Goldy.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 4;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"Goldy/Preview Content\"";
 				DEVELOPMENT_TEAM = 24S36Y3GNV;
@@ -829,7 +829,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 14.2;
-				MARKETING_VERSION = 0.1.0;
+				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.gohard.ios;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -850,7 +850,7 @@
 				CODE_SIGN_ENTITLEMENTS = Goldy/Goldy.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 4;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"Goldy/Preview Content\"";
 				DEVELOPMENT_TEAM = 24S36Y3GNV;
@@ -873,7 +873,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 14.2;
-				MARKETING_VERSION = 0.1.0;
+				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.gohard.ios;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";

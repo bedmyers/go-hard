@@ -36,7 +36,7 @@ class VendorDetailViewModel: ObservableObject {
         
         let released = Double(milestones.filter { $0.released }.reduce(0) { $0 + $1.amountCents }) / 100.0
         
-        let isFunded = escrow.status == "AUTHORIZED" || escrow.status == "COMPLETE"
+        let isFunded = escrow.status == "AUTHORIZED" || escrow.status == "FUNDED" || escrow.status == "COMPLETE"
         let inEscrow = isFunded ? (total - released) : 0
         let pending = isFunded ? 0 : (total - released)
         

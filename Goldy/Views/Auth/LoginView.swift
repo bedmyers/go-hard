@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import AuthenticationServices
 
 // MARK: - LoginView
 struct LoginView: View {
@@ -71,11 +72,11 @@ private struct LoginMainContentView: View {
     @FocusState.Binding var focusedField: LoginView.LoginField?
     @Binding var showSignup: Bool
     @Binding var showForgotPassword: Bool
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             LoginTitleView()
-            
+
             LoginEmailFieldView(
                 email: $authVM.email,
                 validationState: authVM.emailValidationState,
@@ -84,7 +85,7 @@ private struct LoginMainContentView: View {
             .focused($focusedField, equals: .email)
             .onSubmit { focusedField = .password }
             .padding(.bottom, 16)
-            
+
             LoginPasswordFieldView(
                 password: $authVM.password,
                 isLoading: authVM.isLoading,
@@ -98,7 +99,7 @@ private struct LoginMainContentView: View {
                 }
             }
             .padding(.bottom, 30)
-            
+
             LoginButtonView(
                 isLoading: authVM.isLoading,
                 canSubmit: authVM.canSubmit,
@@ -107,7 +108,7 @@ private struct LoginMainContentView: View {
                     authVM.login()
                 }
             )
-            
+
             if !authVM.errorMessage.isEmpty {
                 ErrorMessageView(message: authVM.errorMessage)
                     .transition(.move(edge: .top).combined(with: .opacity))
@@ -115,9 +116,26 @@ private struct LoginMainContentView: View {
                         authVM.clearError()
                     }
             }
-            
+
+            // Divider
+            HStack {
+                Rectangle()
+                    .fill(Color.gray.opacity(0.3))
+                    .frame(height: 1)
+                Text("or")
+                    .font(.custom("Spectral-Regular", size: 14))
+                    .foregroundColor(.gray)
+                Rectangle()
+                    .fill(Color.gray.opacity(0.3))
+                    .frame(height: 1)
+            }
+            .padding(.vertical, 24)
+
+            // Apple Sign In Button
+            AppleSignInButton(authVM: authVM)
+
             LoginFooterView(onSignupTapped: { showSignup = true })
-            
+
             Spacer(minLength: 40)
         }
         .padding(.horizontal, 15)
@@ -379,6 +397,121 @@ struct ForgotPasswordView: View {
                         dismiss()
                     }
                 }
+            }
+        }
+    }
+}
+
+// MARK: - Apple Sign In Button
+private struct AppleSignInButton: View {
+    @ObservedObject var authVM: AuthViewModel
+
+    var body: some View {
+        SignInWithAppleButton(.signIn) { request in
+            request.requestedScopes = [.email, .fullName]
+        } onCompletion: { result in
+            switch result {
+            case .success(let authResults):
+                handleAppleSignIn(authResults)
+            case .failure(let error):
+                print("Apple Sign In failed: \(error)")
+                authVM.errorMessage = "Apple Sign In failed. Please try again."
+            }
+        }
+        .signInWithAppleButtonStyle(.black)
+        .frame(height: 50)
+        .cornerRadius(8)
+    }
+
+    private func handleAppleSignIn(_ authorization: ASAuthorization) {
+        guard let appleIDCredential = authorization.credential as? ASAuthorizationAppleIDCredential,
+              let identityTokenData = appleIDCredential.identityToken,
+              let identityToken = String(data: identityTokenData, encoding: .utf8) else {
+            authVM.errorMessage = "Failed to get Apple credentials"
+            return
+        }
+
+        // Get user info (only available on first sign in)
+        var userInfo: [String: Any] = [:]
+        if let email = appleIDCredential.email {
+            userInfo["email"] = email
+        }
+        if let fullName = appleIDCredential.fullName {
+            userInfo["name"] = [
+                "firstName": fullName.givenName ?? "",
+                "lastName": fullName.familyName ?? ""
+            ]
+        }
+
+        // Send to backend
+        Task {
+            await signInWithApple(identityToken: identityToken, userInfo: userInfo)
+        }
+    }
+
+    private func signInWithApple(identityToken: String, userInfo: [String: Any]) async {
+        authVM.isLoading = true
+        authVM.errorMessage = ""
+
+        guard let url = URL(string: "https://go-hard-backend-production.up.railway.app/auth/apple") else {
+            authVM.errorMessage = "Invalid server URL"
+            authVM.isLoading = false
+            return
+        }
+
+        var body: [String: Any] = ["identityToken": identityToken]
+        if !userInfo.isEmpty {
+            body["user"] = userInfo
+        }
+
+        guard let requestBody = try? JSONSerialization.data(withJSONObject: body) else {
+            authVM.errorMessage = "Failed to prepare request"
+            authVM.isLoading = false
+            return
+        }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.httpBody = requestBody
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+
+        do {
+            let (data, response) = try await URLSession.shared.data(for: request)
+
+            guard let httpResponse = response as? HTTPURLResponse else {
+                throw NSError(domain: "AppleSignIn", code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid response"])
+            }
+
+            if httpResponse.statusCode == 200 || httpResponse.statusCode == 201 {
+                let decoder = JSONDecoder()
+                let loginResponse = try decoder.decode(LoginResponse.self, from: data)
+
+                await MainActor.run {
+                    // Store credentials
+                    UserDefaults.standard.set(loginResponse.token, forKey: "authToken")
+                    UserDefaults.standard.set(loginResponse.user.id, forKey: "userId")
+                    UserDefaults.standard.set(loginResponse.user.email, forKey: "userEmail")
+                    UserDefaults.standard.set(loginResponse.user.name, forKey: "userName")
+                    UserDefaults.standard.set(loginResponse.user.userType, forKey: "userType")
+
+                    authVM.isLoading = false
+                    authVM.isAuthenticated = true
+
+                    print("✅ Apple Sign In successful: \(loginResponse.user.email)")
+                }
+            } else {
+                let errorBody = String(data: data, encoding: .utf8) ?? "Unknown error"
+                print("Apple Sign In error: \(errorBody)")
+                await MainActor.run {
+                    authVM.errorMessage = "Sign in failed. Please try again."
+                    authVM.isLoading = false
+                }
+            }
+        } catch {
+            print("Apple Sign In network error: \(error)")
+            await MainActor.run {
+                authVM.errorMessage = "Network error. Please try again."
+                authVM.isLoading = false
             }
         }
     }

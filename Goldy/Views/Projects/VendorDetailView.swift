@@ -417,7 +417,7 @@ private struct MilestoneCard: View {
     let isLoading: Bool
     
     private var isFunded: Bool {
-        escrowStatus == "AUTHORIZED" || escrowStatus == "COMPLETE"
+        escrowStatus == "AUTHORIZED" || escrowStatus == "FUNDED" || escrowStatus == "COMPLETE"
     }
     
     var body: some View {
