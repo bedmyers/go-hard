@@ -18,7 +18,7 @@ struct DiscoverView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                Color(hex: "F5F1E8")
+                Color("Background")
                     .ignoresSafeArea()
                 
                 VStack(spacing: 0) {
@@ -70,7 +70,7 @@ private struct AllRFPsView: View {
                 } label: {
                     HStack(spacing: 4) {
                         Image(systemName: "plus")
-                            .font(.custom("Spectral-Bold", size: 12))
+                            .font(.system(size: 12, weight: .bold))
                         Text("New RFP")
                             .font(.custom("Spectral-Bold", size: 13))
                     }
@@ -102,7 +102,7 @@ private struct AllRFPsView: View {
     private var emptyState: some View {
         VStack(spacing: 20) {
             Image(systemName: "megaphone")
-                .font(.custom("Spectral-Regular", size: 60))
+                .font(.system(size: 60))
                 .foregroundColor(.gray.opacity(0.4))
             
             Text("No RFPs Yet")
@@ -257,8 +257,8 @@ private struct RFPCardWithProject: View {
     
     private var statsRow: some View {
         HStack(spacing: 10) {
-            StatBox(icon: "dollarsign", label: "BUDGET", value: rfp.budgetFormatted, bgColor: Color(hex: "F5F1E8"))
-            StatBox(icon: "person.2", label: "BIDS", value: "\(rfp.bidCount) received", bgColor: Color(hex: "F5F1E8"))
+            StatBox(icon: "dollarsign", label: "BUDGET", value: rfp.budgetFormatted, bgColor: Color("Background"))
+            StatBox(icon: "person.2", label: "BIDS", value: "\(rfp.bidCount) received", bgColor: Color("Background"))
             StatBox(icon: "clock", label: "TIME LEFT", value: timeLeftText, bgColor: Color(hex: "FFEBE5"), valueColor: Color(hex: "FF6B35"))
         }
     }
@@ -651,7 +651,7 @@ private struct FilterSheet: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                Color(hex: "F5F1E8")
+                Color("Background")
                     .ignoresSafeArea()
                 
                 ScrollView {

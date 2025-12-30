@@ -18,7 +18,7 @@ struct VendorDiscoverView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                Color(hex: "F5F1E8")
+                Color("Background")
                     .ignoresSafeArea()
                 
                 VStack(spacing: 0) {
@@ -78,7 +78,7 @@ private struct VendorBrowseContent: View {
     private var emptyState: some View {
         VStack(spacing: 20) {
             Image(systemName: "doc.text.magnifyingglass")
-                .font(.custom("Spectral-Regular", size: 60))
+                .font(.system(size: 60))
                 .foregroundColor(.gray.opacity(0.4))
             
             Text("No Open Requests")

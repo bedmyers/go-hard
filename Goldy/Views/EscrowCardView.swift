@@ -311,6 +311,6 @@ struct EscrowCardView_Previews: PreviewProvider {
             .frame(height: 300)
         }
         .padding()
-        .background(Color(red: 0.97, green: 0.93, blue: 0.85))
+        .background(Color("Background"))
     }
 }

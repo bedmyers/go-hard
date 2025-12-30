@@ -32,7 +32,7 @@ struct UserSearchSheetView: View {
                     searchResults
                 }
             }
-            .background(Color(red: 0.97, green: 0.93, blue: 0.85))
+            .background(Color("Background"))
             .navigationTitle("Add a Party")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

@@ -15,7 +15,7 @@ struct VendorRFPBrowseView: View {
     
     var body: some View {
         ZStack {
-            Color(hex: "F5F1E8")
+            Color("Background")
                 .ignoresSafeArea()
             
             if isLoading {
@@ -48,7 +48,7 @@ struct VendorRFPBrowseView: View {
     private var emptyState: some View {
         VStack(spacing: 20) {
             Image(systemName: "doc.text.magnifyingglass")
-                .font(.custom("Spectral-Regular", size: 60))
+                .font(.system(size: 60))
                 .foregroundColor(.gray.opacity(0.4))
             
             Text("No Open Requests")
@@ -229,7 +229,7 @@ struct RFPBidSheet: View {
                 }
                 .padding()
             }
-            .background(Color(hex: "F5F1E8"))
+            .background(Color("Background"))
             .navigationTitle("Submit Bid")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -370,7 +370,7 @@ struct RFPBidSheet: View {
             .disabled(!isValid || isLoading)
             .opacity(isValid ? 1.0 : 0.5)
             .padding()
-            .background(Color(hex: "F5F1E8"))
+            .background(Color("Background"))
         }
     }
     

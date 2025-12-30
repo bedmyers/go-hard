@@ -16,7 +16,7 @@ struct VendorProfileView: View {
     
     var body: some View {
         ZStack {
-            Color(hex: "F5F1E8")
+            Color("Background")
                 .ignoresSafeArea()
             
             if viewModel.isLoading {
@@ -644,7 +644,7 @@ struct VendorInviteToRFPSheet: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                Color(hex: "F5F1E8")
+                Color("Background")
                     .ignoresSafeArea()
                 
                 if isLoading {

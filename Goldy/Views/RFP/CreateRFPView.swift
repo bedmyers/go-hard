@@ -22,7 +22,7 @@ struct CreateRFPView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                Color(hex: "F5F1E8")
+                Color("Background")
                     .ignoresSafeArea()
                 
                 VStack(spacing: 0) {
@@ -145,7 +145,7 @@ struct CreateRFPView: View {
                 .opacity(viewModel.canProceed ? 1.0 : 0.5)
             }
             .padding()
-            .background(Color(hex: "F5F1E8"))
+            .background(Color("Background"))
         }
     }
 }

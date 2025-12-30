@@ -13,7 +13,7 @@ struct MessagesView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                Color(hex: "F5F1E8")
+                Color("Background")
                     .ignoresSafeArea()
                 
                 if viewModel.isLoading {
@@ -41,7 +41,7 @@ struct MessagesView: View {
     private var emptyState: some View {
         VStack(spacing: 20) {
             Image(systemName: "bubble.left.and.bubble.right")
-                .font(.custom("Spectral-Regular", size: 60))
+                .font(.system(size: 60))
                 .foregroundColor(.gray.opacity(0.4))
             
             Text("No Messages Yet")

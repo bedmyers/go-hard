@@ -14,7 +14,7 @@ struct VendorMyBidsView: View {
     
     var body: some View {
         ZStack {
-            Color(hex: "F5F1E8")
+            Color("Background")
                 .ignoresSafeArea()
             
             if isLoading {
@@ -40,7 +40,7 @@ struct VendorMyBidsView: View {
     private var emptyState: some View {
         VStack(spacing: 20) {
             Image(systemName: "paperplane")
-                .font(.custom("Spectral-Regular", size: 60))
+                .font(.system(size: 60))
                 .foregroundColor(.gray.opacity(0.4))
             
             Text("No Bids Yet")

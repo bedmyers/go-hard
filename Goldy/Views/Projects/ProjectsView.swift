@@ -417,7 +417,7 @@ private struct EmptyProjectsView: View {
             Spacer()
             
             Image(systemName: "folder.fill")
-                .font(.custom("Spectral-Regular", size: 56))
+                .font(.system(size: 56))
                 .foregroundColor(.gray.opacity(0.4))
             
             Text("No Projects Yet")
@@ -454,7 +454,7 @@ private struct ErrorView: View {
     var body: some View {
         VStack(spacing: 20) {
             Image(systemName: "exclamationmark.triangle.fill")
-                .font(.custom("Spectral-Regular", size: 48))
+                .font(.system(size: 48))
                 .foregroundColor(.orange)
             
             Text("Something Went Wrong")

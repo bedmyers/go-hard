@@ -14,7 +14,7 @@ struct VendorWelcomeView: View {
     var body: some View {
         NavigationView {
             ZStack {
-                Color(hex: "F5F1E8")
+                Color("Background")
                     .ignoresSafeArea()
                 
                 VStack(spacing: 0) {
@@ -98,7 +98,7 @@ struct VendorWelcomeView: View {
                     .padding(.top, 16)
                     .padding(.bottom, 24)  // Extra bottom padding for safe area
                     .background(
-                        Color(hex: "F5F1E8")
+                        Color("Background")
                             .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: -5)
                     )
                 }

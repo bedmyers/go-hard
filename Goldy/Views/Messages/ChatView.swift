@@ -47,7 +47,7 @@ struct ChatView: View {
             // Input bar
             inputBar
         }
-        .background(Color(hex: "F5F1E8"))
+        .background(Color("Background"))
         .navigationTitle(partner.name)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
@@ -89,7 +89,7 @@ struct ChatView: View {
                 }
             } label: {
                 Image(systemName: "paperplane.fill")
-                    .font(.custom("Spectral-Regular", size: 18))
+                    .font(.system(size: 18))
                     .foregroundColor(viewModel.canSend ? .black : .gray)
                     .frame(width: 44, height: 44)
                     .background(viewModel.canSend ? Color(hex: "FFD700") : Color.gray.opacity(0.2))

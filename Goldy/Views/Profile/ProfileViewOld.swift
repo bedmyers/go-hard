@@ -13,7 +13,7 @@ struct ProfileViewOld: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                Color(hex: "F5F1E8")
+                Color("Background")
                     .ignoresSafeArea()
                 
                 VStack(spacing: 24) {

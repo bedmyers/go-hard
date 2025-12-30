@@ -27,7 +27,7 @@ struct VendorQuickProfileView: View {
     var body: some View {
         NavigationView {
             ZStack {
-                Color(hex: "F5F1E8")
+                Color("Background")
                     .ignoresSafeArea()
                 
                 ScrollView {

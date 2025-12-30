@@ -190,8 +190,8 @@ struct RFPExpandableCard: View {
     
     private var statsRow: some View {
         HStack(spacing: 10) {
-            StatBox(icon: "dollarsign", label: "BUDGET", value: rfp.budgetFormatted, bgColor: Color(hex: "F5F1E8"))
-            StatBox(icon: "person.2", label: "BIDS", value: "\(rfp.bidCount) received", bgColor: Color(hex: "F5F1E8"))
+            StatBox(icon: "dollarsign", label: "BUDGET", value: rfp.budgetFormatted, bgColor: Color("Background"))
+            StatBox(icon: "person.2", label: "BIDS", value: "\(rfp.bidCount) received", bgColor: Color("Background"))
             StatBox(icon: "clock", label: "TIME LEFT", value: timeLeftText, bgColor: Color(hex: "FFEBE5"), valueColor: Color(hex: "FF6B35"))
         }
     }

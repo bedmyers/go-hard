@@ -248,7 +248,7 @@ struct ProfileView: View {
             } label: {
                 HStack {
                     Image(systemName: "rectangle.portrait.and.arrow.right")
-                        .font(.custom("Spectral-Medium", size: 16))
+                        .font(.system(size: 16))
                     Text("Log Out")
                         .font(.custom("Spectral-Bold", size: 16))
                 }
@@ -313,19 +313,19 @@ private struct ProfileRow: View {
         Button(action: action) {
             HStack(spacing: 16) {
                 Image(systemName: icon)
-                    .font(.custom("Spectral-Regular", size: 16))
+                    .font(.system(size: 16))
                     .foregroundColor(Color(hex: "FFD700"))
                     .frame(width: 24)
-                
+
                 Text(title)
                     .font(.custom("Spectral-Regular", size: 15))
                     .foregroundColor(.black)
-                
+
                 Spacer()
-                
+
                 if showChevron {
                     Image(systemName: "chevron.right")
-                        .font(.custom("Spectral-Medium", size: 13))
+                        .font(.system(size: 13))
                         .foregroundColor(.gray.opacity(0.5))
                 }
             }

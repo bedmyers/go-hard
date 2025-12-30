@@ -50,7 +50,7 @@ struct OpenEscrowsView: View {
                 .opacity(0.6)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color(red: 0.97, green: 0.93, blue: 0.85).ignoresSafeArea())
+        .background(Color("Background").ignoresSafeArea())
     }
     
     private var escrowsContent: some View {
@@ -66,7 +66,7 @@ struct OpenEscrowsView: View {
         .background(
             LinearGradient(
                 gradient: Gradient(colors: [
-                    Color(red: 0.97, green: 0.93, blue: 0.85),
+                    Color("Background"),
                     Color(red: 0.99, green: 0.90, blue: 0.90)
                 ]),
                 startPoint: .top,
