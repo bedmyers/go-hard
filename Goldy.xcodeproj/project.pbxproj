@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		1818BD772DA1FE540078BCAB /* DaysOne-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1818BD762DA1FE540078BCAB /* DaysOne-Regular.ttf */; };
+		183707C72F0471FF00FCD868 /* EditProjectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183707C62F0471FF00FCD868 /* EditProjectView.swift */; };
+		183707C92F0C518500FCD868 /* EditRFPView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183707C82F0C518500FCD868 /* EditRFPView.swift */; };
 		1857F8382E496E7800B75623 /* Stripe in Frameworks */ = {isa = PBXBuildFile; productRef = 1857F8372E496E7800B75623 /* Stripe */; };
 		1857F83A2E496E7800B75623 /* StripeApplePay in Frameworks */ = {isa = PBXBuildFile; productRef = 1857F8392E496E7800B75623 /* StripeApplePay */; };
 		1857F83C2E496E7800B75623 /* StripeCardScan in Frameworks */ = {isa = PBXBuildFile; productRef = 1857F83B2E496E7800B75623 /* StripeCardScan */; };
@@ -104,6 +106,8 @@
 
 /* Begin PBXFileReference section */
 		1818BD762DA1FE540078BCAB /* DaysOne-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "DaysOne-Regular.ttf"; sourceTree = "<group>"; };
+		183707C62F0471FF00FCD868 /* EditProjectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProjectView.swift; sourceTree = "<group>"; };
+		183707C82F0C518500FCD868 /* EditRFPView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditRFPView.swift; sourceTree = "<group>"; };
 		1863265C2D5B05BB00759DC1 /* Goldy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Goldy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		186326632D5B05BC00759DC1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		186326652D5B05BC00759DC1 /* Goldy.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Goldy.entitlements; sourceTree = "<group>"; };
@@ -402,6 +406,7 @@
 				187B1C512ED65F1C0090DE18 /* AddVendorView.swift */,
 				187B1C4F2ED65CD60090DE18 /* ProjectDetailView.swift */,
 				187B1C4D2ECFBA7E0090DE18 /* CreateProjectView.swift */,
+				183707C62F0471FF00FCD868 /* EditProjectView.swift */,
 				187B1C382EC035810090DE18 /* ProjectsView.swift */,
 			);
 			path = Projects;
@@ -460,6 +465,7 @@
 		187B1C632EDA4E5B0090DE18 /* RFP */ = {
 			isa = PBXGroup;
 			children = (
+				183707C82F0C518500FCD868 /* EditRFPView.swift */,
 				187B1C682EDA4EC70090DE18 /* CreateRFPView.swift */,
 				187B1C662EDA4E790090DE18 /* RFPDetailView.swift */,
 				187B1C642EDA4E5F0090DE18 /* RFPListView.swift */,
@@ -643,6 +649,7 @@
 				187B1C972EEB75760090DE18 /* CloudinaryService.swift in Sources */,
 				187B1C5A2ED6664D0090DE18 /* VendorDetailViewModel.swift in Sources */,
 				187B1C622EDA4CAB0090DE18 /* RFPDetailViewModel.swift in Sources */,
+				183707C92F0C518500FCD868 /* EditRFPView.swift in Sources */,
 				187B1C7D2EE62CF90090DE18 /* VendorMarketplaceView.swift in Sources */,
 				187B1C262EC034A70090DE18 /* VendorOnboardingView.swift in Sources */,
 				187B1C272EC034A70090DE18 /* VendorQuickProfileView.swift in Sources */,
@@ -655,6 +662,7 @@
 				187B1C4E2ECFBA880090DE18 /* CreateProjectView.swift in Sources */,
 				187B1C2F2EC034A70090DE18 /* FundEscrowView.swift in Sources */,
 				187B1C5C2ED6666E0090DE18 /* VendorDetailView.swift in Sources */,
+				183707C72F0471FF00FCD868 /* EditProjectView.swift in Sources */,
 				187B1C312EC034A70090DE18 /* MakePaymentView.swift in Sources */,
 				187B1C322EC034A70090DE18 /* OpenEscrowsView.swift in Sources */,
 				187B1C822EE681D60090DE18 /* Messages.swift in Sources */,
@@ -806,7 +814,7 @@
 				CODE_SIGN_ENTITLEMENTS = Goldy/Goldy.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 5;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"Goldy/Preview Content\"";
 				DEVELOPMENT_TEAM = 24S36Y3GNV;
@@ -829,7 +837,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 14.2;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 0.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.gohard.ios;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -850,7 +858,7 @@
 				CODE_SIGN_ENTITLEMENTS = Goldy/Goldy.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 5;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"Goldy/Preview Content\"";
 				DEVELOPMENT_TEAM = 24S36Y3GNV;
@@ -873,7 +881,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 14.2;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 0.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.gohard.ios;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";

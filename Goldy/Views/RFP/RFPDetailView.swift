@@ -9,24 +9,25 @@ import SwiftUI
 struct RFPDetailView: View {
     @StateObject private var viewModel: RFPDetailViewModel
     @Environment(\.dismiss) var dismiss
-    
+    @State private var showEditSheet = false
+
     init(rfp: RFP) {
         _viewModel = StateObject(wrappedValue: RFPDetailViewModel(rfp: rfp))
     }
-    
+
     var body: some View {
         ScrollView {
             VStack(spacing: 24) {
                 rfpHeader
-                
+
                 rfpDetails
-                
+
                 bidsSection
-                
+
                 if viewModel.rfp.isOpen {
                     closeRequestButton
                 }
-                
+
                 Spacer(minLength: 40)
             }
             .padding()
@@ -34,8 +35,25 @@ struct RFPDetailView: View {
         .background(Color("Background"))
         .navigationTitle("Request Details")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            if viewModel.rfp.isOpen {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button {
+                        showEditSheet = true
+                    } label: {
+                        Image(systemName: "pencil")
+                            .foregroundColor(.black)
+                    }
+                }
+            }
+        }
         .refreshable {
             await viewModel.refresh()
+        }
+        .sheet(isPresented: $showEditSheet) {
+            EditRFPView(rfp: viewModel.rfp) { updatedRFP in
+                viewModel.updateRFP(updatedRFP)
+            }
         }
         .alert("Accept Bid", isPresented: $viewModel.showAcceptConfirm, presenting: viewModel.selectedBid) { bid in
             Button("Accept", role: .none) {

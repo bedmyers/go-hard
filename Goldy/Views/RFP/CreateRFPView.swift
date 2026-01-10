@@ -10,43 +10,53 @@ import SwiftUI
 struct CreateRFPView: View {
     @Environment(\.dismiss) var dismiss
     @StateObject private var viewModel = CreateRFPViewModel()
-    
+    @State private var showSuccessScreen = false
+
     let projectId: Int?
     var onCreated: ((RFP) -> Void)?
-    
+
     init(projectId: Int? = nil, onCreated: ((RFP) -> Void)? = nil) {
         self.projectId = projectId
         self.onCreated = onCreated
     }
-    
+
     var body: some View {
         NavigationStack {
             ZStack {
                 Color("Background")
                     .ignoresSafeArea()
-                
-                VStack(spacing: 0) {
-                    progressBar
-                    
-                    TabView(selection: $viewModel.currentStep) {
-                        Step1BasicsView(viewModel: viewModel).tag(1)
-                        Step2EventView(viewModel: viewModel).tag(2)
-                        Step3StyleView(viewModel: viewModel).tag(3)
-                        Step4RequirementsView(viewModel: viewModel).tag(4)
-                        Step5BudgetView(viewModel: viewModel).tag(5)
-                        Step6VisibilityView(viewModel: viewModel).tag(6)
+
+                if showSuccessScreen, let rfp = viewModel.createdRFP {
+                    RFPSuccessView(rfp: rfp) {
+                        onCreated?(rfp)
+                        dismiss()
                     }
-                    .tabViewStyle(.page(indexDisplayMode: .never))
-                    .animation(.easeInOut, value: viewModel.currentStep)
-                    
-                    navigationButtons
+                } else {
+                    VStack(spacing: 0) {
+                        progressBar
+
+                        TabView(selection: $viewModel.currentStep) {
+                            Step1BasicsView(viewModel: viewModel).tag(1)
+                            Step2EventView(viewModel: viewModel).tag(2)
+                            Step3StyleView(viewModel: viewModel).tag(3)
+                            Step4RequirementsView(viewModel: viewModel).tag(4)
+                            Step5BudgetView(viewModel: viewModel).tag(5)
+                            Step6VisibilityView(viewModel: viewModel).tag(6)
+                        }
+                        .tabViewStyle(.page(indexDisplayMode: .never))
+                        .animation(.easeInOut, value: viewModel.currentStep)
+
+                        navigationButtons
+                    }
                 }
             }
-            .navigationTitle(stepTitle)
+            .navigationTitle(showSuccessScreen ? "" : stepTitle)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
+                if !showSuccessScreen {
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button("Cancel") { dismiss() }
+                    }
                 }
             }
             .alert("Error", isPresented: $viewModel.showError) {
@@ -54,10 +64,11 @@ struct CreateRFPView: View {
             } message: {
                 Text(viewModel.errorMessage ?? "Something went wrong")
             }
-            .onChange(of: viewModel.didCreate) { created in
-                if created, let rfp = viewModel.createdRFP {
-                    onCreated?(rfp)
-                    dismiss()
+            .onChange(of: viewModel.didCreate) { _, created in
+                if created {
+                    withAnimation(.easeInOut(duration: 0.3)) {
+                        showSuccessScreen = true
+                    }
                 }
             }
         }
@@ -208,14 +219,26 @@ private struct Step1BasicsView: View {
                     Text("DESCRIPTION")
                         .font(.custom("Spectral-Bold", size: 12))
                         .foregroundColor(.gray)
-                    
-                    TextEditor(text: $viewModel.description)
-                        .font(.custom("Spectral-Regular", size: 15))
-                        .frame(minHeight: 120)
-                        .padding(8)
-                        .background(Color.white)
-                        .cornerRadius(10)
-                    
+
+                    ZStack(alignment: .topLeading) {
+                        if viewModel.description.isEmpty {
+                            Text("e.g., Looking for a photographer who specializes in candid shots and outdoor settings...")
+                                .font(.custom("Spectral-Regular", size: 15))
+                                .foregroundColor(.gray.opacity(0.5))
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 12)
+                                .allowsHitTesting(false)
+                        }
+
+                        TextEditor(text: $viewModel.description)
+                            .font(.custom("Spectral-Regular", size: 15))
+                            .frame(minHeight: 120)
+                            .padding(8)
+                            .scrollContentBackground(.hidden)
+                    }
+                    .background(Color.white)
+                    .cornerRadius(10)
+
                     Text("What style are you looking for? Any specific needs?")
                         .font(.custom("Spectral-Regular", size: 12))
                         .foregroundColor(.gray)
@@ -302,10 +325,20 @@ private struct Step2EventView: View {
                 }
                 
                 VStack(alignment: .leading, spacing: 6) {
-                    Text("GUEST COUNT")
-                        .font(.custom("Spectral-Bold", size: 12))
-                        .foregroundColor(.gray)
-                    
+                    HStack {
+                        Text("GUEST COUNT")
+                            .font(.custom("Spectral-Bold", size: 12))
+                            .foregroundColor(.gray)
+
+                        Text("Optional")
+                            .font(.custom("Spectral-Regular", size: 10))
+                            .foregroundColor(.gray.opacity(0.6))
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 2)
+                            .background(Color.gray.opacity(0.1))
+                            .cornerRadius(4)
+                    }
+
                     HStack {
                         TextField("e.g., 150", text: $viewModel.guestCountText)
                             .font(.custom("Spectral-Regular", size: 15))
@@ -357,10 +390,10 @@ private struct Step3StyleView: View {
                 
                 VStack(alignment: .leading, spacing: 6) {
                     HStack {
-                        Text("PINTEREST MOOD BOARD")
+                        Text("INSPIRATION LINK")
                             .font(.custom("Spectral-Bold", size: 12))
                             .foregroundColor(.gray)
-                        
+
                         Text("Optional")
                             .font(.custom("Spectral-Regular", size: 10))
                             .foregroundColor(.gray.opacity(0.6))
@@ -369,19 +402,19 @@ private struct Step3StyleView: View {
                             .background(Color.gray.opacity(0.1))
                             .cornerRadius(4)
                     }
-                    
+
                     HStack {
                         Image(systemName: "link")
                             .foregroundColor(.gray)
-                        TextField("Paste Pinterest board URL", text: $viewModel.inspirationUrl)
+                        TextField("Pinterest, mood board, or reference link...", text: $viewModel.inspirationUrl)
                             .font(.custom("Spectral-Regular", size: 15))
                             .autocapitalization(.none)
                     }
                     .padding()
                     .background(Color.white)
                     .cornerRadius(10)
-                    
-                    Text("Share a link to your Pinterest board so vendors can see your style")
+
+                    Text("Share your inspiration to help vendors understand your style")
                         .font(.custom("Spectral-Regular", size: 12))
                         .foregroundColor(.gray)
                 }
@@ -450,7 +483,9 @@ private struct StyleTagPill: View {
 
 private struct Step4RequirementsView: View {
     @ObservedObject var viewModel: CreateRFPViewModel
-    
+    @State private var mustHaveCount: Int = 1
+    @State private var niceToHaveCount: Int = 1
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
@@ -459,7 +494,7 @@ private struct Step4RequirementsView: View {
                     .foregroundColor(.gray)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 16)
-                
+
                 // Must Haves
                 VStack(alignment: .leading, spacing: 12) {
                     HStack {
@@ -468,26 +503,48 @@ private struct Step4RequirementsView: View {
                         Text("MUST HAVES")
                             .font(.custom("Spectral-Bold", size: 12))
                             .foregroundColor(.gray)
-                        Text("(up to 3)")
-                            .font(.custom("Spectral-Regular", size: 10))
-                            .foregroundColor(.gray.opacity(0.6))
                     }
-                    
-                    ForEach(0..<3, id: \.self) { index in
+
+                    ForEach(0..<mustHaveCount, id: \.self) { index in
                         HStack {
-                            Text("\(index + 1).")
-                                .foregroundColor(.gray)
-                                .frame(width: 20)
-                            
-                            TextField(placeholders[index], text: binding(for: index, in: \.mustHaves))
+                            TextField(mustHavePlaceholders[index], text: binding(for: index, in: \.mustHaves))
                                 .font(.custom("Spectral-Regular", size: 15))
+
+                            if index > 0 {
+                                Button {
+                                    withAnimation {
+                                        if index < viewModel.mustHaves.count {
+                                            viewModel.mustHaves.remove(at: index)
+                                        }
+                                        mustHaveCount -= 1
+                                    }
+                                } label: {
+                                    Image(systemName: "xmark.circle.fill")
+                                        .foregroundColor(.gray.opacity(0.5))
+                                }
+                            }
                         }
                         .padding()
                         .background(Color.white)
                         .cornerRadius(10)
                     }
+
+                    if mustHaveCount < 3 {
+                        Button {
+                            withAnimation {
+                                mustHaveCount += 1
+                            }
+                        } label: {
+                            HStack(spacing: 6) {
+                                Image(systemName: "plus.circle.fill")
+                                Text("Add another")
+                                    .font(.custom("Spectral-Medium", size: 13))
+                            }
+                            .foregroundColor(Color(hex: "FF6B35"))
+                        }
+                    }
                 }
-                
+
                 // Nice to Haves
                 VStack(alignment: .leading, spacing: 12) {
                     HStack {
@@ -496,36 +553,75 @@ private struct Step4RequirementsView: View {
                         Text("NICE TO HAVES")
                             .font(.custom("Spectral-Bold", size: 12))
                             .foregroundColor(.gray)
-                        Text("(up to 3)")
+
+                        Text("Optional")
                             .font(.custom("Spectral-Regular", size: 10))
                             .foregroundColor(.gray.opacity(0.6))
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 2)
+                            .background(Color.gray.opacity(0.1))
+                            .cornerRadius(4)
                     }
-                    
-                    ForEach(0..<3, id: \.self) { index in
+
+                    ForEach(0..<niceToHaveCount, id: \.self) { index in
                         HStack {
-                            Text("\(index + 1).")
-                                .foregroundColor(.gray)
-                                .frame(width: 20)
-                            
-                            TextField("Optional", text: binding(for: index, in: \.niceToHaves))
+                            TextField(niceToHavePlaceholders[index], text: binding(for: index, in: \.niceToHaves))
                                 .font(.custom("Spectral-Regular", size: 15))
+
+                            if index > 0 || niceToHaveCount > 1 {
+                                Button {
+                                    withAnimation {
+                                        if index < viewModel.niceToHaves.count {
+                                            viewModel.niceToHaves.remove(at: index)
+                                        }
+                                        niceToHaveCount -= 1
+                                    }
+                                } label: {
+                                    Image(systemName: "xmark.circle.fill")
+                                        .foregroundColor(.gray.opacity(0.5))
+                                }
+                            }
                         }
                         .padding()
                         .background(Color.white)
                         .cornerRadius(10)
                     }
+
+                    if niceToHaveCount < 3 {
+                        Button {
+                            withAnimation {
+                                niceToHaveCount += 1
+                            }
+                        } label: {
+                            HStack(spacing: 6) {
+                                Image(systemName: "plus.circle.fill")
+                                Text("Add another")
+                                    .font(.custom("Spectral-Medium", size: 13))
+                            }
+                            .foregroundColor(Color(hex: "22C55E"))
+                        }
+                    }
                 }
-                
+
                 Spacer(minLength: 100)
             }
             .padding()
         }
+        .onAppear {
+            // Initialize counts based on existing data
+            mustHaveCount = max(1, viewModel.mustHaves.filter { !$0.isEmpty }.count)
+            niceToHaveCount = max(1, viewModel.niceToHaves.filter { !$0.isEmpty }.count)
+        }
     }
-    
-    private var placeholders: [String] {
+
+    private var mustHavePlaceholders: [String] {
         ["e.g., Available on my date", "e.g., Experience with outdoor venues", "e.g., Specific equipment"]
     }
-    
+
+    private var niceToHavePlaceholders: [String] {
+        ["e.g., Second shooter included", "e.g., Same-day previews", "e.g., Drone footage"]
+    }
+
     private func binding(for index: Int, in keyPath: ReferenceWritableKeyPath<CreateRFPViewModel, [String]>) -> Binding<String> {
         Binding(
             get: {
@@ -545,7 +641,11 @@ private struct Step4RequirementsView: View {
 
 private struct Step5BudgetView: View {
     @ObservedObject var viewModel: CreateRFPViewModel
-    
+
+    private var isDecisionDateValid: Bool {
+        viewModel.decisionDate >= viewModel.deadline
+    }
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
@@ -554,14 +654,14 @@ private struct Step5BudgetView: View {
                     .foregroundColor(.gray)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 16)
-                
+
                 // Budget
                 VStack(alignment: .leading, spacing: 6) {
                     HStack {
                         Text("BUDGET")
                             .font(.custom("Spectral-Bold", size: 12))
                             .foregroundColor(.gray)
-                        
+
                         Text("Optional")
                             .font(.custom("Spectral-Regular", size: 10))
                             .foregroundColor(.gray.opacity(0.6))
@@ -570,7 +670,7 @@ private struct Step5BudgetView: View {
                             .background(Color.gray.opacity(0.1))
                             .cornerRadius(4)
                     }
-                    
+
                     HStack {
                         Text("$")
                             .font(.custom("Spectral-Bold", size: 18))
@@ -582,7 +682,7 @@ private struct Step5BudgetView: View {
                     .padding()
                     .background(Color.white)
                     .cornerRadius(10)
-                    
+
                     // Quick budget buttons
                     HStack(spacing: 8) {
                         ForEach(["1000", "3000", "5000", "10000"], id: \.self) { amount in
@@ -600,51 +700,77 @@ private struct Step5BudgetView: View {
                         }
                     }
                 }
-                
+
                 // Proposals Due
                 VStack(alignment: .leading, spacing: 6) {
                     Text("PROPOSALS DUE BY")
                         .font(.custom("Spectral-Bold", size: 12))
                         .foregroundColor(.gray)
-                    
-                    DatePicker(
-                        "",
-                        selection: $viewModel.deadline,
-                        in: Date()...,
-                        displayedComponents: .date
-                    )
-                    .datePickerStyle(.compact)
-                    .labelsHidden()
+
+                    HStack {
+                        DatePicker(
+                            "",
+                            selection: $viewModel.deadline,
+                            in: Date()...,
+                            displayedComponents: .date
+                        )
+                        .datePickerStyle(.compact)
+                        .labelsHidden()
+
+                        Spacer()
+                    }
                     .padding()
-                    .frame(maxWidth: .infinity, alignment: .leading)
                     .background(Color.white)
                     .cornerRadius(10)
                 }
-                
+                .onChange(of: viewModel.deadline) { _, newDeadline in
+                    // Auto-adjust decision date if it's before the new deadline
+                    if viewModel.decisionDate < newDeadline {
+                        viewModel.decisionDate = newDeadline.addingTimeInterval(60 * 60 * 24 * 7) // 1 week after
+                    }
+                }
+
                 // Decision Date
                 VStack(alignment: .leading, spacing: 6) {
                     Text("WHEN WILL YOU DECIDE?")
                         .font(.custom("Spectral-Bold", size: 12))
                         .foregroundColor(.gray)
-                    
-                    DatePicker(
-                        "",
-                        selection: $viewModel.decisionDate,
-                        in: Date()...,
-                        displayedComponents: .date
-                    )
-                    .datePickerStyle(.compact)
-                    .labelsHidden()
+
+                    HStack {
+                        DatePicker(
+                            "",
+                            selection: $viewModel.decisionDate,
+                            in: viewModel.deadline...,
+                            displayedComponents: .date
+                        )
+                        .datePickerStyle(.compact)
+                        .labelsHidden()
+
+                        Spacer()
+                    }
                     .padding()
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(Color.white)
+                    .background(isDecisionDateValid ? Color.white : Color(hex: "FEE2E2"))
                     .cornerRadius(10)
-                    
-                    Text("Let vendors know when to expect your decision")
-                        .font(.custom("Spectral-Regular", size: 12))
-                        .foregroundColor(.gray)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 10)
+                            .stroke(isDecisionDateValid ? Color.clear : Color(hex: "EF4444"), lineWidth: 1)
+                    )
+
+                    if !isDecisionDateValid {
+                        HStack(spacing: 4) {
+                            Image(systemName: "exclamationmark.circle.fill")
+                                .font(.system(size: 12))
+                            Text("Decision date must be after proposals due date")
+                                .font(.custom("Spectral-Regular", size: 12))
+                        }
+                        .foregroundColor(Color(hex: "EF4444"))
+                    } else {
+                        Text("Let vendors know when to expect your decision")
+                            .font(.custom("Spectral-Regular", size: 12))
+                            .foregroundColor(.gray)
+                    }
                 }
-                
+
                 Spacer(minLength: 100)
             }
             .padding()
@@ -656,7 +782,8 @@ private struct Step5BudgetView: View {
 
 private struct Step6VisibilityView: View {
     @ObservedObject var viewModel: CreateRFPViewModel
-    
+    @State private var showPreview = false
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
@@ -665,7 +792,7 @@ private struct Step6VisibilityView: View {
                     .foregroundColor(.gray)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 16)
-                
+
                 VStack(spacing: 12) {
                     VisibilityOption(
                         title: "Public",
@@ -675,7 +802,7 @@ private struct Step6VisibilityView: View {
                     ) {
                         viewModel.visibility = .public
                     }
-                    
+
                     VisibilityOption(
                         title: "Private",
                         description: "Only vendors you invite can see this request",
@@ -685,13 +812,13 @@ private struct Step6VisibilityView: View {
                         viewModel.visibility = .private
                     }
                 }
-                
+
                 if viewModel.visibility == .private {
                     VStack(alignment: .leading, spacing: 8) {
                         Text("INVITE VENDORS")
                             .font(.custom("Spectral-Bold", size: 12))
                             .foregroundColor(.gray)
-                        
+
                         Text("You can invite specific vendors after creating this request")
                             .font(.custom("Spectral-Regular", size: 13))
                             .foregroundColor(.gray)
@@ -701,28 +828,402 @@ private struct Step6VisibilityView: View {
                             .cornerRadius(10)
                     }
                 }
-                
+
                 // Summary
                 VStack(alignment: .leading, spacing: 12) {
-                    Text("SUMMARY")
-                        .font(.custom("Spectral-Bold", size: 12))
-                        .foregroundColor(.gray)
-                    
-                    VStack(alignment: .leading, spacing: 8) {
-                        SummaryRow(label: "Title", value: viewModel.title)
-                        SummaryRow(label: "Location", value: viewModel.location.isEmpty ? "Not specified" : viewModel.location)
-                        SummaryRow(label: "Event Date", value: viewModel.eventDate.formatted(date: .abbreviated, time: .omitted))
-                        SummaryRow(label: "Budget", value: viewModel.budgetText.isEmpty ? "Flexible" : "$\(viewModel.budgetText)")
-                        SummaryRow(label: "Proposals Due", value: viewModel.deadline.formatted(date: .abbreviated, time: .omitted))
+                    HStack {
+                        Text("SUMMARY")
+                            .font(.custom("Spectral-Bold", size: 12))
+                            .foregroundColor(.gray)
+
+                        Spacer()
+
+                        Button {
+                            showPreview = true
+                        } label: {
+                            HStack(spacing: 4) {
+                                Image(systemName: "eye")
+                                Text("Preview")
+                                    .font(.custom("Spectral-Medium", size: 12))
+                            }
+                            .foregroundColor(Color(hex: "8B5CF6"))
+                        }
+                    }
+
+                    VStack(alignment: .leading, spacing: 0) {
+                        // Basic Info
+                        SummarySection(title: "Basic Info") {
+                            SummaryRow(label: "Title", value: viewModel.title)
+                            SummaryRow(label: "Category", value: viewModel.selectedCategory?.rawValue ?? "Not selected")
+                            if !viewModel.description.isEmpty {
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text("Description")
+                                        .font(.custom("Spectral-Regular", size: 13))
+                                        .foregroundColor(.gray)
+                                    Text(viewModel.description)
+                                        .font(.custom("Spectral-Regular", size: 13))
+                                        .foregroundColor(.black)
+                                        .lineLimit(3)
+                                }
+                                .padding(.vertical, 4)
+                            }
+                        }
+
+                        Divider().padding(.vertical, 8)
+
+                        // Event Details
+                        SummarySection(title: "Event Details") {
+                            SummaryRow(label: "Date", value: viewModel.eventDate.formatted(date: .abbreviated, time: .omitted))
+                            SummaryRow(label: "Location", value: viewModel.location.isEmpty ? "Not specified" : viewModel.location)
+                            if !viewModel.guestCountText.isEmpty {
+                                SummaryRow(label: "Guests", value: "\(viewModel.guestCountText) guests")
+                            }
+                        }
+
+                        Divider().padding(.vertical, 8)
+
+                        // Style
+                        if !viewModel.selectedStyleTags.isEmpty || !viewModel.inspirationUrl.isEmpty {
+                            SummarySection(title: "Style") {
+                                if !viewModel.selectedStyleTags.isEmpty {
+                                    VStack(alignment: .leading, spacing: 4) {
+                                        Text("Style Tags")
+                                            .font(.custom("Spectral-Regular", size: 13))
+                                            .foregroundColor(.gray)
+                                        Text(viewModel.selectedStyleTags.map { $0.displayName }.joined(separator: ", "))
+                                            .font(.custom("Spectral-Medium", size: 13))
+                                            .foregroundColor(.black)
+                                    }
+                                    .padding(.vertical, 2)
+                                }
+                                if !viewModel.inspirationUrl.isEmpty {
+                                    SummaryRow(label: "Inspiration", value: "Link added ✓")
+                                }
+                            }
+                            Divider().padding(.vertical, 8)
+                        }
+
+                        // Requirements
+                        let mustHaves = viewModel.mustHaves.filter { !$0.isEmpty }
+                        let niceToHaves = viewModel.niceToHaves.filter { !$0.isEmpty }
+                        if !mustHaves.isEmpty || !niceToHaves.isEmpty {
+                            SummarySection(title: "Requirements") {
+                                if !mustHaves.isEmpty {
+                                    VStack(alignment: .leading, spacing: 4) {
+                                        HStack(spacing: 4) {
+                                            Image(systemName: "star.fill")
+                                                .font(.system(size: 10))
+                                                .foregroundColor(Color(hex: "FF6B35"))
+                                            Text("Must Haves")
+                                                .font(.custom("Spectral-Regular", size: 13))
+                                                .foregroundColor(.gray)
+                                        }
+                                        ForEach(mustHaves, id: \.self) { item in
+                                            Text("• \(item)")
+                                                .font(.custom("Spectral-Regular", size: 13))
+                                                .foregroundColor(.black)
+                                        }
+                                    }
+                                    .padding(.vertical, 2)
+                                }
+                                if !niceToHaves.isEmpty {
+                                    VStack(alignment: .leading, spacing: 4) {
+                                        HStack(spacing: 4) {
+                                            Image(systemName: "heart.fill")
+                                                .font(.system(size: 10))
+                                                .foregroundColor(Color(hex: "22C55E"))
+                                            Text("Nice to Haves")
+                                                .font(.custom("Spectral-Regular", size: 13))
+                                                .foregroundColor(.gray)
+                                        }
+                                        ForEach(niceToHaves, id: \.self) { item in
+                                            Text("• \(item)")
+                                                .font(.custom("Spectral-Regular", size: 13))
+                                                .foregroundColor(.black)
+                                        }
+                                    }
+                                    .padding(.vertical, 2)
+                                }
+                            }
+                            Divider().padding(.vertical, 8)
+                        }
+
+                        // Budget & Timeline
+                        SummarySection(title: "Budget & Timeline") {
+                            SummaryRow(label: "Budget", value: viewModel.budgetText.isEmpty ? "Flexible" : "$\(viewModel.budgetText)")
+                            SummaryRow(label: "Proposals Due", value: viewModel.deadline.formatted(date: .abbreviated, time: .omitted))
+                            SummaryRow(label: "Decision By", value: viewModel.decisionDate.formatted(date: .abbreviated, time: .omitted))
+                        }
                     }
                     .padding()
                     .background(Color.white)
                     .cornerRadius(10)
                 }
-                
+
                 Spacer(minLength: 100)
             }
             .padding()
+        }
+        .sheet(isPresented: $showPreview) {
+            RFPPreviewSheet(viewModel: viewModel)
+        }
+    }
+}
+
+// MARK: - Summary Section
+
+private struct SummarySection<Content: View>: View {
+    let title: String
+    @ViewBuilder let content: Content
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text(title)
+                .font(.custom("Spectral-Bold", size: 11))
+                .foregroundColor(Color(hex: "8B5CF6"))
+
+            content
+        }
+    }
+}
+
+// MARK: - RFP Preview Sheet
+
+private struct RFPPreviewSheet: View {
+    @ObservedObject var viewModel: CreateRFPViewModel
+    @Environment(\.dismiss) var dismiss
+
+    var body: some View {
+        NavigationStack {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 20) {
+                    // Header
+                    VStack(alignment: .leading, spacing: 8) {
+                        HStack {
+                            if let category = viewModel.selectedCategory {
+                                HStack(spacing: 4) {
+                                    Image(systemName: category.icon)
+                                        .font(.system(size: 12))
+                                    Text(category.rawValue)
+                                        .font(.custom("Spectral-Medium", size: 12))
+                                }
+                                .foregroundColor(.black)
+                                .padding(.horizontal, 10)
+                                .padding(.vertical, 6)
+                                .background(Color(hex: "FFD700"))
+                                .cornerRadius(12)
+                            }
+
+                            Spacer()
+
+                            Text(viewModel.visibility == .public ? "Public" : "Private")
+                                .font(.custom("Spectral-Regular", size: 12))
+                                .foregroundColor(.gray)
+                        }
+
+                        Text(viewModel.title)
+                            .font(.custom("DelaGothicOne-Regular", size: 22))
+
+                        HStack(spacing: 16) {
+                            HStack(spacing: 4) {
+                                Image(systemName: "calendar")
+                                Text(viewModel.eventDate.formatted(date: .abbreviated, time: .omitted))
+                            }
+                            .font(.custom("Spectral-Regular", size: 13))
+                            .foregroundColor(.gray)
+
+                            if !viewModel.location.isEmpty {
+                                HStack(spacing: 4) {
+                                    Image(systemName: "location")
+                                    Text(viewModel.location)
+                                }
+                                .font(.custom("Spectral-Regular", size: 13))
+                                .foregroundColor(.gray)
+                            }
+                        }
+                    }
+                    .padding()
+                    .background(Color.white)
+                    .cornerRadius(12)
+
+                    // Description
+                    if !viewModel.description.isEmpty {
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("About this request")
+                                .font(.custom("Spectral-Bold", size: 14))
+
+                            Text(viewModel.description)
+                                .font(.custom("Spectral-Regular", size: 14))
+                                .foregroundColor(.gray)
+                        }
+                        .padding()
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .background(Color.white)
+                        .cornerRadius(12)
+                    }
+
+                    // Event Details
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text("Event Details")
+                            .font(.custom("Spectral-Bold", size: 14))
+
+                        HStack(spacing: 20) {
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text("Date")
+                                    .font(.custom("Spectral-Regular", size: 12))
+                                    .foregroundColor(.gray)
+                                Text(viewModel.eventDate.formatted(date: .long, time: .omitted))
+                                    .font(.custom("Spectral-Medium", size: 14))
+                            }
+
+                            if !viewModel.guestCountText.isEmpty {
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text("Guests")
+                                        .font(.custom("Spectral-Regular", size: 12))
+                                        .foregroundColor(.gray)
+                                    Text(viewModel.guestCountText)
+                                        .font(.custom("Spectral-Medium", size: 14))
+                                }
+                            }
+
+                            if !viewModel.budgetText.isEmpty {
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text("Budget")
+                                        .font(.custom("Spectral-Regular", size: 12))
+                                        .foregroundColor(.gray)
+                                    Text("$\(viewModel.budgetText)")
+                                        .font(.custom("Spectral-Medium", size: 14))
+                                }
+                            }
+                        }
+                    }
+                    .padding()
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(Color.white)
+                    .cornerRadius(12)
+
+                    // Requirements
+                    let mustHaves = viewModel.mustHaves.filter { !$0.isEmpty }
+                    let niceToHaves = viewModel.niceToHaves.filter { !$0.isEmpty }
+                    if !mustHaves.isEmpty || !niceToHaves.isEmpty {
+                        VStack(alignment: .leading, spacing: 12) {
+                            Text("Requirements")
+                                .font(.custom("Spectral-Bold", size: 14))
+
+                            if !mustHaves.isEmpty {
+                                VStack(alignment: .leading, spacing: 8) {
+                                    HStack(spacing: 6) {
+                                        Image(systemName: "star.fill")
+                                            .foregroundColor(Color(hex: "FF6B35"))
+                                        Text("Must Haves")
+                                            .font(.custom("Spectral-Bold", size: 13))
+                                    }
+                                    ForEach(mustHaves, id: \.self) { item in
+                                        HStack(alignment: .top, spacing: 8) {
+                                            Image(systemName: "checkmark.circle.fill")
+                                                .foregroundColor(Color(hex: "FF6B35"))
+                                                .font(.system(size: 14))
+                                            Text(item)
+                                                .font(.custom("Spectral-Regular", size: 14))
+                                        }
+                                    }
+                                }
+                            }
+
+                            if !niceToHaves.isEmpty {
+                                VStack(alignment: .leading, spacing: 8) {
+                                    HStack(spacing: 6) {
+                                        Image(systemName: "heart.fill")
+                                            .foregroundColor(Color(hex: "22C55E"))
+                                        Text("Nice to Haves")
+                                            .font(.custom("Spectral-Bold", size: 13))
+                                    }
+                                    ForEach(niceToHaves, id: \.self) { item in
+                                        HStack(alignment: .top, spacing: 8) {
+                                            Image(systemName: "plus.circle.fill")
+                                                .foregroundColor(Color(hex: "22C55E"))
+                                                .font(.system(size: 14))
+                                            Text(item)
+                                                .font(.custom("Spectral-Regular", size: 14))
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        .padding()
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .background(Color.white)
+                        .cornerRadius(12)
+                    }
+
+                    // Style Tags
+                    if !viewModel.selectedStyleTags.isEmpty {
+                        VStack(alignment: .leading, spacing: 12) {
+                            Text("Style")
+                                .font(.custom("Spectral-Bold", size: 14))
+
+                            FlowLayout(spacing: 8) {
+                                ForEach(Array(viewModel.selectedStyleTags), id: \.self) { tag in
+                                    HStack(spacing: 4) {
+                                        Image(systemName: tag.icon)
+                                            .font(.system(size: 10))
+                                        Text(tag.displayName)
+                                            .font(.custom("Spectral-Medium", size: 12))
+                                    }
+                                    .foregroundColor(.black)
+                                    .padding(.horizontal, 12)
+                                    .padding(.vertical, 8)
+                                    .background(Color(hex: "FFD700").opacity(0.3))
+                                    .cornerRadius(16)
+                                }
+                            }
+                        }
+                        .padding()
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .background(Color.white)
+                        .cornerRadius(12)
+                    }
+
+                    // Timeline
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text("Timeline")
+                            .font(.custom("Spectral-Bold", size: 14))
+
+                        HStack(spacing: 20) {
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text("Proposals Due")
+                                    .font(.custom("Spectral-Regular", size: 12))
+                                    .foregroundColor(.gray)
+                                Text(viewModel.deadline.formatted(date: .abbreviated, time: .omitted))
+                                    .font(.custom("Spectral-Medium", size: 14))
+                            }
+
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text("Decision By")
+                                    .font(.custom("Spectral-Regular", size: 12))
+                                    .foregroundColor(.gray)
+                                Text(viewModel.decisionDate.formatted(date: .abbreviated, time: .omitted))
+                                    .font(.custom("Spectral-Medium", size: 14))
+                            }
+                        }
+                    }
+                    .padding()
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(Color.white)
+                    .cornerRadius(12)
+
+                    Spacer(minLength: 40)
+                }
+                .padding()
+            }
+            .background(Color("Background"))
+            .navigationTitle("Vendor Preview")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Done") { dismiss() }
+                }
+            }
         }
     }
 }
@@ -781,7 +1282,7 @@ private struct VisibilityOption: View {
 private struct SummaryRow: View {
     let label: String
     let value: String
-    
+
     var body: some View {
         HStack {
             Text(label)
@@ -792,6 +1293,123 @@ private struct SummaryRow: View {
                 .font(.custom("Spectral-Medium", size: 13))
                 .foregroundColor(.black)
         }
+    }
+}
+
+// MARK: - RFP Success View
+
+private struct RFPSuccessView: View {
+    let rfp: RFP
+    let onDone: () -> Void
+
+    var body: some View {
+        VStack(spacing: 24) {
+            Spacer()
+
+            // Success animation
+            VStack(spacing: 16) {
+                ZStack {
+                    Circle()
+                        .fill(Color(hex: "22C55E").opacity(0.15))
+                        .frame(width: 120, height: 120)
+
+                    Circle()
+                        .fill(Color(hex: "22C55E").opacity(0.3))
+                        .frame(width: 90, height: 90)
+
+                    Image(systemName: "checkmark.circle.fill")
+                        .font(.system(size: 60))
+                        .foregroundColor(Color(hex: "22C55E"))
+                }
+
+                Text("Request Posted!")
+                    .font(.custom("DelaGothicOne-Regular", size: 24))
+
+                Text("Your request is now live and vendors can start submitting proposals")
+                    .font(.custom("Spectral-Regular", size: 15))
+                    .foregroundColor(.gray)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 32)
+            }
+
+            Spacer()
+
+            // Info cards
+            VStack(spacing: 12) {
+                InfoCard(
+                    icon: "magnifyingglass",
+                    iconColor: Color(hex: "8B5CF6"),
+                    title: "Find Your Request",
+                    description: "Go to your project and tap \"RFPs\" to view and manage this request"
+                )
+
+                InfoCard(
+                    icon: "bell.badge",
+                    iconColor: Color(hex: "FF6B35"),
+                    title: "Get Notified",
+                    description: "You'll receive notifications when vendors submit proposals"
+                )
+
+                InfoCard(
+                    icon: "pencil",
+                    iconColor: Color(hex: "3B82F6"),
+                    title: "Need to Edit?",
+                    description: "You can edit your request anytime from the RFP details page"
+                )
+            }
+            .padding(.horizontal)
+
+            Spacer()
+
+            // Done button
+            Button(action: onDone) {
+                Text("DONE")
+                    .font(.custom("DelaGothicOne-Regular", size: 14))
+                    .foregroundColor(.black)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 16)
+                    .background(Color(hex: "FFD700"))
+                    .cornerRadius(12)
+            }
+            .padding(.horizontal)
+            .padding(.bottom, 20)
+        }
+    }
+}
+
+// MARK: - Info Card
+
+private struct InfoCard: View {
+    let icon: String
+    let iconColor: Color
+    let title: String
+    let description: String
+
+    var body: some View {
+        HStack(spacing: 14) {
+            Image(systemName: icon)
+                .font(.system(size: 20))
+                .foregroundColor(iconColor)
+                .frame(width: 44, height: 44)
+                .background(iconColor.opacity(0.15))
+                .cornerRadius(10)
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title)
+                    .font(.custom("Spectral-Bold", size: 14))
+                    .foregroundColor(.black)
+
+                Text(description)
+                    .font(.custom("Spectral-Regular", size: 12))
+                    .foregroundColor(.gray)
+                    .lineLimit(2)
+            }
+
+            Spacer()
+        }
+        .padding(14)
+        .background(Color.white)
+        .cornerRadius(12)
     }
 }
 

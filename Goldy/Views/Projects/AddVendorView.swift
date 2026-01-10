@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import UniformTypeIdentifiers
 
 struct AddVendorView: View {
     let project: Project
@@ -67,20 +68,16 @@ struct AddVendorView: View {
                 Button {
                     viewModel.goBack()
                 } label: {
-                    HStack(spacing: 6) {
-                        Image(systemName: "arrow.left")
-                        Text("Back")
-                    }
-                    .font(.custom("Spectral-Medium", size: 14))
-                    .foregroundColor(.black)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 16)
-                    .background(Color.white)
-                    .cornerRadius(12)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 12)
-                            .stroke(Color.black.opacity(0.2), lineWidth: 1)
-                    )
+                    Image(systemName: "chevron.left")
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundColor(.black)
+                        .frame(width: 52, height: 52)
+                        .background(Color.white)
+                        .cornerRadius(12)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 12)
+                                .stroke(Color.black.opacity(0.15), lineWidth: 1)
+                        )
                 }
             }
             
@@ -174,13 +171,15 @@ private struct StepIndicator: View {
 private struct VendorInfoStep: View {
     @ObservedObject var viewModel: AddVendorViewModel
     @FocusState private var focusedField: Field?
+    @State private var customRole: String = ""
+    @State private var isOtherSelected: Bool = false
 
-    enum Field { case search, name, email }
+    enum Field { case search, name, email, customRole }
 
     let vendorRoles = [
         "Venue", "Catering", "Photography", "Videography",
         "Florals", "Music/DJ", "Wedding Planner", "Hair & Makeup",
-        "Cake/Desserts", "Transportation", "Rentals", "Other"
+        "Cake/Desserts", "Transportation", "Rentals"
     ]
 
     var body: some View {
@@ -217,7 +216,7 @@ private struct VendorInfoStep: View {
                 }
 
                 // Role Selection (shown for both modes)
-                VStack(alignment: .leading, spacing: 8) {
+                VStack(alignment: .leading, spacing: 12) {
                     Label("SERVICE TYPE", systemImage: "tag.fill")
                         .font(.custom("Spectral-Bold", size: 11))
                         .foregroundColor(.gray)
@@ -230,11 +229,42 @@ private struct VendorInfoStep: View {
                         ForEach(vendorRoles, id: \.self) { role in
                             RoleChip(
                                 role: role,
-                                isSelected: viewModel.vendorRole == role
+                                isSelected: viewModel.vendorRole == role && !isOtherSelected
                             ) {
+                                isOtherSelected = false
                                 viewModel.vendorRole = role
                             }
                         }
+
+                        // Other chip
+                        RoleChip(
+                            role: "Other",
+                            isSelected: isOtherSelected
+                        ) {
+                            isOtherSelected = true
+                            viewModel.vendorRole = customRole.isEmpty ? "" : customRole
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                focusedField = .customRole
+                            }
+                        }
+                    }
+
+                    // Custom role text field (shown when Other is selected)
+                    if isOtherSelected {
+                        TextField("Enter service type...", text: $customRole)
+                            .font(.custom("Spectral-Regular", size: 16))
+                            .focused($focusedField, equals: .customRole)
+                            .onChange(of: customRole) { _, newValue in
+                                viewModel.vendorRole = newValue
+                            }
+                            .padding()
+                            .background(Color.white)
+                            .cornerRadius(12)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .stroke(Color(hex: "8B5CF6").opacity(0.3), lineWidth: 1)
+                            )
+                            .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
                     }
                 }
 
@@ -263,6 +293,13 @@ private struct VendorInfoStep: View {
             }
             .padding()
         }
+        .onAppear {
+            // Check if current role is custom (not in predefined list)
+            if !viewModel.vendorRole.isEmpty && !vendorRoles.contains(viewModel.vendorRole) {
+                isOtherSelected = true
+                customRole = viewModel.vendorRole
+            }
+        }
     }
 
     // MARK: - Search Mode
@@ -283,8 +320,8 @@ private struct VendorInfoStep: View {
                         TextField("Search by name...", text: $viewModel.vendorSearchQuery)
                             .font(.custom("Spectral-Regular", size: 16))
                             .focused($focusedField, equals: .search)
-                            .onSubmit {
-                                Task { await viewModel.searchVendors() }
+                            .onChange(of: viewModel.vendorSearchQuery) { _, _ in
+                                viewModel.searchVendorsDebounced()
                             }
 
                         if viewModel.isSearchingVendors {
@@ -292,10 +329,12 @@ private struct VendorInfoStep: View {
                                 .scaleEffect(0.8)
                         } else if !viewModel.vendorSearchQuery.isEmpty {
                             Button {
-                                Task { await viewModel.searchVendors() }
+                                viewModel.vendorSearchQuery = ""
+                                viewModel.vendorSearchResults = []
+                                viewModel.hasSearched = false
                             } label: {
-                                Image(systemName: "arrow.right.circle.fill")
-                                    .foregroundColor(.black)
+                                Image(systemName: "xmark.circle.fill")
+                                    .foregroundColor(.gray)
                             }
                         }
                     }
@@ -318,7 +357,7 @@ private struct VendorInfoStep: View {
                             }
                         }
                     }
-                } else if !viewModel.vendorSearchQuery.isEmpty && !viewModel.isSearchingVendors {
+                } else if viewModel.hasSearched && !viewModel.isSearchingVendors {
                     VStack(spacing: 12) {
                         Image(systemName: "person.crop.circle.badge.questionmark")
                             .font(.system(size: 32))
@@ -706,23 +745,23 @@ private struct MilestoneCard: View {
     @Binding var milestone: MilestoneInput
     let index: Int
     let onDelete: () -> Void
-    @State private var showDatePicker = false
-    
+    @State private var showDateOptions = false
+
     var body: some View {
         VStack(spacing: 12) {
             // Header
             HStack {
                 Text("Milestone \(index + 1)")
                     .font(.custom("Spectral-Bold", size: 13))
-                
+
                 Spacer()
-                
+
                 Button(action: onDelete) {
                     Image(systemName: "xmark.circle.fill")
                         .foregroundColor(.gray)
                 }
             }
-            
+
             // Amount
             HStack(spacing: 8) {
                 Text("$")
@@ -734,47 +773,210 @@ private struct MilestoneCard: View {
             .padding(12)
             .background(Color("Background"))
             .cornerRadius(8)
-            
+
             // Description
             TextField("Description (e.g., Deposit)", text: $milestone.description)
                 .font(.custom("Spectral-Regular", size: 14))
                 .padding(12)
                 .background(Color("Background"))
                 .cornerRadius(8)
-            
-            // Due Date
-            HStack {
-                Text("Due Date")
-                    .font(.custom("Spectral-Regular", size: 13))
-                    .foregroundColor(.gray)
-                
-                Spacer()
-                
-                DatePicker(
-                    "",
-                    selection: Binding(
-                        get: { milestone.dueDate ?? Date() },
-                        set: { milestone.dueDate = $0 }
-                    ),
-                    displayedComponents: .date
-                )
-                .labelsHidden()
-            }
-            .padding(12)
-            .background(Color("Background"))
-            .cornerRadius(8)
-            
-            // Release Condition
-            TextField("Release condition (e.g., After venue walkthrough)", text: $milestone.releaseCondition)
-                .font(.custom("Spectral-Regular", size: 14))
+
+            // Due Date - now optional
+            Button {
+                showDateOptions = true
+            } label: {
+                HStack {
+                    Image(systemName: "calendar")
+                        .font(.system(size: 14))
+                        .foregroundColor(.gray)
+
+                    Text("Due Date")
+                        .font(.custom("Spectral-Regular", size: 13))
+                        .foregroundColor(.gray)
+
+                    Spacer()
+
+                    if let date = milestone.dueDate {
+                        Text(date, style: .date)
+                            .font(.custom("Spectral-Medium", size: 13))
+                            .foregroundColor(.black)
+                    } else {
+                        Text("No date set")
+                            .font(.custom("Spectral-Regular", size: 13))
+                            .foregroundColor(.gray.opacity(0.7))
+                    }
+
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 12))
+                        .foregroundColor(.gray)
+                }
                 .padding(12)
-                .background(Color("Background"))
+                .background(Color.white)
                 .cornerRadius(8)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 8)
+                        .stroke(Color.gray.opacity(0.2), lineWidth: 1)
+                )
+            }
+
+            // Release Condition - simple text field
+            VStack(alignment: .leading, spacing: 4) {
+                HStack(spacing: 4) {
+                    Image(systemName: "flag")
+                        .font(.system(size: 12))
+                        .foregroundColor(Color(hex: "8B5CF6"))
+                    Text("Release Condition")
+                        .font(.custom("Spectral-Regular", size: 11))
+                        .foregroundColor(.gray)
+                }
+
+                TextField("e.g., Upon booking confirmation, After event...", text: $milestone.releaseCondition)
+                    .font(.custom("Spectral-Regular", size: 14))
+                    .padding(12)
+                    .background(Color.white)
+                    .cornerRadius(8)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(Color.gray.opacity(0.2), lineWidth: 1)
+                    )
+            }
         }
         .padding()
         .background(Color.white)
         .cornerRadius(12)
         .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+        .sheet(isPresented: $showDateOptions) {
+            DueDatePickerSheet(dueDate: $milestone.dueDate)
+                .presentationDetents([.medium])
+        }
+    }
+}
+
+// MARK: - Due Date Picker Sheet
+
+private struct DueDatePickerSheet: View {
+    @Binding var dueDate: Date?
+    @Environment(\.dismiss) var dismiss
+    @State private var selectedDate: Date = Date()
+    @State private var dateMode: DateMode = .noDate
+
+    enum DateMode {
+        case noDate
+        case specificDate
+    }
+
+    var body: some View {
+        NavigationStack {
+            ScrollView {
+                VStack(spacing: 20) {
+                    // Options
+                    VStack(spacing: 10) {
+                        Button {
+                            dateMode = .noDate
+                        } label: {
+                            HStack {
+                                Image(systemName: "clock")
+                                    .font(.system(size: 18))
+                                    .foregroundColor(.gray)
+                                    .frame(width: 24)
+
+                                Text("No specific date")
+                                    .font(.custom("Spectral-Regular", size: 15))
+                                    .foregroundColor(.black)
+
+                                Spacer()
+
+                                Image(systemName: dateMode == .noDate ? "checkmark.circle.fill" : "circle")
+                                    .font(.system(size: 22))
+                                    .foregroundColor(dateMode == .noDate ? Color(hex: "22C55E") : Color.gray.opacity(0.3))
+                            }
+                            .padding(14)
+                            .background(dateMode == .noDate ? Color(hex: "22C55E").opacity(0.1) : Color.white)
+                            .cornerRadius(10)
+                        }
+
+                        Button {
+                            dateMode = .specificDate
+                        } label: {
+                            HStack {
+                                Image(systemName: "calendar")
+                                    .font(.system(size: 18))
+                                    .foregroundColor(Color(hex: "8B5CF6"))
+                                    .frame(width: 24)
+
+                                Text("Set specific date")
+                                    .font(.custom("Spectral-Regular", size: 15))
+                                    .foregroundColor(.black)
+
+                                Spacer()
+
+                                Image(systemName: dateMode == .specificDate ? "checkmark.circle.fill" : "circle")
+                                    .font(.system(size: 22))
+                                    .foregroundColor(dateMode == .specificDate ? Color(hex: "22C55E") : Color.gray.opacity(0.3))
+                            }
+                            .padding(14)
+                            .background(dateMode == .specificDate ? Color(hex: "8B5CF6").opacity(0.1) : Color.white)
+                            .cornerRadius(10)
+                        }
+                    }
+                    .padding(.horizontal)
+
+                    if dateMode == .specificDate {
+                        DatePicker(
+                            "",
+                            selection: $selectedDate,
+                            in: Date()...,
+                            displayedComponents: .date
+                        )
+                        .datePickerStyle(.graphical)
+                        .labelsHidden()
+                        .padding()
+                        .background(Color.white)
+                        .cornerRadius(12)
+                        .padding(.horizontal)
+                    }
+
+                    Spacer(minLength: 20)
+                }
+                .padding(.top)
+            }
+            .background(Color("Background"))
+            .safeAreaInset(edge: .bottom) {
+                Button {
+                    if dateMode == .noDate {
+                        dueDate = nil
+                    } else {
+                        dueDate = selectedDate
+                    }
+                    dismiss()
+                } label: {
+                    Text(dateMode == .noDate ? "CONFIRM NO DATE" : "SET DATE")
+                        .font(.custom("DelaGothicOne-Regular", size: 14))
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 16)
+                        .background(Color.black)
+                        .cornerRadius(12)
+                }
+                .padding()
+                .background(Color("Background"))
+            }
+            .navigationTitle("Due Date")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") { dismiss() }
+                }
+            }
+            .onAppear {
+                if let existing = dueDate {
+                    selectedDate = existing
+                    dateMode = .specificDate
+                } else {
+                    dateMode = .noDate
+                }
+            }
+        }
     }
 }
 
@@ -803,54 +1005,201 @@ private struct TemplateButton: View {
 
 private struct TermsStep: View {
     @ObservedObject var viewModel: AddVendorViewModel
-    
+    @State private var showDocumentPicker = false
+
     var body: some View {
         ScrollView {
             VStack(spacing: 20) {
-                // AI generation indicator
-                HStack(spacing: 12) {
-                    Image(systemName: "sparkles")
-                        .foregroundColor(Color(hex: "8B5CF6"))
-                        .font(.custom("Spectral-Regular", size: 20))
-                    
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("Auto-Generated Terms")
-                            .font(.custom("Spectral-Bold", size: 14))
-                        Text("Based on your vendor type and payment schedule")
-                            .font(.custom("Spectral-Regular", size: 12))
+                // Terms Mode Selection
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("HOW DO YOU WANT TO HANDLE TERMS?")
+                        .font(.custom("Spectral-Bold", size: 11))
+                        .foregroundColor(.gray)
+
+                    // Auto-Generated Option
+                    TermsModeOption(
+                        icon: "sparkles",
+                        iconColor: Color(hex: "8B5CF6"),
+                        title: "Auto-Generated Terms",
+                        description: "Detailed terms based on your vendor type",
+                        isSelected: viewModel.termsMode == .autoGenerated
+                    ) {
+                        viewModel.termsMode = .autoGenerated
+                        viewModel.generateTermsForMode(.autoGenerated)
+                    }
+
+                    // Basic Terms Option
+                    TermsModeOption(
+                        icon: "shield.checkered",
+                        iconColor: Color(hex: "22C55E"),
+                        title: "Basic Terms",
+                        description: "Essential protection: payments, cancellation, disputes",
+                        isSelected: viewModel.termsMode == .basicTerms
+                    ) {
+                        viewModel.termsMode = .basicTerms
+                        viewModel.generateTermsForMode(.basicTerms)
+                    }
+
+                    // Upload Own Contract Option
+                    TermsModeOption(
+                        icon: "doc.text",
+                        iconColor: Color(hex: "3B82F6"),
+                        title: "Upload Your Contract",
+                        description: "Use your own contract or vendor's agreement",
+                        isSelected: viewModel.termsMode == .uploadOwn,
+                        showUploadStatus: viewModel.termsMode == .uploadOwn,
+                        uploadedName: viewModel.uploadedContractName
+                    ) {
+                        viewModel.termsMode = .uploadOwn
+                        viewModel.generateTermsForMode(.uploadOwn)
+                    }
+
+                    if viewModel.termsMode == .uploadOwn {
+                        Button {
+                            showDocumentPicker = true
+                        } label: {
+                            HStack {
+                                Image(systemName: viewModel.uploadedContractURL != nil ? "doc.fill" : "plus.circle.fill")
+                                Text(viewModel.uploadedContractURL != nil ? "Change Document" : "Select Document")
+                                    .font(.custom("Spectral-Medium", size: 14))
+                            }
+                            .foregroundColor(Color(hex: "3B82F6"))
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 14)
+                            .background(Color(hex: "3B82F6").opacity(0.1))
+                            .cornerRadius(10)
+                        }
+                    }
+                }
+
+                // Terms sections (for auto-generated and basic modes)
+                if viewModel.termsMode != .uploadOwn {
+                    ForEach(viewModel.termsSections.indices, id: \.self) { index in
+                        TermsSectionCard(section: $viewModel.termsSections[index])
+                    }
+
+                    // Disclaimer
+                    HStack(alignment: .top, spacing: 10) {
+                        Image(systemName: "info.circle.fill")
+                            .foregroundColor(.gray)
+
+                        Text("These terms are provided as a starting point. For large contracts, we recommend consulting with a legal professional.")
+                            .font(.custom("Spectral-Regular", size: 11))
                             .foregroundColor(.gray)
                     }
-                    
-                    Spacer()
+                    .padding()
+                    .background(Color.white)
+                    .cornerRadius(12)
                 }
-                .padding()
-                .background(Color(hex: "E9D5FF").opacity(0.3))
-                .cornerRadius(12)
-                
-                // Terms sections
-                ForEach(viewModel.termsSections.indices, id: \.self) { index in
-                    TermsSectionCard(section: $viewModel.termsSections[index])
-                }
-                
-                // Disclaimer
-                HStack(alignment: .top, spacing: 10) {
-                    Image(systemName: "info.circle.fill")
-                        .foregroundColor(.gray)
-                    
-                    Text("These terms are provided as a starting point. For large contracts, we recommend consulting with a legal professional.")
-                        .font(.custom("Spectral-Regular", size: 11))
-                        .foregroundColor(.gray)
-                }
-                .padding()
-                .background(Color.white)
-                .cornerRadius(12)
-                
+
                 Spacer(minLength: 100)
             }
             .padding()
         }
         .onAppear {
-            viewModel.generateTerms()
+            if viewModel.termsSections.isEmpty {
+                viewModel.generateTerms()
+            }
+        }
+        .sheet(isPresented: $showDocumentPicker) {
+            DocumentPickerView { url in
+                viewModel.uploadedContractURL = url
+                viewModel.uploadedContractName = url.lastPathComponent
+            }
+        }
+    }
+}
+
+// MARK: - Terms Mode Option
+
+private struct TermsModeOption: View {
+    let icon: String
+    let iconColor: Color
+    let title: String
+    let description: String
+    let isSelected: Bool
+    var showUploadStatus: Bool = false
+    var uploadedName: String = ""
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 14) {
+                Image(systemName: icon)
+                    .font(.system(size: 20))
+                    .foregroundColor(iconColor)
+                    .frame(width: 36, height: 36)
+                    .background(iconColor.opacity(0.15))
+                    .cornerRadius(8)
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(title)
+                        .font(.custom("Spectral-Bold", size: 14))
+                        .foregroundColor(.black)
+
+                    Text(description)
+                        .font(.custom("Spectral-Regular", size: 12))
+                        .foregroundColor(.gray)
+                        .lineLimit(1)
+
+                    if showUploadStatus && !uploadedName.isEmpty {
+                        HStack(spacing: 4) {
+                            Image(systemName: "checkmark.circle.fill")
+                                .font(.system(size: 10))
+                                .foregroundColor(Color(hex: "22C55E"))
+                            Text(uploadedName)
+                                .font(.custom("Spectral-Regular", size: 11))
+                                .foregroundColor(Color(hex: "22C55E"))
+                                .lineLimit(1)
+                        }
+                    }
+                }
+
+                Spacer()
+
+                Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
+                    .font(.system(size: 22))
+                    .foregroundColor(isSelected ? Color(hex: "22C55E") : Color.gray.opacity(0.3))
+            }
+            .padding(14)
+            .background(isSelected ? iconColor.opacity(0.08) : Color.white)
+            .cornerRadius(12)
+            .overlay(
+                RoundedRectangle(cornerRadius: 12)
+                    .stroke(isSelected ? iconColor.opacity(0.3) : Color.gray.opacity(0.15), lineWidth: 1)
+            )
+        }
+    }
+}
+
+// MARK: - Document Picker
+
+private struct DocumentPickerView: UIViewControllerRepresentable {
+    let onPick: (URL) -> Void
+
+    func makeUIViewController(context: Context) -> UIDocumentPickerViewController {
+        let picker = UIDocumentPickerViewController(forOpeningContentTypes: [.pdf, .text, .plainText])
+        picker.delegate = context.coordinator
+        picker.allowsMultipleSelection = false
+        return picker
+    }
+
+    func updateUIViewController(_ uiViewController: UIDocumentPickerViewController, context: Context) {}
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator(onPick: onPick)
+    }
+
+    class Coordinator: NSObject, UIDocumentPickerDelegate {
+        let onPick: (URL) -> Void
+
+        init(onPick: @escaping (URL) -> Void) {
+            self.onPick = onPick
+        }
+
+        func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
+            guard let url = urls.first else { return }
+            onPick(url)
         }
     }
 }
@@ -910,62 +1259,122 @@ private struct TermsSectionCard: View {
 private struct ReviewStep: View {
     @ObservedObject var viewModel: AddVendorViewModel
     let project: Project
-    
+
+    private var formattedTotal: String {
+        let amount = Int(viewModel.totalAmount) ?? 0
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .currency
+        formatter.maximumFractionDigits = 0
+        return formatter.string(from: NSNumber(value: amount)) ?? "$0"
+    }
+
     var body: some View {
         ScrollView {
             VStack(spacing: 20) {
+                // Prominent Total Amount Card
+                VStack(spacing: 8) {
+                    Text("CONTRACT TOTAL")
+                        .font(.custom("Spectral-Bold", size: 11))
+                        .foregroundColor(.gray)
+
+                    Text(formattedTotal)
+                        .font(.custom("DelaGothicOne-Regular", size: 36))
+                        .foregroundColor(.black)
+
+                    Text("\(viewModel.milestones.count) payment milestone\(viewModel.milestones.count == 1 ? "" : "s")")
+                        .font(.custom("Spectral-Regular", size: 13))
+                        .foregroundColor(.gray)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 24)
+                .background(Color.white)
+                .cornerRadius(16)
+                .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+
                 // Vendor Summary
                 SummaryCard(title: "Vendor") {
                     SummaryRow(label: "Name", value: viewModel.vendorName)
                     SummaryRow(label: "Email", value: viewModel.vendorEmail)
                     SummaryRow(label: "Service", value: viewModel.vendorRole)
+
+                    if !viewModel.vendorDescription.isEmpty {
+                        Divider()
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Notes")
+                                .font(.custom("Spectral-Regular", size: 11))
+                                .foregroundColor(.gray)
+                            Text(viewModel.vendorDescription)
+                                .font(.custom("Spectral-Regular", size: 13))
+                                .foregroundColor(.black)
+                        }
+                    }
                 }
-                
+
                 // Payment Summary
-                SummaryCard(title: "Payment") {
-                    SummaryRow(label: "Total Amount", value: "$\(viewModel.totalAmount)", isBold: true)
-                    
-                    Divider()
-                    
+                SummaryCard(title: "Payment Schedule") {
                     ForEach(viewModel.milestones.indices, id: \.self) { index in
                         let milestone = viewModel.milestones[index]
                         HStack {
                             VStack(alignment: .leading, spacing: 2) {
                                 Text(milestone.description.isEmpty ? "Milestone \(index + 1)" : milestone.description)
-                                    .font(.custom("Spectral-Regular", size: 13))
-                                
+                                    .font(.custom("Spectral-Medium", size: 14))
+
                                 if let date = milestone.dueDate {
                                     Text(date, style: .date)
                                         .font(.custom("Spectral-Regular", size: 11))
                                         .foregroundColor(.gray)
+                                } else {
+                                    Text("No specific date")
+                                        .font(.custom("Spectral-Regular", size: 11))
+                                        .foregroundColor(.gray)
+                                }
+
+                                if !milestone.releaseCondition.isEmpty {
+                                    Text(milestone.releaseCondition)
+                                        .font(.custom("Spectral-Regular", size: 11))
+                                        .foregroundColor(Color(hex: "8B5CF6"))
                                 }
                             }
-                            
+
                             Spacer()
-                            
+
                             Text("$\(milestone.amount)")
-                                .font(.custom("Spectral-Medium", size: 13))
+                                .font(.custom("DelaGothicOne-Regular", size: 16))
                         }
-                        .padding(.vertical, 4)
+                        .padding(.vertical, 6)
+
+                        if index < viewModel.milestones.count - 1 {
+                            Divider()
+                        }
                     }
                 }
-                
+
                 // Terms Summary
                 SummaryCard(title: "Terms & Conditions") {
                     let enabledSections = viewModel.termsSections.filter { $0.isEnabled }
-                    
-                    ForEach(enabledSections.indices, id: \.self) { index in
+
+                    if enabledSections.isEmpty {
                         HStack(spacing: 8) {
-                            Image(systemName: "checkmark.circle.fill")
-                                .foregroundColor(Color(hex: "22C55E"))
-                                .font(.custom("Spectral-Regular", size: 14))
-                            
-                            Text(enabledSections[index].title)
+                            Image(systemName: "exclamationmark.triangle.fill")
+                                .foregroundColor(Color(hex: "F59E0B"))
+                            Text("No terms selected")
                                 .font(.custom("Spectral-Regular", size: 13))
+                                .foregroundColor(.gray)
+                        }
+                    } else {
+                        ForEach(enabledSections.indices, id: \.self) { index in
+                            HStack(spacing: 8) {
+                                Image(systemName: "checkmark.circle.fill")
+                                    .foregroundColor(Color(hex: "22C55E"))
+                                    .font(.system(size: 14))
+
+                                Text(enabledSections[index].title)
+                                    .font(.custom("Spectral-Regular", size: 13))
+                            }
                         }
                     }
                 }
-                
+
                 // What happens next
                 VStack(alignment: .leading, spacing: 12) {
                     Text("WHAT HAPPENS NEXT")

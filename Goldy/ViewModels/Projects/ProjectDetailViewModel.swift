@@ -22,7 +22,7 @@ class ProjectDetailViewModel: ObservableObject {
     func refresh() async {
         isLoading = true
         errorMessage = nil
-        
+
         do {
             project = try await api.getProject(project.id)
             print("✅ Refreshed project: \(project.vendors.count) vendors")
@@ -30,7 +30,20 @@ class ProjectDetailViewModel: ObservableObject {
             errorMessage = error.localizedDescription
             print("❌ Error refreshing project: \(error)")
         }
-        
+
         isLoading = false
+    }
+
+    func archiveProject() async {
+        do {
+            _ = try await api.updateProject(
+                projectId: project.id,
+                body: ["status": "CANCELED"]
+            )
+            print("✅ Project archived")
+        } catch {
+            errorMessage = error.localizedDescription
+            print("❌ Error archiving project: \(error)")
+        }
     }
 }

@@ -10,6 +10,10 @@ import SwiftUI
 struct ProjectDetailView: View {
     @StateObject private var viewModel: ProjectDetailViewModel
     @Environment(\.dismiss) var dismiss
+    @State private var showEditProject = false
+    @State private var showDeleteConfirm = false
+    @State private var showMoreMenu = false
+
     init(project: Project) {
         _viewModel = StateObject(wrappedValue: ProjectDetailViewModel(project: project))
     }
@@ -30,23 +34,62 @@ struct ProjectDetailView: View {
         .onAppear {
             Task { await viewModel.refresh() }
         }
+        .sheet(isPresented: $showEditProject, onDismiss: {
+            Task { await viewModel.refresh() }
+        }) {
+            EditProjectView(project: viewModel.project)
+        }
+        .confirmationDialog("Project Options", isPresented: $showMoreMenu) {
+            Button("Edit Project") {
+                showEditProject = true
+            }
+            Button("Archive Project", role: .destructive) {
+                showDeleteConfirm = true
+            }
+            Button("Cancel", role: .cancel) { }
+        }
+        .alert("Archive Project?", isPresented: $showDeleteConfirm) {
+            Button("Cancel", role: .cancel) { }
+            Button("Archive", role: .destructive) {
+                Task {
+                    await viewModel.archiveProject()
+                    dismiss()
+                }
+            }
+        } message: {
+            Text("This will move the project to your past projects. You can still view it there.")
+        }
     }
     
     // MARK: - Header
 
     private var headerSection: some View {
         VStack(alignment: .leading, spacing: 16) {
-            // Back button
-            Button {
-                dismiss()
-            } label: {
-                HStack(spacing: 6) {
-                    Image(systemName: "arrow.left")
-                        .font(.system(size: 14))
-                    Text("Back")
-                        .font(.custom("Spectral-Medium", size: 14))
+            // Nav row with back and more buttons
+            HStack {
+                Button {
+                    dismiss()
+                } label: {
+                    Image(systemName: "chevron.left")
+                        .font(.system(size: 18, weight: .semibold))
+                        .foregroundColor(.black)
+                        .frame(width: 40, height: 40)
+                        .background(Color("Background"))
+                        .clipShape(Circle())
                 }
-                .foregroundColor(.black)
+
+                Spacer()
+
+                Button {
+                    showMoreMenu = true
+                } label: {
+                    Image(systemName: "ellipsis")
+                        .font(.system(size: 18, weight: .semibold))
+                        .foregroundColor(.black)
+                        .frame(width: 40, height: 40)
+                        .background(Color("Background"))
+                        .clipShape(Circle())
+                }
             }
 
             // Title
@@ -54,7 +97,7 @@ struct ProjectDetailView: View {
                 .font(.custom("DelaGothicOne-Regular", size: 26))
                 .foregroundColor(.black)
 
-            // Date and budget
+            // Date, budget, location
             HStack(spacing: 16) {
                 if let eventDate = viewModel.project.eventDate {
                     HStack(spacing: 5) {
@@ -102,9 +145,9 @@ struct ProjectDetailView: View {
             // Vendors
             vendorsSection
 
-            // Milestones (only if there are any)
-            if hasUpcomingMilestones {
-                milestonesSection
+            // Payments (only if there are any)
+            if hasPayments {
+                paymentsSection
             }
 
             // RFP link
@@ -135,15 +178,19 @@ struct ProjectDetailView: View {
                 } label: {
                     HStack(spacing: 6) {
                         Image(systemName: "plus")
-                            .font(.system(size: 12, weight: .bold))
+                            .font(.system(size: 12, weight: .semibold))
                         Text("Add")
                             .font(.custom("Spectral-Medium", size: 13))
                     }
-                    .foregroundColor(.black)
+                    .foregroundColor(.gray)
                     .padding(.horizontal, 14)
                     .padding(.vertical, 8)
-                    .background(Color(hex: "FFD700"))
+                    .background(Color.white)
                     .cornerRadius(8)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+                    )
                 }
             }
 
@@ -173,54 +220,113 @@ struct ProjectDetailView: View {
         }
     }
 
-    // MARK: - Milestones Section
+    // MARK: - Payments Section
 
-    private var hasUpcomingMilestones: Bool {
-        !upcomingMilestones.isEmpty
+    private var hasPayments: Bool {
+        !allMilestones.isEmpty
     }
 
-    private var upcomingMilestones: [(milestone: Milestone, vendorName: String)] {
-        viewModel.project.vendors
+    // All milestones (both paid and unpaid)
+    // Sorted: overdue first, then upcoming by date, then completed at end
+    private var allMilestones: [(milestone: Milestone, vendorName: String, vendorId: Int)] {
+        let now = Date()
+        return viewModel.project.vendors
             .flatMap { vendor in
                 (vendor.escrow?.milestones ?? [])
-                    .filter { !$0.released }
-                    .map { (milestone: $0, vendorName: vendor.vendor.name) }
+                    .map { (milestone: $0, vendorName: vendor.vendor.name, vendorId: vendor.id) }
             }
-            .sorted { ($0.milestone.dueDate ?? .distantFuture) < ($1.milestone.dueDate ?? .distantFuture) }
+            .sorted { item1, item2 in
+                let m1 = item1.milestone
+                let m2 = item2.milestone
+
+                // Completed items go last
+                if m1.released != m2.released {
+                    return !m1.released
+                }
+
+                // Both completed - sort by due date
+                if m1.released && m2.released {
+                    return (m1.dueDate ?? .distantPast) > (m2.dueDate ?? .distantPast)
+                }
+
+                // Both unpaid - overdue first, then by due date
+                let d1 = m1.dueDate ?? .distantFuture
+                let d2 = m2.dueDate ?? .distantFuture
+                let isOverdue1 = d1 < now
+                let isOverdue2 = d2 < now
+
+                if isOverdue1 != isOverdue2 {
+                    return isOverdue1 // Overdue items first
+                }
+
+                // Both overdue or both upcoming - sort by date
+                if isOverdue1 {
+                    return d1 < d2 // Most overdue first
+                }
+                return d1 < d2 // Soonest upcoming first
+            }
     }
 
-    private var milestonesSection: some View {
+    // Payment summary calculations
+    private var totalPaid: Double {
+        allMilestones
+            .filter { $0.milestone.released }
+            .reduce(0) { $0 + Double($1.milestone.amountCents) / 100.0 }
+    }
+
+    private var totalInEscrow: Double {
+        viewModel.project.totalAmountInEscrow
+    }
+
+    private var totalRemaining: Double {
+        allMilestones
+            .filter { !$0.milestone.released }
+            .reduce(0) { $0 + Double($1.milestone.amountCents) / 100.0 }
+    }
+
+    private var paymentsSection: some View {
         VStack(alignment: .leading, spacing: 14) {
-            Text("Coming up")
-                .font(.custom("DelaGothicOne-Regular", size: 18))
+            Text("Payments")
+                .font(.custom("DelaGothicOne-Regular", size: 20))
+
+            // Payment summary line
+            HStack(spacing: 4) {
+                Text(formatCurrency(totalPaid))
+                    .font(.custom("Spectral-Bold", size: 13))
+                    .foregroundColor(Color(hex: "22C55E"))
+                Text("paid")
+                    .font(.custom("Spectral-Regular", size: 13))
+                    .foregroundColor(.gray)
+                Text("·")
+                    .foregroundColor(.gray)
+                Text(formatCurrency(totalInEscrow))
+                    .font(.custom("Spectral-Bold", size: 13))
+                    .foregroundColor(Color(hex: "3B82F6"))
+                Text("in escrow")
+                    .font(.custom("Spectral-Regular", size: 13))
+                    .foregroundColor(.gray)
+                Text("·")
+                    .foregroundColor(.gray)
+                Text(formatCurrency(totalRemaining))
+                    .font(.custom("Spectral-Bold", size: 13))
+                    .foregroundColor(.black)
+                Text("remaining")
+                    .font(.custom("Spectral-Regular", size: 13))
+                    .foregroundColor(.gray)
+            }
 
             VStack(spacing: 10) {
-                ForEach(upcomingMilestones.prefix(4), id: \.milestone.id) { item in
-                    HStack {
-                        VStack(alignment: .leading, spacing: 3) {
-                            Text(item.milestone.description ?? "Payment")
-                                .font(.custom("Spectral-Medium", size: 14))
-                            Text(item.vendorName)
-                                .font(.custom("Spectral-Regular", size: 12))
-                                .foregroundColor(.gray)
+                ForEach(allMilestones, id: \.milestone.id) { item in
+                    // Find the vendor for navigation
+                    if let vendor = viewModel.project.vendors.first(where: { $0.id == item.vendorId }) {
+                        NavigationLink(destination: VendorDetailView(projectVendor: vendor)) {
+                            PaymentRow(
+                                milestone: item.milestone,
+                                vendorName: item.vendorName
+                            )
                         }
-
-                        Spacer()
-
-                        VStack(alignment: .trailing, spacing: 3) {
-                            Text(formatCurrency(Double(item.milestone.amountCents) / 100.0))
-                                .font(.custom("Spectral-Bold", size: 14))
-
-                            if let due = item.milestone.dueDate {
-                                Text(formatDueDate(due))
-                                    .font(.custom("Spectral-Regular", size: 11))
-                                    .foregroundColor(dueDateColor(due))
-                            }
-                        }
+                        .buttonStyle(.plain)
                     }
-                    .padding(14)
-                    .background(Color.white)
-                    .cornerRadius(10)
                 }
             }
         }
@@ -290,10 +396,150 @@ struct ProjectDetailView: View {
     }
 }
 
+// MARK: - Payment Row
+
+private struct PaymentRow: View {
+    let milestone: Milestone
+    let vendorName: String
+
+    private var isPaid: Bool {
+        milestone.released
+    }
+
+    // Auto-release countdown - customer has 3 days after due date
+    private var autoReleaseInfo: (daysLeft: Int, isOverdue: Bool)? {
+        guard !isPaid, let dueDate = milestone.dueDate else { return nil }
+        let days = Calendar.current.dateComponents([.day], from: Date(), to: dueDate).day ?? 0
+        if days < 0 {
+            // Overdue - show countdown to auto-release (3 days after due)
+            let daysOverdue = abs(days)
+            let daysUntilAutoRelease = 3 - daysOverdue
+            if daysUntilAutoRelease > 0 {
+                return (daysUntilAutoRelease, true)
+            } else if daysUntilAutoRelease == 0 {
+                return (0, true) // Auto-releases today
+            }
+        }
+        return nil
+    }
+
+    var body: some View {
+        HStack(spacing: 12) {
+            // Left side - checkmark for paid, exclamation for overdue
+            if isPaid {
+                Image(systemName: "checkmark.circle.fill")
+                    .font(.system(size: 18))
+                    .foregroundColor(Color(hex: "22C55E"))
+            } else if autoReleaseInfo?.isOverdue == true {
+                Image(systemName: "exclamationmark.circle.fill")
+                    .font(.system(size: 18))
+                    .foregroundColor(Color(hex: "EF4444"))
+            }
+
+            VStack(alignment: .leading, spacing: 3) {
+                Text(milestone.description ?? "Payment")
+                    .font(.custom("Spectral-Medium", size: 14))
+                    .foregroundColor(isPaid ? .gray : .black)
+                Text(vendorName)
+                    .font(.custom("Spectral-Regular", size: 12))
+                    .foregroundColor(.gray)
+            }
+
+            Spacer()
+
+            VStack(alignment: .trailing, spacing: 3) {
+                HStack(spacing: 4) {
+                    Text(formatCurrency(Double(milestone.amountCents) / 100.0))
+                        .font(.custom("Spectral-Bold", size: 14))
+                        .foregroundColor(isPaid ? .gray : .black)
+
+                    if isPaid {
+                        Text("Paid")
+                            .font(.custom("Spectral-Medium", size: 11))
+                            .foregroundColor(Color(hex: "22C55E"))
+                    }
+                }
+
+                if let dueDate = milestone.dueDate {
+                    if isPaid {
+                        Text("Completed")
+                            .font(.custom("Spectral-Regular", size: 11))
+                            .foregroundColor(.gray)
+                    } else if let autoRelease = autoReleaseInfo {
+                        if autoRelease.daysLeft == 0 {
+                            Text("Auto-releases today")
+                                .font(.custom("Spectral-Medium", size: 11))
+                                .foregroundColor(Color(hex: "EF4444"))
+                        } else {
+                            Text("Auto-releases in \(autoRelease.daysLeft)d")
+                                .font(.custom("Spectral-Medium", size: 11))
+                                .foregroundColor(Color(hex: "EF4444"))
+                        }
+                    } else {
+                        Text(formatDueDate(dueDate))
+                            .font(.custom("Spectral-Regular", size: 11))
+                            .foregroundColor(dueDateColor(dueDate))
+                    }
+                }
+            }
+
+            Image(systemName: "chevron.right")
+                .font(.system(size: 12))
+                .foregroundColor(.gray.opacity(0.4))
+        }
+        .padding(14)
+        .background(Color.white)
+        .cornerRadius(10)
+        .opacity(isPaid ? 0.7 : 1.0)
+    }
+
+    private func formatCurrency(_ amount: Double) -> String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .currency
+        formatter.maximumFractionDigits = 0
+        return formatter.string(from: NSNumber(value: amount)) ?? "$0"
+    }
+
+    private func formatDueDate(_ date: Date) -> String {
+        let days = Calendar.current.dateComponents([.day], from: Date(), to: date).day ?? 0
+        if days < 0 {
+            return "\(abs(days))d overdue"
+        } else if days == 0 {
+            return "Due today"
+        } else if days <= 7 {
+            return "Due in \(days)d"
+        } else {
+            let formatter = DateFormatter()
+            formatter.dateFormat = "MMM d"
+            return formatter.string(from: date)
+        }
+    }
+
+    private func dueDateColor(_ date: Date) -> Color {
+        let days = Calendar.current.dateComponents([.day], from: Date(), to: date).day ?? 0
+        if days < 0 {
+            return Color(hex: "EF4444")
+        } else if days <= 7 {
+            return Color(hex: "F59E0B")
+        } else {
+            return .gray
+        }
+    }
+}
+
 // MARK: - Simple Vendor Row
 
 private struct SimpleVendorRow: View {
     let vendor: ProjectVendor
+
+    // Calculate payment progress
+    private var paymentProgress: (paid: Int, total: Int)? {
+        guard let escrow = vendor.escrow else { return nil }
+        let milestones = escrow.milestones
+        guard !milestones.isEmpty else { return nil }
+        let paid = milestones.filter { $0.released }.count
+        return (paid, milestones.count)
+    }
 
     private var statusText: String {
         switch vendor.status {
@@ -305,9 +551,19 @@ private struct SimpleVendorRow: View {
             }
             return "Accepted"
         case "PAID":
+            // Show specific payment progress
+            if let progress = paymentProgress {
+                if progress.paid == 0 {
+                    return "Deposit pending"
+                } else if progress.paid < progress.total {
+                    return "\(progress.paid) of \(progress.total) paid"
+                } else {
+                    return "Fully paid"
+                }
+            }
             return "In progress"
         case "COMPLETED":
-            return "Done"
+            return "Completed"
         default:
             return vendor.status.lowercased()
         }
@@ -322,7 +578,12 @@ private struct SimpleVendorRow: View {
                 return Color(hex: "F59E0B")
             }
             return Color(hex: "3B82F6")
-        case "PAID", "COMPLETED":
+        case "PAID":
+            if let progress = paymentProgress, progress.paid == progress.total {
+                return Color(hex: "22C55E")
+            }
+            return Color(hex: "3B82F6")
+        case "COMPLETED":
             return Color(hex: "22C55E")
         default:
             return .gray

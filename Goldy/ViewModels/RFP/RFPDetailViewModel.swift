@@ -58,7 +58,7 @@ class RFPDetailViewModel: ObservableObject {
     func closeRFP() async {
         isLoading = true
         errorMessage = nil
-        
+
         do {
             rfp = try await api.updateRFP(rfpId: rfp.id, body: ["status": "CLOSED"])
             print("✅ RFP closed")
@@ -67,7 +67,11 @@ class RFPDetailViewModel: ObservableObject {
             showError = true
             print("❌ Error closing RFP: \(error)")
         }
-        
+
         isLoading = false
+    }
+
+    func updateRFP(_ updatedRFP: RFP) {
+        self.rfp = updatedRFP
     }
 }

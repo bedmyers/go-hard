@@ -21,18 +21,23 @@ struct VendorDetailView: View {
         ScrollView {
             VStack(spacing: 20) {
                 vendorHeader
-                
+
+                // Notes section (if there are notes)
+                if let description = viewModel.projectVendor.description, !description.isEmpty {
+                    notesSection(description)
+                }
+
                 if viewModel.projectVendor.escrow != nil {
                     paymentProgressCard
                     milestonesSection
                 }
-                
+
                 if viewModel.projectVendor.escrow == nil {
                     awaitingSetupCard
                 }
-                
+
                 termsSection
-                
+
                 Spacer(minLength: 40)
             }
             .padding(.top, 20)
@@ -41,23 +46,26 @@ struct VendorDetailView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
-                HStack(spacing: 16) {
-                    if viewModel.canRemoveVendor {
-                        Button {
-                            viewModel.showRemoveConfirm = true
-                        } label: {
-                            Image(systemName: "trash")
-                                .font(.system(size: 14))
-                                .foregroundColor(.red)
-                        }
-                    }
-
+                Menu {
                     Button {
                         viewModel.showContactOptions = true
                     } label: {
-                        Image(systemName: "envelope.fill")
-                            .font(.system(size: 14))
+                        Label("Contact Vendor", systemImage: "envelope")
                     }
+
+                    if viewModel.canRemoveVendor {
+                        Divider()
+
+                        Button(role: .destructive) {
+                            viewModel.showRemoveConfirm = true
+                        } label: {
+                            Label("Remove Vendor", systemImage: "trash")
+                        }
+                    }
+                } label: {
+                    Image(systemName: "ellipsis")
+                        .font(.system(size: 16, weight: .medium))
+                        .foregroundColor(.primary)
                 }
             }
         }
@@ -111,19 +119,27 @@ struct VendorDetailView: View {
     }
     
     // MARK: - Vendor Header
-    
+
     private var vendorHeader: some View {
         VStack(spacing: 16) {
-            ZStack {
-                Circle()
-                    .fill(roleColor.opacity(0.2))
+            // Profile photo or initials - tappable to view full profile
+            NavigationLink(destination: VendorProfileView(vendorId: viewModel.projectVendor.vendor.id)) {
+                if let profileUrl = viewModel.projectVendor.vendor.profileImageUrl,
+                   let url = URL(string: profileUrl) {
+                    AsyncImage(url: url) { image in
+                        image
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                    } placeholder: {
+                        vendorInitialsView
+                    }
                     .frame(width: 80, height: 80)
-                
-                Image(systemName: roleIcon)
-                    .font(.custom("Spectral-Regular", size: 32))
-                    .foregroundColor(roleColor)
+                    .clipShape(Circle())
+                } else {
+                    vendorInitialsView
+                }
             }
-            
+
             VStack(spacing: 6) {
                 Text(viewModel.projectVendor.role.uppercased())
                     .font(.custom("Spectral-Bold", size: 11))
@@ -132,18 +148,43 @@ struct VendorDetailView: View {
                     .padding(.vertical, 4)
                     .background(roleColor.opacity(0.15))
                     .cornerRadius(4)
-                
+
                 Text(viewModel.projectVendor.vendor.name)
                     .font(.custom("DelaGothicOne-Regular", size: 24))
-                
+
                 Text(viewModel.projectVendor.vendor.email)
                     .font(.custom("Spectral-Regular", size: 14))
                     .foregroundColor(.gray)
             }
-            
+
             StatusBadge(status: viewModel.projectVendor.status)
         }
         .padding(.horizontal)
+    }
+
+    private var vendorInitialsView: some View {
+        ZStack {
+            Circle()
+                .fill(roleColor.opacity(0.2))
+                .frame(width: 80, height: 80)
+
+            Text(vendorInitials)
+                .font(.custom("DelaGothicOne-Regular", size: 28))
+                .foregroundColor(roleColor)
+        }
+    }
+
+    private var vendorInitials: String {
+        let name = viewModel.projectVendor.vendor.name
+        let components = name.split(separator: " ")
+        if components.count >= 2 {
+            let first = components[0].prefix(1)
+            let second = components[1].prefix(1)
+            return "\(first)\(second)".uppercased()
+        } else if let first = components.first {
+            return String(first.prefix(2)).uppercased()
+        }
+        return "?"
     }
     
     // MARK: - Payment Progress
@@ -152,56 +193,38 @@ struct VendorDetailView: View {
         VStack(alignment: .leading, spacing: 16) {
             Text("Payment Progress")
                 .font(.custom("DelaGothicOne-Regular", size: 18))
-            
+
             let progress = viewModel.paymentProgress
-            
-            VStack(spacing: 8) {
-                GeometryReader { geometry in
-                    ZStack(alignment: .leading) {
-                        RoundedRectangle(cornerRadius: 6)
-                            .fill(Color.gray.opacity(0.2))
-                            .frame(height: 12)
-                        
-                        RoundedRectangle(cornerRadius: 6)
-                            .fill(
-                                LinearGradient(
-                                    colors: [Color(hex: "BBF7D0"), Color(hex: "22C55E")],
-                                    startPoint: .leading,
-                                    endPoint: .trailing
-                                )
+
+            // Progress bar
+            GeometryReader { geometry in
+                ZStack(alignment: .leading) {
+                    RoundedRectangle(cornerRadius: 6)
+                        .fill(Color.gray.opacity(0.2))
+                        .frame(height: 10)
+
+                    RoundedRectangle(cornerRadius: 6)
+                        .fill(
+                            LinearGradient(
+                                colors: [Color(hex: "BBF7D0"), Color(hex: "22C55E")],
+                                startPoint: .leading,
+                                endPoint: .trailing
                             )
-                            .frame(width: geometry.size.width * progress.percentage, height: 12)
-                    }
-                }
-                .frame(height: 12)
-                
-                HStack {
-                    Text(formatCurrency(progress.released))
-                        .font(.custom("Spectral-Bold", size: 14))
-                    +
-                    Text(" of ")
-                        .font(.custom("Spectral-Regular", size: 14))
-                        .foregroundColor(.gray)
-                    +
-                    Text(formatCurrency(progress.total))
-                        .font(.custom("Spectral-Bold", size: 14))
-                    
-                    Spacer()
-                    
-                    Text("\(Int(progress.percentage * 100))%")
-                        .font(.custom("DelaGothicOne-Regular", size: 14))
+                        )
+                        .frame(width: max(geometry.size.width * progress.percentage, 0), height: 10)
                 }
             }
-            
+            .frame(height: 10)
+
             HStack(spacing: 0) {
                 ProgressStat(label: "Released", value: formatCurrency(progress.released), color: Color(hex: "22C55E"))
-                
+
                 Divider().frame(height: 30)
-                
+
                 ProgressStat(label: "In Escrow", value: formatCurrency(progress.inEscrow), color: Color(hex: "F59E0B"))
-                
+
                 Divider().frame(height: 30)
-                
+
                 ProgressStat(label: "Pending", value: formatCurrency(progress.pending), color: Color.gray)
             }
         }
@@ -219,9 +242,11 @@ struct VendorDetailView: View {
             Text("Milestones")
                 .font(.custom("DelaGothicOne-Regular", size: 18))
                 .padding(.horizontal)
-            
-            let milestones = viewModel.projectVendor.escrow?.milestones ?? []
-            
+
+            // Sort by due date (chronological order) so Deposit comes before Final Payment
+            let milestones = (viewModel.projectVendor.escrow?.milestones ?? [])
+                .sorted { ($0.dueDate ?? .distantFuture) < ($1.dueDate ?? .distantFuture) }
+
             VStack(spacing: 12) {
                 ForEach(Array(milestones.enumerated()), id: \.element.id) { index, milestone in
                     MilestoneCard(
@@ -277,8 +302,33 @@ struct VendorDetailView: View {
         .padding(.horizontal)
     }
     
+    // MARK: - Notes Section
+
+    private func notesSection(_ notes: String) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 6) {
+                Image(systemName: "note.text")
+                    .font(.system(size: 12))
+                    .foregroundColor(.gray)
+                Text("Notes")
+                    .font(.custom("Spectral-Bold", size: 12))
+                    .foregroundColor(.gray)
+            }
+
+            Text(notes)
+                .font(.custom("Spectral-Regular", size: 14))
+                .foregroundColor(.black)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(16)
+        .background(Color.white)
+        .cornerRadius(12)
+        .shadow(color: .black.opacity(0.04), radius: 8, x: 0, y: 4)
+        .padding(.horizontal)
+    }
+
     // MARK: - Terms
-    
+
     private var termsSection: some View {
         Button {
             viewModel.showTerms = true
@@ -367,7 +417,7 @@ private struct StatusBadge: View {
         switch status {
         case "PENDING", "INVITED": return "Invited"
         case "ACCEPTED": return "Accepted"
-        case "PAID": return "Active"
+        case "PAID": return "In Progress"
         case "COMPLETED": return "Completed"
         default: return status
         }

@@ -165,7 +165,11 @@ class APIService {
     func createProject(body: [String: Any]) async throws -> Project {
         return try await makeRequest(endpoint: "/projects", method: "POST", body: body)
     }
-    
+
+    func updateProject(projectId: Int, body: [String: Any]) async throws -> Project {
+        return try await makeRequest(endpoint: "/projects/\(projectId)", method: "PATCH", body: body)
+    }
+
     func deleteProject(_ projectId: Int) async throws {
         try await makeRequestNoResponse(endpoint: "/projects/\(projectId)", method: "DELETE")
     }
