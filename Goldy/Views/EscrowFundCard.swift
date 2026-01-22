@@ -68,5 +68,5 @@ struct EscrowFundCard: View {
         EscrowFundCard(fund: .constant(EscrowFund(text: "", amount: nil)))
     }
     .padding()
-    .background(Color(red: 0.97, green: 0.93, blue: 0.85))
+    .background(Color("Background"))
 }

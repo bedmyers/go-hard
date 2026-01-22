@@ -20,10 +20,8 @@ struct UserSearchSheetView: View {
     var body: some View {
         NavigationView {
             VStack(spacing: 0) {
-                // Search Header
                 searchHeaderSection
                 
-                // Results Content
                 if query.isEmpty {
                     emptySearchState
                 } else if viewModel.isLoading {
@@ -34,7 +32,7 @@ struct UserSearchSheetView: View {
                     searchResults
                 }
             }
-            .background(Color(red: 0.97, green: 0.93, blue: 0.85))
+            .background(Color("Background"))
             .navigationTitle("Add a Party")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -56,7 +54,7 @@ struct UserSearchSheetView: View {
                 Image(systemName: "magnifyingglass")
                     .foregroundColor(.black)
                     .opacity(0.6)
-                    .font(.system(size: 16))
+                    .font(.custom("Spectral-Regular", size: 16))
                 
                 TextField("Search name or email", text: $query)
                     .font(.custom("IBMPlexMono-Regular", size: 16))
@@ -67,7 +65,7 @@ struct UserSearchSheetView: View {
                         Image(systemName: "xmark.circle.fill")
                             .foregroundColor(.black)
                             .opacity(0.6)
-                            .font(.system(size: 16))
+                            .font(.custom("Spectral-Regular", size: 16))
                     }
                 }
             }
@@ -96,7 +94,7 @@ struct UserSearchSheetView: View {
             Spacer()
             
             Image(systemName: "person.2.badge.plus")
-                .font(.system(size: 48))
+                .font(.custom("Spectral-Regular", size: 48))
                 .foregroundColor(.black)
                 .opacity(0.4)
             
@@ -139,7 +137,7 @@ struct UserSearchSheetView: View {
             Spacer()
             
             Image(systemName: "person.crop.circle.badge.questionmark")
-                .font(.system(size: 48))
+                .font(.custom("Spectral-Regular", size: 48))
                 .foregroundColor(.black)
                 .opacity(0.4)
             
@@ -194,7 +192,6 @@ private struct UserResultRow: View {
     var body: some View {
         Button(action: onTap) {
             HStack(spacing: 16) {
-                // Avatar with initials
                 Circle()
                     .fill(Color("ActiveColor"))
                     .frame(width: 40, height: 40)

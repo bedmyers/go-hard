@@ -19,12 +19,10 @@ struct ProgressBar: View {
             let xOffset = (width - indicatorSize) * clampedProgress
 
             ZStack(alignment: .leading) {
-                // Background bar
                 RoundedRectangle(cornerRadius: height / 2)
                     .fill(Color("ActiveColor"))
                     .frame(height: height)
 
-                // Filled indicator with % text
                 Text("\(Int(clampedProgress * 100))%")
                     .font(.custom("DelaGothicOne-Regular", size: 12))
                     .foregroundColor(.black)

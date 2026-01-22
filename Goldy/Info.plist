@@ -3,12 +3,19 @@
 <plist version="1.0">
 <dict>
 	<key>STRIPE_PUBLISHABLE_KEY</key>
-	<string>pk_test_XXXXXXXXXXXXXXXX</string>
+	<string>pk_test_51SfTwcLtrWIf14vNFufl4tzZQemSMthESEkSfGKI55sS6HSi2RAFKZPPTrDBq9T0wcz99i7tt8M7hOfyaP3jFhZH00nYqMwUXE</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>DelaGothicOne-Regular.ttf</string>
 		<string>IBMPlexMono-Regular.ttf</string>
 		<string>DaysOne-Regular.ttf</string>
+		<string>Spectral-Regular.ttf</string>
+		<string>Spectral-Medium.ttf</string>
+		<string>Spectral-Bold.ttf</string>
 	</array>
+	<key>NSCameraUsageDescription</key>
+	<string>Take photos for your vendor profile and portfolio</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Select photos for your vendor profile and portfolio</string>
 </dict>
 </plist>
