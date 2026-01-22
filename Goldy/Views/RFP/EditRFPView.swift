@@ -514,6 +514,8 @@ struct EditRFPView: View {
         eventDate: Date().addingTimeInterval(86400 * 180),
         location: "Detroit, MI",
         guestCount: 150,
+        category: "Photography",
+        timeOfDay: "Afternoon",
         inspirationUrl: nil,
         styleTags: ["natural-light", "romantic"],
         mustHaves: ["Available on date", "Second shooter"],

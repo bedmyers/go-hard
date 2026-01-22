@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Combine
 
 @MainActor
 class VendorMarketplaceViewModel: ObservableObject {
@@ -15,17 +16,23 @@ class VendorMarketplaceViewModel: ObservableObject {
     @Published var selectedCategory: VendorCategory?
     @Published var selectedLocation: String?
     @Published var portfolioOnly = false
-    
+
+    private var searchTask: Task<Void, Never>?
+
     let locations = [
         "Detroit, MI",
-        "Chicago, IL",
-        "Los Angeles, CA",
-        "New York, NY",
-        "Austin, TX",
-        "Miami, FL",
-        "Denver, CO",
-        "Seattle, WA"
+        "Chicago, IL"
     ]
+
+    /// Debounced search - call this when searchQuery changes
+    func debouncedSearch() {
+        searchTask?.cancel()
+        searchTask = Task {
+            try? await Task.sleep(nanoseconds: 300_000_000) // 300ms
+            guard !Task.isCancelled else { return }
+            await search()
+        }
+    }
     
     var hasActiveFilters: Bool {
         selectedLocation != nil || portfolioOnly

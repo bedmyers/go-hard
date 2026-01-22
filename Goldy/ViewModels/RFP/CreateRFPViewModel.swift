@@ -7,18 +7,37 @@
 
 import SwiftUI
 
+// MARK: - Time of Day Enum
+
+enum TimeOfDay: String, CaseIterable {
+    case morning = "Morning"
+    case afternoon = "Afternoon"
+    case evening = "Evening"
+    case fullDay = "Full Day"
+
+    var icon: String {
+        switch self {
+        case .morning: return "sunrise.fill"
+        case .afternoon: return "sun.max.fill"
+        case .evening: return "moon.stars.fill"
+        case .fullDay: return "clock.fill"
+        }
+    }
+}
+
 @MainActor
 class CreateRFPViewModel: ObservableObject {
     // Navigation
     @Published var currentStep = 1
-    
+
     // Step 1: Basics
     @Published var selectedCategory: RFPCategory?
     @Published var title = ""
     @Published var description = ""
-    
+
     // Step 2: Event Details
     @Published var eventDate = Date().addingTimeInterval(86400 * 180) // 6 months out
+    @Published var selectedTimeOfDay: TimeOfDay?
     @Published var location = ""
     @Published var guestCountText = ""
     
@@ -53,17 +72,15 @@ class CreateRFPViewModel: ObservableObject {
     var canProceed: Bool {
         switch currentStep {
         case 1:
-            return !title.trimmingCharacters(in: .whitespaces).isEmpty &&
-                   !description.trimmingCharacters(in: .whitespaces).isEmpty
+            return selectedCategory != nil &&
+                   !title.trimmingCharacters(in: .whitespaces).isEmpty
         case 2:
             return !location.trimmingCharacters(in: .whitespaces).isEmpty
         case 3:
-            return true // Optional step
+            return true // Optional step (style + requirements)
         case 4:
-            return true // Optional step
-        case 5:
             return true // Budget is optional
-        case 6:
+        case 5:
             return true
         default:
             return true
@@ -108,10 +125,19 @@ class CreateRFPViewModel: ObservableObject {
                 "description": description.trimmingCharacters(in: .whitespaces),
                 "visibility": visibility == .public ? "PUBLIC" : "PRIVATE"
             ]
+
+            // Category
+            if let category = selectedCategory {
+                body["category"] = category.rawValue
+            }
             
             // Event details
             body["eventDate"] = ISO8601DateFormatter().string(from: eventDate)
-            
+
+            if let timeOfDay = selectedTimeOfDay {
+                body["timeOfDay"] = timeOfDay.rawValue
+            }
+
             if !location.isEmpty {
                 body["location"] = location.trimmingCharacters(in: .whitespaces)
             }

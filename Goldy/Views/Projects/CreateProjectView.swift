@@ -73,8 +73,7 @@ struct CreateProjectView: View {
                                 .padding()
                                 .background(Color.white)
                                 .cornerRadius(12)
-                                .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
-                                .focused($focusedField, equals: .title)
+                                                                .focused($focusedField, equals: .title)
                         }
                         
                         // Event Type
@@ -138,8 +137,7 @@ struct CreateProjectView: View {
                                     .padding()
                                     .background(Color.white)
                                     .cornerRadius(12)
-                                    .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
-                            }
+                                                                }
                         }
 
                         // Event Date - left aligned
@@ -162,8 +160,7 @@ struct CreateProjectView: View {
                             .padding()
                             .background(Color.white)
                             .cornerRadius(12)
-                            .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
-                        }
+                                                    }
 
                         // Location
                         VStack(alignment: .leading, spacing: 8) {
@@ -182,8 +179,7 @@ struct CreateProjectView: View {
                                 .padding()
                                 .background(Color.white)
                                 .cornerRadius(12)
-                                .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
-                                .focused($focusedField, equals: .location)
+                                                                .focused($focusedField, equals: .location)
                         }
                         
                         VStack(alignment: .leading, spacing: 8) {
@@ -210,8 +206,7 @@ struct CreateProjectView: View {
                             .padding()
                             .background(Color.white)
                             .cornerRadius(12)
-                            .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
-                        }
+                                                    }
                         
                         VStack(alignment: .leading, spacing: 8) {
                             HStack {
@@ -243,8 +238,7 @@ struct CreateProjectView: View {
                             }
                             .background(Color.white)
                             .cornerRadius(12)
-                            .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
-
+                            
                             Text("Visible to vendors you invite")
                                 .font(.custom("Spectral-Regular", size: 11))
                                 .foregroundColor(.gray.opacity(0.7))
@@ -270,8 +264,7 @@ struct CreateProjectView: View {
                                 .padding()
                                 .background(Color.white)
                                 .cornerRadius(12)
-                                .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
-                                .focused($focusedField, equals: .inspiration)
+                                                                .focused($focusedField, equals: .inspiration)
 
                             Text("Share your inspiration to help vendors understand your style")
                                 .font(.custom("Spectral-Regular", size: 11))

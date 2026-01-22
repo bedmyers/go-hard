@@ -201,7 +201,6 @@ struct RFPExpandableCard: View {
         .padding(20)
         .background(Color.white)
         .cornerRadius(16)
-        .shadow(color: .black.opacity(0.05), radius: 10, x: 0, y: 4)
     }
 
     private var cardHeader: some View {
@@ -511,24 +510,22 @@ private struct BidRowExpanded: View {
                             .foregroundColor(.black)
                     }
 
-                    // Rating
-                    HStack(spacing: 2) {
-                        ForEach(0..<5) { i in
-                            Image(systemName: "star.fill")
-                                .font(.custom("Spectral-Regular", size: 10))
-                                .foregroundColor(i < 4 ? Color(hex: "F59E0B") : Color.gray.opacity(0.3))
-                        }
-                        Text("4.0")
-                            .font(.custom("Spectral-Medium", size: 10))
-                            .foregroundColor(.gray)
-                    }
-
                     // Services summary
                     if let services = bid.vendor?.services, !services.isEmpty {
                         Text(services.prefix(2).joined(separator: " • "))
-                            .font(.custom("Spectral-Regular", size: 11))
-                            .foregroundColor(.gray)
-                            .lineLimit(1)
+                            .font(.custom("Spectral-Regular", size: 12))
+                            .foregroundColor(Color(hex: "8B5CF6"))
+                    }
+
+                    // Location
+                    if let location = bid.vendor?.location {
+                        HStack(spacing: 4) {
+                            Image(systemName: "mappin")
+                                .font(.system(size: 10))
+                            Text(location)
+                                .font(.custom("Spectral-Regular", size: 11))
+                        }
+                        .foregroundColor(.gray)
                     }
                 }
 

@@ -23,6 +23,8 @@ struct RFP: Codable, Identifiable {
     let eventDate: Date?
     let location: String?
     let guestCount: Int?
+    let category: String?
+    let timeOfDay: String?
     
     // Style & inspiration
     let inspirationUrl: String?
@@ -80,6 +82,11 @@ struct RFP: Codable, Identifiable {
     var guestCountFormatted: String {
         guard let count = guestCount else { return "TBD" }
         return "\(count) guests"
+    }
+
+    var rfpCategory: RFPCategory? {
+        guard let category = category else { return nil }
+        return RFPCategory(rawValue: category)
     }
 }
 

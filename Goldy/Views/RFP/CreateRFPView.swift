@@ -38,10 +38,9 @@ struct CreateRFPView: View {
                         TabView(selection: $viewModel.currentStep) {
                             Step1BasicsView(viewModel: viewModel).tag(1)
                             Step2EventView(viewModel: viewModel).tag(2)
-                            Step3StyleView(viewModel: viewModel).tag(3)
-                            Step4RequirementsView(viewModel: viewModel).tag(4)
-                            Step5BudgetView(viewModel: viewModel).tag(5)
-                            Step6VisibilityView(viewModel: viewModel).tag(6)
+                            Step3DetailsView(viewModel: viewModel).tag(3)
+                            Step4BudgetView(viewModel: viewModel).tag(4)
+                            Step5VisibilityView(viewModel: viewModel).tag(5)
                         }
                         .tabViewStyle(.page(indexDisplayMode: .never))
                         .animation(.easeInOut, value: viewModel.currentStep)
@@ -78,7 +77,7 @@ struct CreateRFPView: View {
     
     private var progressBar: some View {
         HStack(spacing: 4) {
-            ForEach(1...6, id: \.self) { step in
+            ForEach(1...5, id: \.self) { step in
                 Capsule()
                     .fill(step <= viewModel.currentStep ? Color(hex: "FFD700") : Color.gray.opacity(0.3))
                     .frame(height: 4)
@@ -87,15 +86,14 @@ struct CreateRFPView: View {
         .padding(.horizontal)
         .padding(.vertical, 12)
     }
-    
+
     private var stepTitle: String {
         switch viewModel.currentStep {
         case 1: return "What do you need?"
         case 2: return "Event Details"
-        case 3: return "Style & Inspiration"
-        case 4: return "Requirements"
-        case 5: return "Budget & Timeline"
-        case 6: return "Visibility"
+        case 3: return "Style & Requirements"
+        case 4: return "Budget & Timeline"
+        case 5: return "Visibility"
         default: return "Create RFP"
         }
     }
@@ -126,7 +124,7 @@ struct CreateRFPView: View {
                 }
                 
                 Button {
-                    if viewModel.currentStep < 6 {
+                    if viewModel.currentStep < 5 {
                         withAnimation { viewModel.currentStep += 1 }
                     } else {
                         Task { await viewModel.createRFP(projectId: projectId) }
@@ -137,9 +135,9 @@ struct CreateRFPView: View {
                             ProgressView()
                                 .progressViewStyle(CircularProgressViewStyle(tint: .black))
                         } else {
-                            Text(viewModel.currentStep < 6 ? "Continue" : "Post Request")
+                            Text(viewModel.currentStep < 5 ? "Continue" : "Post Request")
                                 .font(.custom("DelaGothicOne-Regular", size: 14))
-                            if viewModel.currentStep < 6 {
+                            if viewModel.currentStep < 5 {
                                 Image(systemName: "arrow.right")
                             } else {
                                 Image(systemName: "paperplane.fill")
@@ -297,7 +295,7 @@ private struct Step2EventView: View {
                     Text("EVENT DATE")
                         .font(.custom("Spectral-Bold", size: 12))
                         .foregroundColor(.gray)
-                    
+
                     DatePicker(
                         "",
                         selection: $viewModel.eventDate,
@@ -311,7 +309,48 @@ private struct Step2EventView: View {
                     .background(Color.white)
                     .cornerRadius(10)
                 }
-                
+
+                // Time of Day
+                VStack(alignment: .leading, spacing: 6) {
+                    HStack {
+                        Text("TIME OF DAY")
+                            .font(.custom("Spectral-Bold", size: 12))
+                            .foregroundColor(.gray)
+
+                        Text("Optional")
+                            .font(.custom("Spectral-Regular", size: 10))
+                            .foregroundColor(.gray.opacity(0.6))
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 2)
+                            .background(Color.gray.opacity(0.1))
+                            .cornerRadius(4)
+                    }
+
+                    HStack(spacing: 8) {
+                        ForEach(TimeOfDay.allCases, id: \.self) { time in
+                            Button {
+                                if viewModel.selectedTimeOfDay == time {
+                                    viewModel.selectedTimeOfDay = nil
+                                } else {
+                                    viewModel.selectedTimeOfDay = time
+                                }
+                            } label: {
+                                HStack(spacing: 4) {
+                                    Image(systemName: time.icon)
+                                        .font(.system(size: 12))
+                                    Text(time.rawValue)
+                                        .font(.custom("Spectral-Medium", size: 12))
+                                }
+                                .foregroundColor(viewModel.selectedTimeOfDay == time ? .black : .gray)
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 10)
+                                .background(viewModel.selectedTimeOfDay == time ? Color(hex: "FFD700") : Color.white)
+                                .cornerRadius(16)
+                            }
+                        }
+                    }
+                }
+
                 VStack(alignment: .leading, spacing: 6) {
                     Text("LOCATION")
                         .font(.custom("Spectral-Bold", size: 12))
@@ -374,20 +413,49 @@ private struct Step2EventView: View {
     }
 }
 
-// MARK: - Step 3: Style & Inspiration
+// MARK: - Step 3: Style & Requirements (Combined)
 
-private struct Step3StyleView: View {
+private struct Step3DetailsView: View {
     @ObservedObject var viewModel: CreateRFPViewModel
-    
+    @State private var mustHaveCount: Int = 1
+    @State private var niceToHaveCount: Int = 1
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
-                Text("Share your vision with vendors")
+                Text("Share your vision and requirements")
                     .font(.custom("Spectral-Regular", size: 14))
                     .foregroundColor(.gray)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 16)
-                
+
+                // MARK: Style Section
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("STYLE TAGS")
+                        .font(.custom("Spectral-Bold", size: 12))
+                        .foregroundColor(.gray)
+
+                    FlowLayout(spacing: 8) {
+                        ForEach(StyleTag.allCases, id: \.self) { tag in
+                            StyleTagPill(
+                                tag: tag,
+                                isSelected: viewModel.selectedStyleTags.contains(tag)
+                            ) {
+                                if viewModel.selectedStyleTags.contains(tag) {
+                                    viewModel.selectedStyleTags.remove(tag)
+                                } else {
+                                    viewModel.selectedStyleTags.insert(tag)
+                                }
+                            }
+                        }
+                    }
+
+                    Text("Select all that apply")
+                        .font(.custom("Spectral-Regular", size: 12))
+                        .foregroundColor(.gray)
+                }
+
+                // Inspiration Link
                 VStack(alignment: .leading, spacing: 6) {
                     HStack {
                         Text("INSPIRATION LINK")
@@ -406,95 +474,18 @@ private struct Step3StyleView: View {
                     HStack {
                         Image(systemName: "link")
                             .foregroundColor(.gray)
-                        TextField("Pinterest, mood board, or reference link...", text: $viewModel.inspirationUrl)
+                        TextField("Pinterest, mood board, or reference...", text: $viewModel.inspirationUrl)
                             .font(.custom("Spectral-Regular", size: 15))
                             .autocapitalization(.none)
                     }
                     .padding()
                     .background(Color.white)
                     .cornerRadius(10)
-
-                    Text("Share your inspiration to help vendors understand your style")
-                        .font(.custom("Spectral-Regular", size: 12))
-                        .foregroundColor(.gray)
                 }
-                
-                VStack(alignment: .leading, spacing: 12) {
-                    Text("STYLE TAGS")
-                        .font(.custom("Spectral-Bold", size: 12))
-                        .foregroundColor(.gray)
-                    
-                    FlowLayout(spacing: 8) {
-                        ForEach(StyleTag.allCases, id: \.self) { tag in
-                            StyleTagPill(
-                                tag: tag,
-                                isSelected: viewModel.selectedStyleTags.contains(tag)
-                            ) {
-                                if viewModel.selectedStyleTags.contains(tag) {
-                                    viewModel.selectedStyleTags.remove(tag)
-                                } else {
-                                    viewModel.selectedStyleTags.insert(tag)
-                                }
-                            }
-                        }
-                    }
-                    
-                    Text("Select all that apply")
-                        .font(.custom("Spectral-Regular", size: 12))
-                        .foregroundColor(.gray)
-                }
-                
-                Spacer(minLength: 100)
-            }
-            .padding()
-        }
-    }
-}
 
-// MARK: - Style Tag Pill
+                Divider().padding(.vertical, 8)
 
-private struct StyleTagPill: View {
-    let tag: StyleTag
-    let isSelected: Bool
-    let action: () -> Void
-    
-    var body: some View {
-        Button(action: action) {
-            HStack(spacing: 4) {
-                Image(systemName: tag.icon)
-                    .font(.custom("Spectral-Regular", size: 10))
-                Text(tag.displayName)
-                    .font(.custom("Spectral-Medium", size: 12))
-            }
-            .foregroundColor(isSelected ? .black : .gray)
-            .padding(.horizontal, 12)
-            .padding(.vertical, 8)
-            .background(isSelected ? Color(hex: "FFD700") : Color.white)
-            .cornerRadius(16)
-            .overlay(
-                RoundedRectangle(cornerRadius: 16)
-                    .stroke(isSelected ? Color.clear : Color.gray.opacity(0.3), lineWidth: 1)
-            )
-        }
-    }
-}
-
-// MARK: - Step 4: Requirements
-
-private struct Step4RequirementsView: View {
-    @ObservedObject var viewModel: CreateRFPViewModel
-    @State private var mustHaveCount: Int = 1
-    @State private var niceToHaveCount: Int = 1
-
-    var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 24) {
-                Text("What's essential vs. nice-to-have?")
-                    .font(.custom("Spectral-Regular", size: 14))
-                    .foregroundColor(.gray)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 16)
-
+                // MARK: Requirements Section
                 // Must Haves
                 VStack(alignment: .leading, spacing: 12) {
                     HStack {
@@ -608,7 +599,6 @@ private struct Step4RequirementsView: View {
             .padding()
         }
         .onAppear {
-            // Initialize counts based on existing data
             mustHaveCount = max(1, viewModel.mustHaves.filter { !$0.isEmpty }.count)
             niceToHaveCount = max(1, viewModel.niceToHaves.filter { !$0.isEmpty }.count)
         }
@@ -637,9 +627,37 @@ private struct Step4RequirementsView: View {
     }
 }
 
-// MARK: - Step 5: Budget & Timeline
+// MARK: - Style Tag Pill
 
-private struct Step5BudgetView: View {
+private struct StyleTagPill: View {
+    let tag: StyleTag
+    let isSelected: Bool
+    let action: () -> Void
+    
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 4) {
+                Image(systemName: tag.icon)
+                    .font(.custom("Spectral-Regular", size: 10))
+                Text(tag.displayName)
+                    .font(.custom("Spectral-Medium", size: 12))
+            }
+            .foregroundColor(isSelected ? .black : .gray)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 8)
+            .background(isSelected ? Color(hex: "FFD700") : Color.white)
+            .cornerRadius(16)
+            .overlay(
+                RoundedRectangle(cornerRadius: 16)
+                    .stroke(isSelected ? Color.clear : Color.gray.opacity(0.3), lineWidth: 1)
+            )
+        }
+    }
+}
+
+// MARK: - Step 4: Budget & Timeline
+
+private struct Step4BudgetView: View {
     @ObservedObject var viewModel: CreateRFPViewModel
 
     private var isDecisionDateValid: Bool {
@@ -778,9 +796,9 @@ private struct Step5BudgetView: View {
     }
 }
 
-// MARK: - Step 6: Visibility
+// MARK: - Step 5: Visibility
 
-private struct Step6VisibilityView: View {
+private struct Step5VisibilityView: View {
     @ObservedObject var viewModel: CreateRFPViewModel
     @State private var showPreview = false
 

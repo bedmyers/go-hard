@@ -284,8 +284,7 @@ private struct OpenRFPCard: View {
         .padding(20)
         .background(Color.white)
         .cornerRadius(16)
-        .shadow(color: .black.opacity(0.05), radius: 10, x: 0, y: 4)
-    }
+            }
 }
 
 // MARK: - Bids Content
@@ -430,8 +429,7 @@ private struct MyBidCard: View {
         .padding(20)
         .background(Color.white)
         .cornerRadius(16)
-        .shadow(color: .black.opacity(0.05), radius: 10, x: 0, y: 4)
-        .overlay(
+                .overlay(
             RoundedRectangle(cornerRadius: 16)
                 .stroke(bid.status == .accepted ? Color(hex: "22C55E") : .clear, lineWidth: 2)
         )

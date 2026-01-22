@@ -45,12 +45,56 @@ struct DiscoverView: View {
 
 // MARK: - All RFPs View
 
+// Filter and Sort enums for RFPs
+private enum RFPFilter: String, CaseIterable {
+    case all = "All"
+    case active = "Active"
+    case awarded = "Awarded"
+    case closed = "Closed"
+}
+
+private enum RFPSort: String, CaseIterable {
+    case newest = "Newest First"
+    case deadlineSoon = "Deadline Soon"
+    case mostBids = "Most Bids"
+}
+
 private struct AllRFPsView: View {
     @State private var rfps: [RFP] = []
     @State private var isLoading = true
     @State private var errorMessage: String?
     @State private var showCreateRFP = false
     @State private var expandedRFPId: Int?
+    @State private var selectedFilter: RFPFilter = .all
+    @State private var selectedSort: RFPSort = .newest
+
+    private var filteredAndSortedRFPs: [RFP] {
+        var result = rfps
+
+        // Filter by status
+        switch selectedFilter {
+        case .all:
+            break
+        case .active:
+            result = result.filter { $0.status == .open }
+        case .awarded:
+            result = result.filter { $0.status == .awarded }
+        case .closed:
+            result = result.filter { $0.status == .closed }
+        }
+
+        // Sort
+        switch selectedSort {
+        case .newest:
+            result = result.sorted { $0.createdAt > $1.createdAt }
+        case .deadlineSoon:
+            result = result.sorted { ($0.deadline ?? .distantFuture) < ($1.deadline ?? .distantFuture) }
+        case .mostBids:
+            result = result.sorted { $0.bidCount > $1.bidCount }
+        }
+
+        return result
+    }
     
     var body: some View {
         ZStack {
@@ -136,14 +180,55 @@ private struct AllRFPsView: View {
     private var rfpList: some View {
         ScrollView {
             VStack(spacing: 12) {
-                Text("All your requests for proposals")
+                // Filter chips + Sort button row
+                HStack(spacing: 8) {
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 8) {
+                            ForEach(RFPFilter.allCases, id: \.self) { filter in
+                                RFPFilterChip(
+                                    title: filter.rawValue,
+                                    isSelected: selectedFilter == filter
+                                ) {
+                                    withAnimation(.easeInOut(duration: 0.2)) {
+                                        selectedFilter = filter
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    Menu {
+                        ForEach(RFPSort.allCases, id: \.self) { sort in
+                            Button {
+                                selectedSort = sort
+                            } label: {
+                                HStack {
+                                    Text(sort.rawValue)
+                                    if selectedSort == sort {
+                                        Image(systemName: "checkmark")
+                                    }
+                                }
+                            }
+                        }
+                    } label: {
+                        Image(systemName: "arrow.up.arrow.down")
+                            .font(.system(size: 14))
+                            .foregroundColor(selectedSort != .newest ? Color(hex: "3B82F6") : .gray)
+                            .frame(width: 36, height: 36)
+                            .background(Color.white)
+                            .cornerRadius(8)
+                    }
+                }
+                .padding(.horizontal)
+
+                Text("\(filteredAndSortedRFPs.count) request\(filteredAndSortedRFPs.count == 1 ? "" : "s")")
                     .font(.custom("Spectral-Regular", size: 14))
                     .foregroundColor(.gray)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.horizontal)
-                
+
                 LazyVStack(spacing: 16) {
-                    ForEach(rfps) { rfp in
+                    ForEach(filteredAndSortedRFPs) { rfp in
                         RFPCardWithProject(
                             rfp: rfp,
                             isExpanded: expandedRFPId == rfp.id,
@@ -196,55 +281,108 @@ private struct RFPCardWithProject: View {
         .padding(20)
         .background(Color.white)
         .cornerRadius(16)
-        .shadow(color: .black.opacity(0.05), radius: 10, x: 0, y: 4)
     }
     
     private var cardHeader: some View {
         VStack(alignment: .leading, spacing: 8) {
-            // Project badge
-            if let project = rfp.project {
-                HStack(spacing: 4) {
-                    Image(systemName: "folder.fill")
-                        .font(.custom("Spectral-Regular", size: 10))
-                    Text(project.title)
-                        .font(.custom("Spectral-Medium", size: 11))
+            // Project badge + Category badge row
+            HStack(spacing: 8) {
+                if let project = rfp.project {
+                    HStack(spacing: 4) {
+                        Image(systemName: "folder.fill")
+                            .font(.system(size: 10))
+                        Text(project.title)
+                            .font(.custom("Spectral-Medium", size: 11))
+                    }
+                    .foregroundColor(Color(hex: "3B82F6"))
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(Color(hex: "3B82F6").opacity(0.1))
+                    .cornerRadius(6)
+                } else {
+                    HStack(spacing: 4) {
+                        Image(systemName: "sparkles")
+                            .font(.system(size: 10))
+                        Text("Standalone")
+                            .font(.custom("Spectral-Medium", size: 11))
+                    }
+                    .foregroundColor(Color(hex: "8B5CF6"))
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(Color(hex: "8B5CF6").opacity(0.1))
+                    .cornerRadius(6)
                 }
-                .foregroundColor(Color(hex: "3B82F6"))
-                .padding(.horizontal, 8)
-                .padding(.vertical, 4)
-                .background(Color(hex: "3B82F6").opacity(0.1))
-                .cornerRadius(6)
-            } else {
-                HStack(spacing: 4) {
-                    Image(systemName: "sparkles")
-                        .font(.custom("Spectral-Regular", size: 10))
-                    Text("Standalone")
-                        .font(.custom("Spectral-Medium", size: 11))
+
+                // Category badge
+                if let category = rfp.rfpCategory {
+                    HStack(spacing: 4) {
+                        Image(systemName: category.icon)
+                            .font(.system(size: 10))
+                        Text(category.rawValue)
+                            .font(.custom("Spectral-Medium", size: 11))
+                    }
+                    .foregroundColor(Color(hex: category.color))
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(Color(hex: category.color).opacity(0.1))
+                    .cornerRadius(6)
                 }
-                .foregroundColor(Color(hex: "8B5CF6"))
-                .padding(.horizontal, 8)
-                .padding(.vertical, 4)
-                .background(Color(hex: "8B5CF6").opacity(0.1))
-                .cornerRadius(6)
             }
             
             HStack(alignment: .top) {
                 VStack(alignment: .leading, spacing: 6) {
                     HStack(spacing: 10) {
-                        Text(rfp.title)
-                            .font(.custom("DelaGothicOne-Regular", size: 17))
-                            .lineLimit(2)
-                        
+                        NavigationLink(destination: RFPDetailView(rfp: rfp)) {
+                            Text(rfp.title)
+                                .font(.custom("DelaGothicOne-Regular", size: 17))
+                                .foregroundColor(.black)
+                                .lineLimit(2)
+                                .multilineTextAlignment(.leading)
+                        }
+
                         StatusBadge(status: rfp.status)
                     }
-                    
-                    Text("Posted \(rfp.createdAt.timeAgoDisplay())")
-                        .font(.custom("Spectral-Regular", size: 13))
-                        .foregroundColor(.gray)
+
+                    HStack(spacing: 12) {
+                        Text("Posted \(rfp.createdAt.timeAgoDisplay())")
+                            .font(.custom("Spectral-Regular", size: 13))
+                            .foregroundColor(.gray)
+
+                        if let eventDate = rfp.eventDate {
+                            HStack(spacing: 4) {
+                                Image(systemName: "calendar")
+                                    .font(.system(size: 10))
+                                Text(eventDate, style: .date)
+                                    .font(.custom("Spectral-Regular", size: 12))
+                            }
+                            .foregroundColor(Color(hex: "8B5CF6"))
+                        }
+
+                        if let location = rfp.location, !location.isEmpty {
+                            HStack(spacing: 4) {
+                                Image(systemName: "mappin")
+                                    .font(.system(size: 10))
+                                Text(location)
+                                    .font(.custom("Spectral-Regular", size: 12))
+                                    .lineLimit(1)
+                            }
+                            .foregroundColor(.gray)
+                        }
+
+                        if let guestCount = rfp.guestCount {
+                            HStack(spacing: 4) {
+                                Image(systemName: "person.2")
+                                    .font(.system(size: 10))
+                                Text("\(guestCount)")
+                                    .font(.custom("Spectral-Regular", size: 12))
+                            }
+                            .foregroundColor(.gray)
+                        }
+                    }
                 }
-                
+
                 Spacer()
-                
+
                 Button(action: onToggle) {
                     Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
                         .font(.custom("Spectral-Medium", size: 14))
@@ -380,7 +518,25 @@ private struct BidRowCompact: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(bid.vendor?.name ?? "Vendor")
                         .font(.custom("Spectral-Bold", size: 15))
-                    
+
+                    // Vendor services
+                    if let services = bid.vendor?.services, !services.isEmpty {
+                        Text(services.prefix(2).joined(separator: " • "))
+                            .font(.custom("Spectral-Regular", size: 12))
+                            .foregroundColor(Color(hex: "8B5CF6"))
+                    }
+
+                    // Vendor location
+                    if let location = bid.vendor?.location {
+                        HStack(spacing: 4) {
+                            Image(systemName: "mappin")
+                                .font(.system(size: 10))
+                            Text(location)
+                                .font(.custom("Spectral-Regular", size: 12))
+                        }
+                        .foregroundColor(.gray)
+                    }
+
                     Text(bid.proposal)
                         .font(.custom("Spectral-Regular", size: 13))
                         .foregroundColor(.gray)
@@ -460,8 +616,8 @@ private struct BrowseVendorsView: View {
                     Image(systemName: "magnifyingglass")
                         .foregroundColor(.gray)
                     TextField("Search vendors...", text: $viewModel.searchQuery)
-                        .onSubmit {
-                            Task { await viewModel.search() }
+                        .onChange(of: viewModel.searchQuery) { _, _ in
+                            viewModel.debouncedSearch()
                         }
                     
                     if !viewModel.searchQuery.isEmpty {
@@ -502,21 +658,42 @@ private struct BrowseVendorsView: View {
             .padding(.bottom, 12)
             
             // Active filters display
-            if viewModel.hasActiveFilters {
+            if viewModel.portfolioOnly {
                 activeFiltersRow
             }
-            
-            // Category chips
+
+            // Combined filter chips row (cities + categories)
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 8) {
-                    CategoryChip(title: "All", isSelected: viewModel.selectedCategory == nil) {
-                        viewModel.selectedCategory = nil
+                    // City chips
+                    LocationChip(title: "All", isSelected: viewModel.selectedLocation == nil) {
+                        viewModel.selectedLocation = nil
                         Task { await viewModel.search() }
                     }
-                    
+
+                    ForEach(viewModel.locations, id: \.self) { location in
+                        // Show just city name without state
+                        let cityName = location.components(separatedBy: ",").first ?? location
+                        LocationChip(title: cityName, isSelected: viewModel.selectedLocation == location) {
+                            viewModel.selectedLocation = location
+                            Task { await viewModel.search() }
+                        }
+                    }
+
+                    // Divider
+                    Rectangle()
+                        .fill(Color.gray.opacity(0.3))
+                        .frame(width: 1, height: 20)
+                        .padding(.horizontal, 4)
+
+                    // Category chips
                     ForEach(VendorCategory.allCases) { category in
                         CategoryChip(title: category.displayName, isSelected: viewModel.selectedCategory == category) {
-                            viewModel.selectedCategory = category
+                            if viewModel.selectedCategory == category {
+                                viewModel.selectedCategory = nil
+                            } else {
+                                viewModel.selectedCategory = category
+                            }
                             Task { await viewModel.search() }
                         }
                     }
@@ -547,16 +724,10 @@ private struct BrowseVendorsView: View {
     private var activeFiltersRow: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 8) {
-                if let location = viewModel.selectedLocation {
-                    FilterTag(label: location) {
-                        viewModel.selectedLocation = nil
-                        Task { await viewModel.search() }
-                    }
-                }
-                
                 if viewModel.portfolioOnly {
                     FilterTag(label: "Has Portfolio") {
                         viewModel.portfolioOnly = false
+                        Task { await viewModel.search() }
                     }
                 }
             }
@@ -774,13 +945,59 @@ private struct LocationOption: View {
     }
 }
 
+// MARK: - RFP Filter Chip
+
+private struct RFPFilterChip: View {
+    let title: String
+    let isSelected: Bool
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            Text(title)
+                .font(.custom("Spectral-Medium", size: 13))
+                .foregroundColor(isSelected ? .white : .gray)
+                .padding(.horizontal, 14)
+                .padding(.vertical, 8)
+                .background(isSelected ? Color.black : Color.white)
+                .cornerRadius(16)
+        }
+    }
+}
+
+// MARK: - Location Chip
+
+private struct LocationChip: View {
+    let title: String
+    let isSelected: Bool
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 4) {
+                if title != "All" {
+                    Image(systemName: "mappin")
+                        .font(.system(size: 9))
+                }
+                Text(title)
+                    .font(.custom("Spectral-Medium", size: 13))
+            }
+            .foregroundColor(isSelected ? .white : .gray)
+            .padding(.horizontal, 14)
+            .padding(.vertical, 8)
+            .background(isSelected ? Color(hex: "3B82F6") : Color.white)
+            .cornerRadius(16)
+        }
+    }
+}
+
 // MARK: - Category Chip
 
 private struct CategoryChip: View {
     let title: String
     let isSelected: Bool
     let action: () -> Void
-    
+
     var body: some View {
         Button(action: action) {
             Text(title)
@@ -798,54 +1015,71 @@ private struct CategoryChip: View {
 
 private struct VendorRowCard: View {
     let vendor: User
-    
+
     var body: some View {
         HStack(spacing: 14) {
             ZStack {
                 Circle()
                     .fill(Color(hex: "FFD700").opacity(0.2))
                     .frame(width: 56, height: 56)
-                
-                Text(initials)
+
+                Text(vendor.initials)
                     .font(.custom("DelaGothicOne-Regular", size: 18))
                     .foregroundColor(Color(hex: "B8860B"))
             }
-            
+
             VStack(alignment: .leading, spacing: 4) {
                 HStack(spacing: 6) {
                     Text(vendor.name)
                         .font(.custom("Spectral-Bold", size: 16))
                         .foregroundColor(.black)
-                    
+
                     // Verified badge
-                    if vendor.stripeAccountId != nil {
+                    if vendor.isVerified {
                         Image(systemName: "checkmark.seal.fill")
-                            .font(.custom("Spectral-Regular", size: 14))
+                            .font(.system(size: 14))
                             .foregroundColor(Color(hex: "3B82F6"))
                     }
                 }
-                
+
                 if let services = vendor.services, !services.isEmpty {
                     Text(services.prefix(2).joined(separator: " • "))
                         .font(.custom("Spectral-Regular", size: 13))
                         .foregroundColor(Color(hex: "8B5CF6"))
                 }
-                
-                HStack(spacing: 12) {
+
+                // Location + years experience + portfolio
+                HStack(spacing: 0) {
                     if let location = vendor.location {
                         HStack(spacing: 4) {
                             Image(systemName: "mappin")
-                                .font(.custom("Spectral-Regular", size: 10))
+                                .font(.system(size: 10))
                             Text(location)
                                 .font(.custom("Spectral-Regular", size: 12))
                         }
                         .foregroundColor(.gray)
                     }
-                    
+
+                    if let expText = vendor.experienceText {
+                        if vendor.location != nil {
+                            Text(" · ")
+                                .font(.custom("Spectral-Regular", size: 12))
+                                .foregroundColor(.gray)
+                        }
+                        Text(expText)
+                            .font(.custom("Spectral-Regular", size: 12))
+                            .foregroundColor(.gray)
+                    }
+
                     if let urls = vendor.portfolioUrls, !urls.isEmpty {
+                        if vendor.location != nil || vendor.experienceText != nil {
+                            Text(" · ")
+                                .font(.custom("Spectral-Regular", size: 12))
+                                .foregroundColor(.gray)
+                        }
                         HStack(spacing: 4) {
                             Image(systemName: "photo")
-                                .font(.custom("Spectral-Regular", size: 10))
+                                .font(.system(size: 10))
                             Text("\(urls.count) photos")
                                 .font(.custom("Spectral-Regular", size: 12))
                         }
@@ -853,25 +1087,23 @@ private struct VendorRowCard: View {
                     }
                 }
             }
-            
+
             Spacer()
-            
-            Image(systemName: "chevron.right")
-                .font(.custom("Spectral-Regular", size: 14))
-                .foregroundColor(.gray.opacity(0.5))
+
+            // Starting price on the right
+            if let price = vendor.startingPriceFormatted {
+                Text(price)
+                    .font(.custom("Spectral-Bold", size: 16))
+                    .foregroundColor(Color(hex: "22C55E"))
+            } else {
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 14))
+                    .foregroundColor(.gray.opacity(0.5))
+            }
         }
-        .padding(16)
+        .padding(14)
         .background(Color.white)
-        .cornerRadius(14)
-        .shadow(color: .black.opacity(0.04), radius: 8, x: 0, y: 2)
-    }
-    
-    private var initials: String {
-        let parts = vendor.name.split(separator: " ")
-        if parts.count >= 2 {
-            return "\(parts[0].prefix(1))\(parts[1].prefix(1))".uppercased()
-        }
-        return String(vendor.name.prefix(2)).uppercased()
+        .cornerRadius(10)
     }
 }
 

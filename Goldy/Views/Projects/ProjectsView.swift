@@ -65,7 +65,7 @@ struct ProjectsView: View {
                 VStack(spacing: 20) {
                     // Pending Invitations Section
                     if !viewModel.pendingInvitations.isEmpty {
-                        VStack(alignment: .leading, spacing: 12) {
+                        VStack(alignment: .leading, spacing: 8) {
                             Text("PENDING INVITATIONS")
                                 .font(.custom("DelaGothicOne-Regular", size: 14))
                                 .foregroundColor(Color(hex: "8B5CF6"))
@@ -79,7 +79,7 @@ struct ProjectsView: View {
                     }
 
                     // Active Projects Section
-                    VStack(alignment: .leading, spacing: 16) {
+                    VStack(alignment: .leading, spacing: 8) {
                         if viewModel.isLoading {
                             ProgressView()
                                 .scaleEffect(1.5)
@@ -120,7 +120,7 @@ struct ProjectsView: View {
 
                     // Past Projects Section (collapsed)
                     if !pastProjects.isEmpty {
-                        VStack(alignment: .leading, spacing: 12) {
+                        VStack(alignment: .leading, spacing: 8) {
                             Button {
                                 withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
                                     showPastProjects.toggle()
@@ -190,117 +190,111 @@ private struct InvitationCard: View {
     @State private var showDetails = false
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            // Header
-            HStack {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(project.title)
-                        .font(.custom("DelaGothicOne-Regular", size: 16))
+        HStack(spacing: 0) {
+            // Purple accent bar on left
+            RoundedRectangle(cornerRadius: 2)
+                .fill(Color(hex: "8B5CF6"))
+                .frame(width: 4)
 
-                    Text("from \(project.customer.name)")
-                        .font(.custom("Spectral-Regular", size: 13))
-                        .foregroundColor(.gray)
-                }
+            VStack(alignment: .leading, spacing: 10) {
+                // Row 1: Project name + amount
+                HStack(alignment: .top) {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(project.title)
+                            .font(.custom("Spectral-Bold", size: 16))
+                            .foregroundColor(.black)
 
-                Spacer()
-
-                Text("NEW")
-                    .font(.custom("Spectral-Bold", size: 10))
-                    .foregroundColor(.white)
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 4)
-                    .background(Color(hex: "8B5CF6"))
-                    .cornerRadius(4)
-            }
-
-            // Role and amount
-            if let role = project.myVendorRole {
-                HStack {
-                    Label(role.role, systemImage: "tag.fill")
-                        .font(.custom("Spectral-Medium", size: 13))
-                        .foregroundColor(.gray)
+                        Text("from \(project.customer.name)")
+                            .font(.custom("Spectral-Medium", size: 13))
+                            .foregroundColor(.black)
+                    }
 
                     Spacer()
 
-                    Text(role.amountFormatted)
-                        .font(.custom("DelaGothicOne-Regular", size: 16))
-                }
-            }
-
-            // Event date
-            if let eventDate = project.eventDate {
-                HStack(spacing: 4) {
-                    Image(systemName: "calendar")
-                        .font(.system(size: 12))
-                    Text(eventDate, style: .date)
-                        .font(.custom("Spectral-Regular", size: 12))
-                }
-                .foregroundColor(.gray)
-            }
-
-            // Action buttons
-            HStack(spacing: 12) {
-                Button {
-                    guard let projectVendorId = project.myVendorRole?.id else { return }
-                    isProcessing = true
-                    Task {
-                        do {
-                            try await viewModel.declineAgreement(projectVendorId: projectVendorId)
-                        } catch {
-                            print("Error declining: \(error)")
-                        }
-                        isProcessing = false
+                    if let role = project.myVendorRole {
+                        Text(role.amountFormatted)
+                            .font(.custom("Spectral-Bold", size: 18))
+                            .foregroundColor(.black)
                     }
-                } label: {
-                    Text("DECLINE")
-                        .font(.custom("Spectral-Bold", size: 12))
-                        .foregroundColor(.gray)
+                }
+
+                // Row 2: Role + event date
+                if let role = project.myVendorRole {
+                    HStack(spacing: 0) {
+                        Text(role.role)
+                            .font(.custom("Spectral-Medium", size: 13))
+                            .foregroundColor(.black)
+
+                        if let eventDate = project.eventDate {
+                            Text(" · ")
+                                .foregroundColor(.black)
+
+                            Text(eventDate, style: .date)
+                                .font(.custom("Spectral-Medium", size: 13))
+                                .foregroundColor(.black)
+                        }
+                    }
+                }
+
+                // Action buttons
+                HStack(spacing: 8) {
+                    Button {
+                        guard let projectVendorId = project.myVendorRole?.id else { return }
+                        isProcessing = true
+                        Task {
+                            do {
+                                try await viewModel.declineAgreement(projectVendorId: projectVendorId)
+                            } catch {
+                                print("Error declining: \(error)")
+                            }
+                            isProcessing = false
+                        }
+                    } label: {
+                        Text("Decline")
+                            .font(.custom("Spectral-Medium", size: 13))
+                            .foregroundColor(.black)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 10)
+                            .background(Color.gray.opacity(0.1))
+                            .cornerRadius(6)
+                    }
+                    .disabled(isProcessing)
+
+                    Button {
+                        guard let projectVendorId = project.myVendorRole?.id else { return }
+                        isProcessing = true
+                        Task {
+                            do {
+                                try await viewModel.acceptAgreement(projectVendorId: projectVendorId)
+                            } catch {
+                                print("Error accepting: \(error)")
+                            }
+                            isProcessing = false
+                        }
+                    } label: {
+                        HStack {
+                            if isProcessing {
+                                ProgressView()
+                                    .scaleEffect(0.8)
+                                    .tint(.white)
+                            } else {
+                                Text("Accept")
+                                    .font(.custom("Spectral-Medium", size: 13))
+                            }
+                        }
+                        .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
-                        .padding(.vertical, 12)
-                        .background(Color.gray.opacity(0.1))
-                        .cornerRadius(8)
-                }
-                .disabled(isProcessing)
-
-                Button {
-                    guard let projectVendorId = project.myVendorRole?.id else { return }
-                    isProcessing = true
-                    Task {
-                        do {
-                            try await viewModel.acceptAgreement(projectVendorId: projectVendorId)
-                        } catch {
-                            print("Error accepting: \(error)")
-                        }
-                        isProcessing = false
+                        .padding(.vertical, 10)
+                        .background(Color(hex: "22C55E"))
+                        .cornerRadius(6)
                     }
-                } label: {
-                    HStack {
-                        if isProcessing {
-                            ProgressView()
-                                .scaleEffect(0.8)
-                                .tint(.white)
-                        } else {
-                            Text("ACCEPT")
-                                .font(.custom("Spectral-Bold", size: 12))
-                        }
-                    }
-                    .foregroundColor(.white)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 12)
-                    .background(Color(hex: "22C55E"))
-                    .cornerRadius(8)
+                    .disabled(isProcessing)
                 }
-                .disabled(isProcessing)
             }
+            .padding(14)
         }
-        .padding(16)
         .background(Color.white)
-        .cornerRadius(12)
-        .overlay(
-            RoundedRectangle(cornerRadius: 12)
-                .stroke(Color(hex: "8B5CF6").opacity(0.3), lineWidth: 2)
-        )
-        .shadow(color: .black.opacity(0.05), radius: 8, x: 0, y: 4)
+        .cornerRadius(10)
         .onTapGesture {
             showDetails = true
         }
@@ -369,7 +363,6 @@ private struct StatCard: View {
         .padding(.vertical, 14)
         .background(color)
         .cornerRadius(12)
-        .shadow(color: .black.opacity(0.03), radius: 4, x: 0, y: 2)
     }
 }
 
@@ -378,166 +371,123 @@ private struct StatCard: View {
 private struct ProjectCard: View {
     let project: Project
 
-    // Find the most urgent action item
-    private var urgentAction: UrgentAction? {
-        var allMilestones: [(milestone: Milestone, vendorName: String)] = []
+    // Calculate escrow progress as percentage of budget
+    private var escrowProgress: Double {
+        guard let budget = project.totalBudgetDollars, budget > 0 else { return 0 }
+        return min(project.totalAmountInEscrow / budget, 1.0)
+    }
+
+    // Check for overdue milestones
+    private var hasOverdueItems: Bool {
+        let now = Date()
         for vendor in project.vendors {
             guard let escrow = vendor.escrow else { continue }
             for milestone in escrow.milestones where !milestone.released {
-                allMilestones.append((milestone: milestone, vendorName: vendor.vendor.name))
+                if let dueDate = milestone.dueDate, dueDate < now {
+                    return true
+                }
             }
         }
+        return false
+    }
 
-        let now = Date()
-
-        // First priority: overdue milestones
-        let overdue = allMilestones
-            .filter { item in
-                guard let dueDate = item.milestone.dueDate else { return false }
-                return dueDate < now
-            }
-            .sorted { ($0.milestone.dueDate ?? .distantFuture) < ($1.milestone.dueDate ?? .distantFuture) }
-
-        if let first = overdue.first, let dueDate = first.milestone.dueDate {
-            let days = Calendar.current.dateComponents([.day], from: dueDate, to: now).day ?? 0
-            return UrgentAction(
-                description: first.milestone.description ?? "Payment",
-                vendorName: first.vendorName,
-                timing: "\(days)d overdue",
-                isOverdue: true
-            )
+    // Format date with ordinal suffix
+    private func formatDate(_ date: Date) -> String {
+        let day = Calendar.current.component(.day, from: date)
+        let suffix: String
+        switch day {
+        case 1, 21, 31: suffix = "st"
+        case 2, 22: suffix = "nd"
+        case 3, 23: suffix = "rd"
+        default: suffix = "th"
         }
 
-        // Second priority: upcoming milestones (within 14 days)
-        let upcoming = allMilestones
-            .filter { item in
-                guard let dueDate = item.milestone.dueDate else { return false }
-                let days = Calendar.current.dateComponents([.day], from: now, to: dueDate).day ?? 0
-                return days >= 0 && days <= 14
-            }
-            .sorted { ($0.milestone.dueDate ?? .distantFuture) < ($1.milestone.dueDate ?? .distantFuture) }
+        let formatter = DateFormatter()
+        formatter.dateFormat = "MMM"
+        let month = formatter.string(from: date)
 
-        if let first = upcoming.first, let dueDate = first.milestone.dueDate {
-            let days = Calendar.current.dateComponents([.day], from: now, to: dueDate).day ?? 0
-            let timing = days == 0 ? "due today" : "due in \(days)d"
-            return UrgentAction(
-                description: first.milestone.description ?? "Payment",
-                vendorName: first.vendorName,
-                timing: timing,
-                isOverdue: false
-            )
+        formatter.dateFormat = "yyyy"
+        let year = formatter.string(from: date)
+
+        return "\(month) \(day)\(suffix), \(year)"
+    }
+
+    // Format escrow amount compactly
+    private func formatCompact(_ amount: Double) -> String {
+        if amount >= 1000 {
+            return "$\(Int(amount / 1000))k held"
+        } else {
+            return "$\(Int(amount)) held"
         }
-
-        return nil
-    }
-
-    private var hasUrgentItems: Bool {
-        urgentAction?.isOverdue == true
-    }
-
-    private var hasUpcomingItems: Bool {
-        urgentAction != nil && urgentAction?.isOverdue == false
-    }
-
-    private var isEmpty: Bool {
-        project.vendors.isEmpty && project.totalAmountInEscrow == 0
     }
 
     var body: some View {
-        HStack(spacing: 0) {
-            // Left accent bar for urgent items
-            if hasUrgentItems {
-                Rectangle()
-                    .fill(Color(hex: "EF4444"))
-                    .frame(width: 4)
+        VStack(alignment: .leading, spacing: 6) {
+            // Row 1: Project name + Budget
+            HStack(alignment: .top) {
+                Text(project.title)
+                    .font(.custom("Spectral-Bold", size: 16))
+                    .foregroundColor(.black)
+                    .lineLimit(1)
+
+                Spacer()
+
+                Text(formatCurrency(project.totalBudgetDollars ?? 0))
+                    .font(.custom("Spectral-Bold", size: 18))
+                    .foregroundColor(.black)
             }
 
-            VStack(alignment: .leading, spacing: 14) {
-                // Header with title
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(project.title)
-                        .font(.custom("DelaGothicOne-Regular", size: 18))
+            // Row 2: Progress bar (escrow/budget ratio)
+            GeometryReader { geometry in
+                ZStack(alignment: .leading) {
+                    RoundedRectangle(cornerRadius: 5)
+                        .fill(Color.gray.opacity(0.15))
+                        .frame(height: 10)
+
+                    if escrowProgress > 0 {
+                        RoundedRectangle(cornerRadius: 5)
+                            .fill(Color(hex: "EC633A").opacity(0.3))
+                            .frame(width: geometry.size.width * escrowProgress, height: 10)
+                    }
+                }
+            }
+            .frame(height: 10)
+
+            // Row 3: Date + vendor count + escrow held (+ overdue indicator)
+            HStack(spacing: 0) {
+                if let eventDate = project.eventDate {
+                    Text(formatDate(eventDate))
+                        .font(.custom("Spectral-Medium", size: 13))
                         .foregroundColor(.black)
 
-                    if let eventDate = project.eventDate {
-                        Text(eventDate, style: .date)
-                            .font(.custom("Spectral-Regular", size: 13))
-                            .foregroundColor(.gray)
-                    }
+                    Text(" · ")
+                        .foregroundColor(.black)
                 }
 
-                // Vendor count (or empty prompt)
-                if isEmpty {
-                    HStack(spacing: 6) {
-                        Image(systemName: "plus.circle")
-                            .font(.system(size: 12))
-                            .foregroundColor(Color(hex: "8B5CF6"))
+                Text("\(project.vendors.count) vendor\(project.vendors.count == 1 ? "" : "s")")
+                    .font(.custom("Spectral-Medium", size: 13))
+                    .foregroundColor(.black)
 
-                        Text("Add your first vendor to get started")
-                            .font(.custom("Spectral-Regular", size: 13))
-                            .foregroundColor(Color(hex: "8B5CF6"))
-                    }
-                } else {
-                    Text("\(project.vendors.count) vendor\(project.vendors.count == 1 ? "" : "s")")
-                        .font(.custom("Spectral-Regular", size: 13))
-                        .foregroundColor(.gray)
-                }
+                Text(" · ")
+                    .foregroundColor(.black)
 
-                // Escrow and budget row - always show, even when $0
-                HStack {
-                    VStack(alignment: .leading, spacing: 3) {
-                        Text("IN ESCROW")
-                            .font(.custom("Spectral-Bold", size: 9))
-                            .foregroundColor(.gray)
+                Text(formatCompact(project.totalAmountInEscrow))
+                    .font(.custom("Spectral-Medium", size: 13))
+                    .foregroundColor(.black)
 
-                        Text(formatCurrency(project.totalAmountInEscrow))
-                            .font(.custom("DelaGothicOne-Regular", size: 16))
-                            .foregroundColor(.black)
-                    }
+                if hasOverdueItems {
+                    Text(" · ")
+                        .foregroundColor(.black)
 
-                    Spacer()
-
-                    VStack(alignment: .trailing, spacing: 3) {
-                        Text("BUDGET")
-                            .font(.custom("Spectral-Bold", size: 9))
-                            .foregroundColor(.gray)
-
-                        Text(formatCurrency(project.totalBudgetDollars ?? 0))
-                            .font(.custom("DelaGothicOne-Regular", size: 16))
-                            .foregroundColor(.black)
-                    }
-                }
-
-                // Urgent action or event countdown (only for non-empty projects)
-                if !isEmpty {
-                    HStack(spacing: 6) {
-                        if let action = urgentAction {
-                            Image(systemName: action.isOverdue ? "exclamationmark.circle.fill" : "clock.fill")
-                                .font(.system(size: 12))
-                                .foregroundColor(action.isOverdue ? Color(hex: "EF4444") : Color(hex: "F59E0B"))
-
-                            Text("\(action.description) · \(action.vendorName) · \(action.timing)")
-                                .font(.custom("Spectral-Medium", size: 12))
-                                .foregroundColor(action.isOverdue ? Color(hex: "EF4444") : Color(hex: "F59E0B"))
-                                .lineLimit(1)
-                        } else if let eventDate = project.eventDate {
-                            Image(systemName: "calendar")
-                                .font(.system(size: 12))
-                                .foregroundColor(.gray)
-
-                            Text(eventCountdown(eventDate))
-                                .font(.custom("Spectral-Regular", size: 12))
-                                .foregroundColor(.gray)
-                        }
-                    }
+                    Text("overdue")
+                        .font(.custom("Spectral-Medium", size: 13))
+                        .foregroundColor(Color(hex: "EF4444"))
                 }
             }
-            .padding(16)
-            .frame(maxWidth: .infinity, alignment: .leading)
         }
+        .padding(14)
         .background(Color.white)
-        .cornerRadius(14)
-        .shadow(color: .black.opacity(0.06), radius: 8, x: 0, y: 4)
+        .cornerRadius(10)
     }
 
     private func formatCurrency(_ amount: Double) -> String {
@@ -546,30 +496,6 @@ private struct ProjectCard: View {
         formatter.maximumFractionDigits = 0
         return formatter.string(from: NSNumber(value: amount)) ?? "$0"
     }
-
-    private func eventCountdown(_ date: Date) -> String {
-        let days = Calendar.current.dateComponents([.day], from: Date(), to: date).day ?? 0
-        if days < 0 {
-            return "Event passed"
-        } else if days == 0 {
-            return "Event today"
-        } else if days == 1 {
-            return "Event tomorrow"
-        } else if days < 30 {
-            return "Event in \(days) days"
-        } else {
-            let months = days / 30
-            return "Event in \(months)mo"
-        }
-    }
-}
-
-// Helper struct for urgent actions
-private struct UrgentAction {
-    let description: String
-    let vendorName: String
-    let timing: String
-    let isOverdue: Bool
 }
 
 // MARK: - Empty State
@@ -589,7 +515,7 @@ private struct EmptyProjectsView: View {
                 .font(.custom("DelaGothicOne-Regular", size: 22))
             
             Text("Your active projects will appear here")
-                .font(.custom("Spectral-Regular", size: 14))
+                .font(.custom("Spectral-Regular", size: 16))
                 .foregroundColor(.gray)
                 .multilineTextAlignment(.center)
             
