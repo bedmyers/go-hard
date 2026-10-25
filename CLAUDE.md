@@ -44,3 +44,11 @@ Style:
 
 ## Backend
 Base URL: https://go-hard-backend-production.up.railway.app
+
+## Git Workflow
+- `main` is protected: all changes go through a pull request (no direct pushes)
+- Branch off `main` for each change: `feat/...`, `fix/...`, `chore/...`
+- Open a PR into `main`, then merge; delete the branch after merging
+- Tag each TestFlight/App Store build, e.g. `v0.1.0-5` (version-build)
+- If a change depends on a backend change, ship the backend first and keep it compatible with the app version already in users' hands
+- No Claude/AI attribution lines in commits or PRs
