@@ -176,39 +176,80 @@ struct FundEscrowView: View {
             let pm = try await createPaymentMethod(with: pmParams)
             print("✅ Payment method created: \(pm.stripeId)")
 
-            let url = URL(string: "https://go-hard-backend-production.up.railway.app/escrow/\(escrowId)/fund")!
-            print("🌐 Funding escrow at: \(url)")
+            var result = try await postToEscrow("fund", body: ["paymentMethodId": pm.stripeId])
 
-            var req = URLRequest(url: url)
-            req.httpMethod = "POST"
-            req.setValue("application/json", forHTTPHeaderField: "Content-Type")
-            req.setValue("Bearer \(authToken)", forHTTPHeaderField: "Authorization")
-            req.httpBody = try JSONSerialization.data(withJSONObject: [
-                "paymentMethodId": pm.stripeId
-            ])
-
-            let (data, resp) = try await URLSession.shared.data(for: req)
-            let http = resp as? HTTPURLResponse
-            let statusCode = http?.statusCode ?? -1
-            let responseBody = String(data: data, encoding: .utf8) ?? "nil"
-
-            print("📦 Response [\(statusCode)]: \(responseBody)")
-
-            guard (200...299).contains(statusCode) else {
-                // Try to parse error message from response
-                if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-                   let errorMsg = json["error"] as? String {
-                    errorText = errorMsg
-                } else {
-                    errorText = "Server error (\(statusCode)): \(responseBody)"
+            // The card's bank wants the customer to verify (3D Secure). Show Stripe's
+            // verification screen, then have the backend re-check the payment.
+            if result.status == "requires_action", let clientSecret = result.clientSecret {
+                let (actionStatus, actionError) = await handleNextAction(clientSecret: clientSecret)
+                switch actionStatus {
+                case .succeeded:
+                    result = try await postToEscrow("confirm", body: [:])
+                case .canceled:
+                    errorText = "Card verification was canceled. You have not been charged."
+                    return
+                case .failed:
+                    errorText = actionError?.localizedDescription ?? "Card verification failed. Try another card."
+                    return
+                @unknown default:
+                    errorText = "Card verification failed. Try another card."
+                    return
                 }
+            }
+
+            // Only treat the escrow as funded when the backend says so
+            guard result.status == "funded" else {
+                errorText = "Payment didn't go through. Try another card."
                 return
             }
             onSuccess?()
             dismiss()
+        } catch FundError.server(let message) {
+            errorText = message
         } catch {
             print("❌ Fund error: \(error)")
             errorText = error.localizedDescription
+        }
+    }
+
+    private struct FundResponse: Decodable {
+        let status: String?
+        let clientSecret: String?
+        let error: String?
+    }
+
+    private enum FundError: Error {
+        case server(String)
+    }
+
+    /// POSTs to /escrow/:id/<action> and decodes the response, throwing the server's error message on failure.
+    private func postToEscrow(_ action: String, body: [String: Any]) async throws -> FundResponse {
+        let url = URL(string: "https://go-hard-backend-production.up.railway.app/escrow/\(escrowId)/\(action)")!
+
+        var req = URLRequest(url: url)
+        req.httpMethod = "POST"
+        req.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        req.setValue("Bearer \(authToken)", forHTTPHeaderField: "Authorization")
+        req.httpBody = try JSONSerialization.data(withJSONObject: body)
+
+        let (data, resp) = try await URLSession.shared.data(for: req)
+        let statusCode = (resp as? HTTPURLResponse)?.statusCode ?? -1
+        print("📦 /escrow/\(escrowId)/\(action) response [\(statusCode)]")
+
+        let decoded = try? JSONDecoder().decode(FundResponse.self, from: data)
+        guard (200...299).contains(statusCode), let decoded else {
+            throw FundError.server(decoded?.error ?? "Something went wrong (\(statusCode)). Please try again.")
+        }
+        return decoded
+    }
+
+    /// Presents Stripe's 3D Secure verification for a PaymentIntent confirmed on the server.
+    private func handleNextAction(clientSecret: String) async -> (STPPaymentHandlerActionStatus, NSError?) {
+        let context = AuthenticationContext()
+        return await withCheckedContinuation { cont in
+            STPPaymentHandler.shared().handleNextAction(forPayment: clientSecret, with: context, returnURL: nil) { status, _, error in
+                cont.resume(returning: (status, error))
+            }
         }
     }
 
@@ -219,6 +260,23 @@ struct FundEscrowView: View {
                 else if let pm = pm { cont.resume(returning: pm) }
                 else { cont.resume(throwing: NSError(domain: "Stripe", code: -1, userInfo: [NSLocalizedDescriptionKey: "Unknown error"])) }
             }
+        }
+    }
+}
+
+/// Gives Stripe a view controller to present 3D Secure screens on (the top-most one, i.e. this sheet).
+private final class AuthenticationContext: NSObject, STPAuthenticationContext {
+    func authenticationPresentingViewController() -> UIViewController {
+        MainActor.assumeIsolated {
+            let keyWindow = UIApplication.shared.connectedScenes
+                .compactMap { $0 as? UIWindowScene }
+                .flatMap(\.windows)
+                .first(where: \.isKeyWindow)
+            var top = keyWindow?.rootViewController ?? UIViewController()
+            while let presented = top.presentedViewController {
+                top = presented
+            }
+            return top
         }
     }
 }
