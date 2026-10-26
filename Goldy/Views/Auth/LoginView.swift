@@ -35,7 +35,7 @@ struct LoginView: View {
             }
             .scrollDismissesKeyboard(.interactively)
         }
-        .onChange(of: authVM.isAuthenticated) { isAuthed in
+        .onChange(of: authVM.isAuthenticated) { _, isAuthed in
             if isAuthed {
                 let token = UserDefaults.standard.string(forKey: "authToken") ?? ""
                 let userId = UserDefaults.standard.integer(forKey: "userId")
@@ -293,30 +293,6 @@ private struct LoginButtonView: View {
     }
 }
 
-// MARK: - Error Message View
-private struct ErrorMessageView: View {
-    let message: String
-    
-    var body: some View {
-        HStack {
-            Image(systemName: "exclamationmark.triangle.fill")
-                .font(.caption)
-            Text(message)
-                .font(.callout)
-            Spacer()
-            Text("Tap to dismiss")
-                .font(.caption2)
-                .foregroundColor(.red.opacity(0.7))
-        }
-        .foregroundColor(.red)
-        .padding(.vertical, 8)
-        .padding(.horizontal, 12)
-        .background(Color.red.opacity(0.1))
-        .cornerRadius(8)
-        .padding(.top, 8)
-    }
-}
-
 // MARK: - Footer View
 private struct LoginFooterView: View {
     var onSignupTapped: () -> Void
@@ -378,12 +354,12 @@ struct ForgotPasswordView: View {
                     }
                 }) {
                     Text("Send Reset Link")
-                        .font(.headline)
+                        .font(.custom("DelaGothicOne-Regular", size: 14))
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
-                        .padding()
+                        .padding(.vertical, 16)
                         .background(Color.black)
-                        .cornerRadius(8)
+                        .cornerRadius(12)
                 }
                 .padding(.horizontal)
                 

@@ -290,9 +290,7 @@ struct VendorDetailView: View {
             }
         }
         .padding(20)
-        .background(Color.white)
-        .cornerRadius(16)
-        .shadow(color: .black.opacity(0.04), radius: 8, x: 0, y: 4)
+        .cardStyle(cornerRadius: 16)
         .padding(.horizontal)
     }
     
@@ -339,12 +337,12 @@ struct VendorDetailView: View {
                     Task { await viewModel.escalateCancellation() }
                 } label: {
                     Text("ASK GO HARD TO DECIDE")
-                        .font(.custom("Spectral-Bold", size: 13))
+                        .font(.custom("DelaGothicOne-Regular", size: 14))
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
-                        .padding(.vertical, 14)
+                        .padding(.vertical, 16)
                         .background(Color(hex: "8B5CF6"))
-                        .cornerRadius(10)
+                        .cornerRadius(12)
                 }
             }
 
@@ -352,14 +350,14 @@ struct VendorDetailView: View {
                 viewModel.showWithdrawConfirm = true
             } label: {
                 Text("WITHDRAW REQUEST")
-                    .font(.custom("Spectral-Bold", size: 13))
+                    .font(.custom("DelaGothicOne-Regular", size: 14))
                     .foregroundColor(.black)
                     .frame(maxWidth: .infinity)
-                    .padding(.vertical, 14)
+                    .padding(.vertical, 16)
                     .background(Color.white)
-                    .cornerRadius(10)
+                    .cornerRadius(12)
                     .overlay(
-                        RoundedRectangle(cornerRadius: 10)
+                        RoundedRectangle(cornerRadius: 12)
                             .stroke(Color.black.opacity(0.15), lineWidth: 1)
                     )
             }
@@ -395,9 +393,7 @@ struct VendorDetailView: View {
         }
         .padding(24)
         .frame(maxWidth: .infinity)
-        .background(Color.white)
-        .cornerRadius(16)
-        .shadow(color: .black.opacity(0.04), radius: 8, x: 0, y: 4)
+        .cardStyle(cornerRadius: 16)
         .padding(.horizontal)
     }
     
@@ -420,9 +416,7 @@ struct VendorDetailView: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(16)
-        .background(Color.white)
-        .cornerRadius(12)
-        .shadow(color: .black.opacity(0.04), radius: 8, x: 0, y: 4)
+        .cardStyle()
         .padding(.horizontal)
     }
 
@@ -447,9 +441,7 @@ struct VendorDetailView: View {
                     .foregroundColor(.gray)
             }
             .padding(16)
-            .background(Color.white)
-            .cornerRadius(12)
-            .shadow(color: .black.opacity(0.04), radius: 8, x: 0, y: 4)
+            .cardStyle()
         }
         .padding(.horizontal)
         .sheet(isPresented: $viewModel.showTerms) {
@@ -655,9 +647,7 @@ private struct MilestoneCard: View {
                 milestoneAction
             }
             .padding(16)
-            .background(Color.white)
-            .cornerRadius(12)
-            .shadow(color: .black.opacity(0.04), radius: 6, x: 0, y: 3)
+            .cardStyle()
         }
     }
     
@@ -793,8 +783,7 @@ private struct TermsBlock: View {
         }
         .padding()
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color.white)
-        .cornerRadius(12)
+        .cardStyle()
     }
 }
 

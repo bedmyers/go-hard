@@ -27,12 +27,10 @@
 		187B1BE42EC0349A0090DE18 /* GoldyApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 187B1BE12EC0349A0090DE18 /* GoldyApp.swift */; };
 		187B1BE72EC0349D0090DE18 /* IntroView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 187B1BE52EC0349D0090DE18 /* IntroView.swift */; };
 		187B1BEF2EC034A00090DE18 /* AppBackgroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 187B1BE82EC034A00090DE18 /* AppBackgroundView.swift */; };
-		187B1BF12EC034A00090DE18 /* LabelTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 187B1BEA2EC034A00090DE18 /* LabelTextField.swift */; };
 		187B1BF42EC034A00090DE18 /* PrimaryActionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 187B1BED2EC034A00090DE18 /* PrimaryActionButton.swift */; };
 		187B1BFB2EC034A20090DE18 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 187B1BF72EC034A20090DE18 /* User.swift */; };
 		187B1C022EC034A50090DE18 /* AuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 187B1BFC2EC034A50090DE18 /* AuthViewModel.swift */; };
 		187B1C042EC034A50090DE18 /* SignupViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 187B1BFE2EC034A50090DE18 /* SignupViewModel.swift */; };
-		187B1C052EC034A50090DE18 /* UserSearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 187B1BFF2EC034A50090DE18 /* UserSearchViewModel.swift */; };
 		187B1C062EC034A50090DE18 /* VendorOnboardingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 187B1C002EC034A50090DE18 /* VendorOnboardingViewModel.swift */; };
 		187B1C212EC034A70090DE18 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 187B1C072EC034A70090DE18 /* LoginView.swift */; };
 		187B1C222EC034A70090DE18 /* SignupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 187B1C082EC034A70090DE18 /* SignupView.swift */; };
@@ -42,19 +40,10 @@
 		187B1C262EC034A70090DE18 /* VendorOnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 187B1C0E2EC034A70090DE18 /* VendorOnboardingView.swift */; };
 		187B1C272EC034A70090DE18 /* VendorQuickProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 187B1C0F2EC034A70090DE18 /* VendorQuickProfileView.swift */; };
 		187B1C282EC034A70090DE18 /* VendorWelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 187B1C102EC034A70090DE18 /* VendorWelcomeView.swift */; };
-		187B1C2B2EC034A70090DE18 /* EscrowCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 187B1C142EC034A70090DE18 /* EscrowCardView.swift */; };
-		187B1C2E2EC034A70090DE18 /* EscrowFundCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 187B1C172EC034A70090DE18 /* EscrowFundCard.swift */; };
 		187B1C2F2EC034A70090DE18 /* FundEscrowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 187B1C182EC034A70090DE18 /* FundEscrowView.swift */; };
-		187B1C312EC034A70090DE18 /* MakePaymentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 187B1C1A2EC034A70090DE18 /* MakePaymentView.swift */; };
-		187B1C322EC034A70090DE18 /* OpenEscrowsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 187B1C1B2EC034A70090DE18 /* OpenEscrowsView.swift */; };
-		187B1C332EC034A70090DE18 /* PartySelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 187B1C1C2EC034A70090DE18 /* PartySelectionView.swift */; };
-		187B1C342EC034A70090DE18 /* ProgressBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 187B1C1D2EC034A70090DE18 /* ProgressBar.swift */; };
-		187B1C362EC034A70090DE18 /* UserSearchSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 187B1C1F2EC034A70090DE18 /* UserSearchSheetView.swift */; };
 		187B1C392EC035840090DE18 /* ProjectsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 187B1C382EC035810090DE18 /* ProjectsView.swift */; };
 		187B1C3C2EC035A00090DE18 /* DiscoverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 187B1C3B2EC0359B0090DE18 /* DiscoverView.swift */; };
 		187B1C3F2EC035BC0090DE18 /* MessagesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 187B1C3E2EC035BA0090DE18 /* MessagesView.swift */; };
-		187B1C422EC036990090DE18 /* ProfileViewOld.swift in Sources */ = {isa = PBXBuildFile; fileRef = 187B1C412EC036970090DE18 /* ProfileViewOld.swift */; };
-		187B1C442EC036F60090DE18 /* RPFsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 187B1C432EC036EE0090DE18 /* RPFsView.swift */; };
 		187B1C472ECBD2790090DE18 /* ProjectsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 187B1C462ECBD2740090DE18 /* ProjectsViewModel.swift */; };
 		187B1C492ECBD31C0090DE18 /* Project.swift in Sources */ = {isa = PBXBuildFile; fileRef = 187B1C482ECBD3150090DE18 /* Project.swift */; };
 		187B1C4B2ECBD3CE0090DE18 /* ProjectsResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 187B1C4A2ECBD3CB0090DE18 /* ProjectsResponse.swift */; };
@@ -73,11 +62,10 @@
 		187B1C6B2EDA4EF30090DE18 /* CreateRFPViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 187B1C6A2EDA4EEF0090DE18 /* CreateRFPViewModel.swift */; };
 		187B1C6D2EDA4F110090DE18 /* RFPListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 187B1C6C2EDA4F0E0090DE18 /* RFPListViewModel.swift */; };
 		187B1C6F2EDA4FA30090DE18 /* RFPModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 187B1C6E2EDA4FA10090DE18 /* RFPModel.swift */; };
-		187B1C722EDCF5B70090DE18 /* VendorMyBidsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 187B1C712EDCF5AD0090DE18 /* VendorMyBidsView.swift */; };
 		187B1C762EDCF5F70090DE18 /* VendorDiscoverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 187B1C752EDCF5F30090DE18 /* VendorDiscoverView.swift */; };
-		187B1C782EDCF6670090DE18 /* VendorRFPBrowseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 187B1C772EDCF6620090DE18 /* VendorRFPBrowseView.swift */; };
+		187B1C782EDCF6670090DE18 /* RFPBidSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 187B1C772EDCF6620090DE18 /* RFPBidSheet.swift */; };
 		187B1C7A2EE62C8F0090DE18 /* VendorProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 187B1C792EE62C8A0090DE18 /* VendorProfileView.swift */; };
-		187B1C7D2EE62CF90090DE18 /* VendorMarketplaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 187B1C7C2EE62CF50090DE18 /* VendorMarketplaceView.swift */; };
+		187B1C7D2EE62CF90090DE18 /* VendorCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 187B1C7C2EE62CF50090DE18 /* VendorCategory.swift */; };
 		187B1C802EE62D1F0090DE18 /* VendorMarketplaceViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 187B1C7F2EE62D190090DE18 /* VendorMarketplaceViewModel.swift */; };
 		187B1C822EE681D60090DE18 /* Messages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 187B1C812EE681D40090DE18 /* Messages.swift */; };
 		187B1C872EE682330090DE18 /* ChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 187B1C862EE682310090DE18 /* ChatView.swift */; };
@@ -101,6 +89,10 @@
 		187B1CB62EEFCF2D0090DE18 /* Spectral-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 187B1C9B2EEFCF2D0090DE18 /* Spectral-ExtraBold.ttf */; };
 		187B1CBA2EF4A0000090DE18 /* VendorAgreementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 187B1CB92EF4A0000090DE18 /* VendorAgreementView.swift */; };
 		18999279308FC4AE000818C7 /* EscrowCancellationViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18999278308FC4AE000818C7 /* EscrowCancellationViews.swift */; };
+		189992F6308FCC8F000818C7 /* ErrorMessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 189992F5308FCC8F000818C7 /* ErrorMessageView.swift */; };
+		189992F8308FCC92000818C7 /* StatBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 189992F7308FCC92000818C7 /* StatBox.swift */; };
+		189992FE308FCF4C000818C7 /* AppAppearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 189992FD308FCF4C000818C7 /* AppAppearance.swift */; };
+		18999300308FD034000818C7 /* CardStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 189992FF308FD034000818C7 /* CardStyle.swift */; };
 		18FC98012D6EE2910053CFD3 /* DelaGothicOne-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 18FC98002D6EE2910053CFD3 /* DelaGothicOne-Regular.ttf */; };
 		18FC98052D737EFC0053CFD3 /* IBMPlexMono-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 18FC98042D737EFC0053CFD3 /* IBMPlexMono-Regular.ttf */; };
 /* End PBXBuildFile section */
@@ -119,12 +111,10 @@
 		187B1BE12EC0349A0090DE18 /* GoldyApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoldyApp.swift; sourceTree = "<group>"; };
 		187B1BE52EC0349D0090DE18 /* IntroView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntroView.swift; sourceTree = "<group>"; };
 		187B1BE82EC034A00090DE18 /* AppBackgroundView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppBackgroundView.swift; sourceTree = "<group>"; };
-		187B1BEA2EC034A00090DE18 /* LabelTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelTextField.swift; sourceTree = "<group>"; };
 		187B1BED2EC034A00090DE18 /* PrimaryActionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrimaryActionButton.swift; sourceTree = "<group>"; };
 		187B1BF72EC034A20090DE18 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		187B1BFC2EC034A50090DE18 /* AuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModel.swift; sourceTree = "<group>"; };
 		187B1BFE2EC034A50090DE18 /* SignupViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignupViewModel.swift; sourceTree = "<group>"; };
-		187B1BFF2EC034A50090DE18 /* UserSearchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSearchViewModel.swift; sourceTree = "<group>"; };
 		187B1C002EC034A50090DE18 /* VendorOnboardingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VendorOnboardingViewModel.swift; sourceTree = "<group>"; };
 		187B1C072EC034A70090DE18 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		187B1C082EC034A70090DE18 /* SignupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignupView.swift; sourceTree = "<group>"; };
@@ -134,19 +124,10 @@
 		187B1C0E2EC034A70090DE18 /* VendorOnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VendorOnboardingView.swift; sourceTree = "<group>"; };
 		187B1C0F2EC034A70090DE18 /* VendorQuickProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VendorQuickProfileView.swift; sourceTree = "<group>"; };
 		187B1C102EC034A70090DE18 /* VendorWelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VendorWelcomeView.swift; sourceTree = "<group>"; };
-		187B1C142EC034A70090DE18 /* EscrowCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EscrowCardView.swift; sourceTree = "<group>"; };
-		187B1C172EC034A70090DE18 /* EscrowFundCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EscrowFundCard.swift; sourceTree = "<group>"; };
 		187B1C182EC034A70090DE18 /* FundEscrowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FundEscrowView.swift; sourceTree = "<group>"; };
-		187B1C1A2EC034A70090DE18 /* MakePaymentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MakePaymentView.swift; sourceTree = "<group>"; };
-		187B1C1B2EC034A70090DE18 /* OpenEscrowsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenEscrowsView.swift; sourceTree = "<group>"; };
-		187B1C1C2EC034A70090DE18 /* PartySelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PartySelectionView.swift; sourceTree = "<group>"; };
-		187B1C1D2EC034A70090DE18 /* ProgressBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressBar.swift; sourceTree = "<group>"; };
-		187B1C1F2EC034A70090DE18 /* UserSearchSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSearchSheetView.swift; sourceTree = "<group>"; };
 		187B1C382EC035810090DE18 /* ProjectsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectsView.swift; sourceTree = "<group>"; };
 		187B1C3B2EC0359B0090DE18 /* DiscoverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscoverView.swift; sourceTree = "<group>"; };
 		187B1C3E2EC035BA0090DE18 /* MessagesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagesView.swift; sourceTree = "<group>"; };
-		187B1C412EC036970090DE18 /* ProfileViewOld.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewOld.swift; sourceTree = "<group>"; };
-		187B1C432EC036EE0090DE18 /* RPFsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RPFsView.swift; sourceTree = "<group>"; };
 		187B1C462ECBD2740090DE18 /* ProjectsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectsViewModel.swift; sourceTree = "<group>"; };
 		187B1C482ECBD3150090DE18 /* Project.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Project.swift; sourceTree = "<group>"; };
 		187B1C4A2ECBD3CB0090DE18 /* ProjectsResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectsResponse.swift; sourceTree = "<group>"; };
@@ -165,11 +146,10 @@
 		187B1C6A2EDA4EEF0090DE18 /* CreateRFPViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateRFPViewModel.swift; sourceTree = "<group>"; };
 		187B1C6C2EDA4F0E0090DE18 /* RFPListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RFPListViewModel.swift; sourceTree = "<group>"; };
 		187B1C6E2EDA4FA10090DE18 /* RFPModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RFPModel.swift; sourceTree = "<group>"; };
-		187B1C712EDCF5AD0090DE18 /* VendorMyBidsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VendorMyBidsView.swift; sourceTree = "<group>"; };
 		187B1C752EDCF5F30090DE18 /* VendorDiscoverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VendorDiscoverView.swift; sourceTree = "<group>"; };
-		187B1C772EDCF6620090DE18 /* VendorRFPBrowseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VendorRFPBrowseView.swift; sourceTree = "<group>"; };
+		187B1C772EDCF6620090DE18 /* RFPBidSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RFPBidSheet.swift; sourceTree = "<group>"; };
 		187B1C792EE62C8A0090DE18 /* VendorProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VendorProfileView.swift; sourceTree = "<group>"; };
-		187B1C7C2EE62CF50090DE18 /* VendorMarketplaceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VendorMarketplaceView.swift; sourceTree = "<group>"; };
+		187B1C7C2EE62CF50090DE18 /* VendorCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VendorCategory.swift; sourceTree = "<group>"; };
 		187B1C7F2EE62D190090DE18 /* VendorMarketplaceViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VendorMarketplaceViewModel.swift; sourceTree = "<group>"; };
 		187B1C812EE681D40090DE18 /* Messages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Messages.swift; sourceTree = "<group>"; };
 		187B1C862EE682310090DE18 /* ChatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatView.swift; sourceTree = "<group>"; };
@@ -193,6 +173,10 @@
 		187B1CA62EEFCF2D0090DE18 /* Spectral-SemiBoldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Spectral-SemiBoldItalic.ttf"; sourceTree = "<group>"; };
 		187B1CB92EF4A0000090DE18 /* VendorAgreementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VendorAgreementView.swift; sourceTree = "<group>"; };
 		18999278308FC4AE000818C7 /* EscrowCancellationViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EscrowCancellationViews.swift; sourceTree = "<group>"; };
+		189992F5308FCC8F000818C7 /* ErrorMessageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorMessageView.swift; sourceTree = "<group>"; };
+		189992F7308FCC92000818C7 /* StatBox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatBox.swift; sourceTree = "<group>"; };
+		189992FD308FCF4C000818C7 /* AppAppearance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppAppearance.swift; sourceTree = "<group>"; };
+		189992FF308FD034000818C7 /* CardStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardStyle.swift; sourceTree = "<group>"; };
 		18FC97FD2D6EE0E90053CFD3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		18FC98002D6EE2910053CFD3 /* DelaGothicOne-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "DelaGothicOne-Regular.ttf"; sourceTree = "<group>"; };
 		18FC98042D737EFC0053CFD3 /* IBMPlexMono-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "IBMPlexMono-Regular.ttf"; sourceTree = "<group>"; };
@@ -277,6 +261,7 @@
 			isa = PBXGroup;
 			children = (
 				187B1BD82EC034930090DE18 /* Color+Extensions.swift */,
+				189992FD308FCF4C000818C7 /* AppAppearance.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -312,9 +297,11 @@
 			children = (
 				187B1C8C2EEB51DF0090DE18 /* FlowLayout.swift */,
 				187B1BE82EC034A00090DE18 /* AppBackgroundView.swift */,
-				187B1BEA2EC034A00090DE18 /* LabelTextField.swift */,
 				187B1BED2EC034A00090DE18 /* PrimaryActionButton.swift */,
 				18999278308FC4AE000818C7 /* EscrowCancellationViews.swift */,
+				189992F5308FCC8F000818C7 /* ErrorMessageView.swift */,
+				189992F7308FCC92000818C7 /* StatBox.swift */,
+				189992FF308FD034000818C7 /* CardStyle.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -327,6 +314,7 @@
 				187B1C4A2ECBD3CB0090DE18 /* ProjectsResponse.swift */,
 				187B1C482ECBD3150090DE18 /* Project.swift */,
 				187B1BF72EC034A20090DE18 /* User.swift */,
+				187B1C7C2EE62CF50090DE18 /* VendorCategory.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -339,7 +327,6 @@
 				187B1C452ECBD26F0090DE18 /* Projects */,
 				187B1BFC2EC034A50090DE18 /* AuthViewModel.swift */,
 				187B1BFE2EC034A50090DE18 /* SignupViewModel.swift */,
-				187B1BFF2EC034A50090DE18 /* UserSearchViewModel.swift */,
 				187B1C002EC034A50090DE18 /* VendorOnboardingViewModel.swift */,
 			);
 			path = ViewModels;
@@ -390,14 +377,7 @@
 				187B1C3A2EC035930090DE18 /* Discover */,
 				187B1C3D2EC035B00090DE18 /* Messages */,
 				187B1C112EC034A70090DE18 /* Vendor */,
-				187B1C142EC034A70090DE18 /* EscrowCardView.swift */,
-				187B1C172EC034A70090DE18 /* EscrowFundCard.swift */,
 				187B1C182EC034A70090DE18 /* FundEscrowView.swift */,
-				187B1C1A2EC034A70090DE18 /* MakePaymentView.swift */,
-				187B1C1B2EC034A70090DE18 /* OpenEscrowsView.swift */,
-				187B1C1C2EC034A70090DE18 /* PartySelectionView.swift */,
-				187B1C1D2EC034A70090DE18 /* ProgressBar.swift */,
-				187B1C1F2EC034A70090DE18 /* UserSearchSheetView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -419,7 +399,6 @@
 			isa = PBXGroup;
 			children = (
 				187B1C752EDCF5F30090DE18 /* VendorDiscoverView.swift */,
-				187B1C432EC036EE0090DE18 /* RPFsView.swift */,
 				187B1C3B2EC0359B0090DE18 /* DiscoverView.swift */,
 			);
 			path = Discover;
@@ -439,7 +418,6 @@
 			children = (
 				187B1C8A2EEB37110090DE18 /* VendorEditProfileView.swift */,
 				187B1C5D2EDA11B50090DE18 /* ProfileView.swift */,
-				187B1C412EC036970090DE18 /* ProfileViewOld.swift */,
 			);
 			path = Profile;
 			sourceTree = "<group>";
@@ -479,8 +457,7 @@
 		187B1C702EDCF5A80090DE18 /* VendorRFP */ = {
 			isa = PBXGroup;
 			children = (
-				187B1C772EDCF6620090DE18 /* VendorRFPBrowseView.swift */,
-				187B1C712EDCF5AD0090DE18 /* VendorMyBidsView.swift */,
+				187B1C772EDCF6620090DE18 /* RFPBidSheet.swift */,
 			);
 			path = VendorRFP;
 			sourceTree = "<group>";
@@ -488,7 +465,6 @@
 		187B1C7B2EE62CF00090DE18 /* Marketplace */ = {
 			isa = PBXGroup;
 			children = (
-				187B1C7C2EE62CF50090DE18 /* VendorMarketplaceView.swift */,
 			);
 			path = Marketplace;
 			sourceTree = "<group>";
@@ -621,22 +597,22 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				187B1C722EDCF5B70090DE18 /* VendorMyBidsView.swift in Sources */,
 				187B1C762EDCF5F70090DE18 /* VendorDiscoverView.swift in Sources */,
 				187B1C522ED65F200090DE18 /* AddVendorView.swift in Sources */,
 				187B1BE32EC0349A0090DE18 /* AppState.swift in Sources */,
+				18999300308FD034000818C7 /* CardStyle.swift in Sources */,
 				187B1BE42EC0349A0090DE18 /* GoldyApp.swift in Sources */,
 				187B1BDA2EC034930090DE18 /* Color+Extensions.swift in Sources */,
 				187B1BEF2EC034A00090DE18 /* AppBackgroundView.swift in Sources */,
 				187B1C022EC034A50090DE18 /* AuthViewModel.swift in Sources */,
 				187B1C042EC034A50090DE18 /* SignupViewModel.swift in Sources */,
-				187B1C052EC034A50090DE18 /* UserSearchViewModel.swift in Sources */,
 				187B1C062EC034A50090DE18 /* VendorOnboardingViewModel.swift in Sources */,
 				187B1C652EDA4E610090DE18 /* RFPListView.swift in Sources */,
 				187B1C492ECBD31C0090DE18 /* Project.swift in Sources */,
+				189992F8308FCC92000818C7 /* StatBox.swift in Sources */,
+				189992F6308FCC8F000818C7 /* ErrorMessageView.swift in Sources */,
 				187B1C6B2EDA4EF30090DE18 /* CreateRFPViewModel.swift in Sources */,
 				187B1BFB2EC034A20090DE18 /* User.swift in Sources */,
-				187B1BF12EC034A00090DE18 /* LabelTextField.swift in Sources */,
 				187B1C212EC034A70090DE18 /* LoginView.swift in Sources */,
 				187B1C222EC034A70090DE18 /* SignupView.swift in Sources */,
 				187B1C232EC034A70090DE18 /* CustomerTabView.swift in Sources */,
@@ -648,46 +624,38 @@
 				187B1C252EC034A70090DE18 /* VendorTabView.swift in Sources */,
 				187B1C672EDA4E7C0090DE18 /* RFPDetailView.swift in Sources */,
 				187B1C582ED661EB0090DE18 /* ProjectDetailViewModel.swift in Sources */,
-				187B1C782EDCF6670090DE18 /* VendorRFPBrowseView.swift in Sources */,
+				187B1C782EDCF6670090DE18 /* RFPBidSheet.swift in Sources */,
 				187B1C972EEB75760090DE18 /* CloudinaryService.swift in Sources */,
 				187B1C5A2ED6664D0090DE18 /* VendorDetailViewModel.swift in Sources */,
 				187B1C622EDA4CAB0090DE18 /* RFPDetailViewModel.swift in Sources */,
 				183707C92F0C518500FCD868 /* EditRFPView.swift in Sources */,
-				187B1C7D2EE62CF90090DE18 /* VendorMarketplaceView.swift in Sources */,
+				187B1C7D2EE62CF90090DE18 /* VendorCategory.swift in Sources */,
 				187B1C262EC034A70090DE18 /* VendorOnboardingView.swift in Sources */,
 				187B1C272EC034A70090DE18 /* VendorQuickProfileView.swift in Sources */,
 				187B1C392EC035840090DE18 /* ProjectsView.swift in Sources */,
 				187B1C282EC034A70090DE18 /* VendorWelcomeView.swift in Sources */,
 				187B1C692EDA4ECB0090DE18 /* CreateRFPView.swift in Sources */,
-				187B1C2B2EC034A70090DE18 /* EscrowCardView.swift in Sources */,
-				187B1C2E2EC034A70090DE18 /* EscrowFundCard.swift in Sources */,
 				187B1C8D2EEB51E10090DE18 /* FlowLayout.swift in Sources */,
 				187B1C4E2ECFBA880090DE18 /* CreateProjectView.swift in Sources */,
 				187B1C2F2EC034A70090DE18 /* FundEscrowView.swift in Sources */,
 				187B1C5C2ED6666E0090DE18 /* VendorDetailView.swift in Sources */,
 				183707C72F0471FF00FCD868 /* EditProjectView.swift in Sources */,
-				187B1C312EC034A70090DE18 /* MakePaymentView.swift in Sources */,
-				187B1C322EC034A70090DE18 /* OpenEscrowsView.swift in Sources */,
 				187B1C822EE681D60090DE18 /* Messages.swift in Sources */,
 				187B1C3C2EC035A00090DE18 /* DiscoverView.swift in Sources */,
 				187B1C6F2EDA4FA30090DE18 /* RFPModel.swift in Sources */,
-				187B1C332EC034A70090DE18 /* PartySelectionView.swift in Sources */,
 				187B1C3F2EC035BC0090DE18 /* MessagesView.swift in Sources */,
-				187B1C342EC034A70090DE18 /* ProgressBar.swift in Sources */,
 				187B1C4B2ECBD3CE0090DE18 /* ProjectsResponse.swift in Sources */,
 				18999279308FC4AE000818C7 /* EscrowCancellationViews.swift in Sources */,
 				187B1C5E2EDA11B80090DE18 /* ProfileView.swift in Sources */,
 				187B1C472ECBD2790090DE18 /* ProjectsViewModel.swift in Sources */,
-				187B1C422EC036990090DE18 /* ProfileViewOld.swift in Sources */,
 				187B1C872EE682330090DE18 /* ChatView.swift in Sources */,
-				187B1C362EC034A70090DE18 /* UserSearchSheetView.swift in Sources */,
 				187B1C6D2EDA4F110090DE18 /* RFPListViewModel.swift in Sources */,
 				187B1C8B2EEB37150090DE18 /* VendorEditProfileView.swift in Sources */,
 				187B1BF42EC034A00090DE18 /* PrimaryActionButton.swift in Sources */,
 				187B1C802EE62D1F0090DE18 /* VendorMarketplaceViewModel.swift in Sources */,
-				187B1C442EC036F60090DE18 /* RPFsView.swift in Sources */,
 				187B1BDE2EC034960090DE18 /* APIService.swift in Sources */,
 				187B1BE72EC0349D0090DE18 /* IntroView.swift in Sources */,
+				189992FE308FCF4C000818C7 /* AppAppearance.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -827,6 +795,8 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Goldy/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Go Hard";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Take photos for your vendor profile and portfolio";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Select photos for your vendor profile and portfolio";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -837,6 +807,7 @@
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UIUserInterfaceStyle = Light;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
@@ -871,6 +842,8 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Goldy/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Go Hard";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Take photos for your vendor profile and portfolio";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Select photos for your vendor profile and portfolio";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -881,6 +854,7 @@
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UIUserInterfaceStyle = Light;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";

@@ -171,8 +171,7 @@ struct RFPDetailView: View {
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding()
-                .background(Color.white)
-                .cornerRadius(12)
+                .cardStyle()
             }
 
             // Event Info Row
@@ -297,8 +296,7 @@ struct RFPDetailView: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding()
-        .background(Color.white)
-        .cornerRadius(12)
+        .cardStyle()
     }
 
     private func styleTagsSection(_ tags: [String]) -> some View {
@@ -321,8 +319,7 @@ struct RFPDetailView: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding()
-        .background(Color.white)
-        .cornerRadius(12)
+        .cardStyle()
     }
 
     private var requirementsSection: some View {
@@ -384,8 +381,7 @@ struct RFPDetailView: View {
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding()
-                .background(Color.white)
-                .cornerRadius(12)
+                .cardStyle()
             }
         }
     }
@@ -418,8 +414,7 @@ struct RFPDetailView: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding()
-        .background(Color.white)
-        .cornerRadius(12)
+        .cardStyle()
     }
     
     // MARK: - Accepted Bid (Post-Award)
@@ -495,12 +490,12 @@ struct RFPDetailView: View {
                                         Image(systemName: "envelope.fill")
                                         Text("Email")
                                     }
-                                    .font(.custom("Spectral-Bold", size: 13))
+                                    .font(.custom("Spectral-Bold", size: 12))
                                     .foregroundColor(.white)
                                     .frame(maxWidth: .infinity)
                                     .padding(.vertical, 12)
                                     .background(Color(hex: "3B82F6"))
-                                    .cornerRadius(10)
+                                    .cornerRadius(8)
                                 }
                             }
 
@@ -606,8 +601,7 @@ struct RFPDetailView: View {
                 }
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 32)
-                .background(Color.white)
-                .cornerRadius(12)
+                .cardStyle()
             }
         }
     }
@@ -693,8 +687,7 @@ private struct DetailCard: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding()
-        .background(Color.white)
-        .cornerRadius(12)
+        .cardStyle()
     }
 }
 
@@ -839,8 +832,7 @@ struct BidCard: View {
             }
         }
         .padding(16)
-        .background(Color.white)
-        .cornerRadius(12)
+        .cardStyle()
         .sheet(isPresented: $showVendorProfile) {
             if let vendor = bid.vendor {
                 NavigationStack {

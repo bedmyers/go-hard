@@ -70,8 +70,7 @@ struct ProfileView: View {
                     Color.black.opacity(0.3).ignoresSafeArea()
                     ProgressView("Deleting account…")
                         .padding(24)
-                        .background(Color.white)
-                        .cornerRadius(16)
+                        .cardStyle(cornerRadius: 16)
                 }
             }
         }
@@ -201,9 +200,7 @@ struct ProfileView: View {
                     // TODO: Notifications
                 }
             }
-            .background(Color.white)
-            .cornerRadius(12)
-            .shadow(color: .black.opacity(0.04), radius: 8, x: 0, y: 4)
+            .cardStyle()
         }
         .padding(.horizontal)
     }
@@ -225,9 +222,7 @@ struct ProfileView: View {
                     // TODO: Privacy settings
                 }
             }
-            .background(Color.white)
-            .cornerRadius(12)
-            .shadow(color: .black.opacity(0.04), radius: 8, x: 0, y: 4)
+            .cardStyle()
         }
         .padding(.horizontal)
     }
@@ -269,9 +264,7 @@ struct ProfileView: View {
                     }
                 }
             }
-            .background(Color.white)
-            .cornerRadius(12)
-            .shadow(color: .black.opacity(0.04), radius: 8, x: 0, y: 4)
+            .cardStyle()
         }
         .padding(.horizontal)
     }
@@ -292,9 +285,7 @@ struct ProfileView: View {
                 .foregroundColor(.red)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 16)
-                .background(Color.white)
-                .cornerRadius(12)
-                .shadow(color: .black.opacity(0.04), radius: 8, x: 0, y: 4)
+                .cardStyle()
             }
             
             Button {

@@ -1061,8 +1061,7 @@ private struct RFPPreviewSheet: View {
                         }
                     }
                     .padding()
-                    .background(Color.white)
-                    .cornerRadius(12)
+                    .cardStyle()
 
                     // Description
                     if !viewModel.description.isEmpty {
@@ -1076,8 +1075,7 @@ private struct RFPPreviewSheet: View {
                         }
                         .padding()
                         .frame(maxWidth: .infinity, alignment: .leading)
-                        .background(Color.white)
-                        .cornerRadius(12)
+                        .cardStyle()
                     }
 
                     // Event Details
@@ -1117,8 +1115,7 @@ private struct RFPPreviewSheet: View {
                     }
                     .padding()
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(Color.white)
-                    .cornerRadius(12)
+                    .cardStyle()
 
                     // Requirements
                     let mustHaves = viewModel.mustHaves.filter { !$0.isEmpty }
@@ -1170,8 +1167,7 @@ private struct RFPPreviewSheet: View {
                         }
                         .padding()
                         .frame(maxWidth: .infinity, alignment: .leading)
-                        .background(Color.white)
-                        .cornerRadius(12)
+                        .cardStyle()
                     }
 
                     // Style Tags
@@ -1198,8 +1194,7 @@ private struct RFPPreviewSheet: View {
                         }
                         .padding()
                         .frame(maxWidth: .infinity, alignment: .leading)
-                        .background(Color.white)
-                        .cornerRadius(12)
+                        .cardStyle()
                     }
 
                     // Timeline
@@ -1227,8 +1222,7 @@ private struct RFPPreviewSheet: View {
                     }
                     .padding()
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(Color.white)
-                    .cornerRadius(12)
+                    .cardStyle()
 
                     Spacer(minLength: 40)
                 }
@@ -1426,8 +1420,7 @@ private struct InfoCard: View {
             Spacer()
         }
         .padding(14)
-        .background(Color.white)
-        .cornerRadius(12)
+        .cardStyle()
     }
 }
 

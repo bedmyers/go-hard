@@ -68,8 +68,7 @@ struct MessagesView: View {
                         .padding(.leading, 76)
                 }
             }
-            .background(Color.white)
-            .cornerRadius(16)
+            .cardStyle(cornerRadius: 16)
             .padding()
         }
     }

@@ -59,9 +59,7 @@ struct EditProjectView: View {
                             TextField("Project name", text: $title)
                                 .font(.system(size: 16))
                                 .padding()
-                                .background(Color.white)
-                                .cornerRadius(12)
-                                .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+                                .cardStyle()
                         }
 
                         // Event Date
@@ -78,9 +76,7 @@ struct EditProjectView: View {
                             .datePickerStyle(.compact)
                             .labelsHidden()
                             .padding()
-                            .background(Color.white)
-                            .cornerRadius(12)
-                            .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+                            .cardStyle()
                         }
 
                         // Location
@@ -92,9 +88,7 @@ struct EditProjectView: View {
                             TextField("e.g., Detroit, MI", text: $location)
                                 .font(.system(size: 16))
                                 .padding()
-                                .background(Color.white)
-                                .cornerRadius(12)
-                                .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+                                .cardStyle()
                         }
 
                         // Budget
@@ -113,9 +107,7 @@ struct EditProjectView: View {
                                     .keyboardType(.numberPad)
                             }
                             .padding()
-                            .background(Color.white)
-                            .cornerRadius(12)
-                            .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+                            .cardStyle()
                         }
                     }
                     .padding(.horizontal)
