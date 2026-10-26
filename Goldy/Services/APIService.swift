@@ -216,7 +216,34 @@ class APIService {
     func releaseMilestone(escrowId: Int, milestoneId: Int) async throws -> ReleaseMilestoneResponse {
         return try await makeRequest(endpoint: "/escrow/\(escrowId)/milestone/\(milestoneId)/release", method: "POST")
     }
-    
+
+    // MARK: - Escrow Cancellation & Refunds
+
+    /// Customer: cancels an unfunded escrow outright, or asks the vendor to cancel a funded one
+    func requestCancellation(escrowId: Int, reason: String) async throws -> EscrowActionResponse {
+        return try await makeRequest(endpoint: "/escrow/\(escrowId)/cancel-request", method: "POST", body: ["reason": reason])
+    }
+
+    /// Customer: takes back a pending cancellation request
+    func withdrawCancellation(escrowId: Int) async throws -> EscrowActionResponse {
+        return try await makeRequest(endpoint: "/escrow/\(escrowId)/cancel-request/withdraw", method: "POST")
+    }
+
+    /// Customer: sends an unanswered request to Go Hard once the vendor's deadline has passed
+    func escalateCancellation(escrowId: Int) async throws -> EscrowActionResponse {
+        return try await makeRequest(endpoint: "/escrow/\(escrowId)/escalate", method: "POST")
+    }
+
+    /// Vendor: refuses the customer's cancellation (becomes a dispute)
+    func declineCancellation(escrowId: Int, reason: String) async throws -> EscrowActionResponse {
+        return try await makeRequest(endpoint: "/escrow/\(escrowId)/cancel-request/decline", method: "POST", body: ["reason": reason])
+    }
+
+    /// Vendor: refunds everything not yet released (also accepts a cancellation request)
+    func refundEscrow(escrowId: Int) async throws -> EscrowActionResponse {
+        return try await makeRequest(endpoint: "/escrow/\(escrowId)/refund", method: "POST")
+    }
+
     // MARK: - RFP Endpoints
     
     // Create standalone RFP (no project required)
@@ -596,6 +623,12 @@ struct EscrowResponse: Codable {
     let projectVendorId: Int
     let amountCents: Int
     let status: String
+}
+
+struct EscrowActionResponse: Codable {
+    let status: String?
+    let message: String?
+    let refundedCents: Int?
 }
 
 struct FundEscrowResponse: Codable {

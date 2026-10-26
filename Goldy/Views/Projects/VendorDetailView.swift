@@ -27,7 +27,14 @@ struct VendorDetailView: View {
                     notesSection(description)
                 }
 
-                if viewModel.projectVendor.escrow != nil {
+                if let escrow = viewModel.projectVendor.escrow {
+                    EscrowStatusBanner(escrow: escrow, perspective: .customer, otherPartyName: viewModel.projectVendor.vendor.name)
+                        .padding(.horizontal)
+
+                    if escrow.status == "CANCEL_REQUESTED" {
+                        cancellationActions(escrow)
+                    }
+
                     paymentProgressCard
                     milestonesSection
                 }
@@ -51,6 +58,17 @@ struct VendorDetailView: View {
                         viewModel.showContactOptions = true
                     } label: {
                         Label("Contact Vendor", systemImage: "envelope")
+                    }
+
+                    if viewModel.canRequestCancellation {
+                        Button(role: .destructive) {
+                            viewModel.showCancelRequest = true
+                        } label: {
+                            Label(
+                                viewModel.projectVendor.escrow?.status == "PENDING" ? "Cancel Escrow" : "Request Cancellation",
+                                systemImage: "xmark.circle"
+                            )
+                        }
                     }
 
                     if viewModel.canRemoveVendor {
@@ -103,6 +121,44 @@ struct VendorDetailView: View {
             Button("OK", role: .cancel) { }
         } message: { error in
             Text(error)
+        }
+        .alert(
+            "Done",
+            isPresented: Binding(get: { viewModel.noticeMessage != nil }, set: { if !$0 { viewModel.noticeMessage = nil } }),
+            presenting: viewModel.noticeMessage
+        ) { _ in
+            Button("OK", role: .cancel) { }
+        } message: { message in
+            Text(message)
+        }
+        .sheet(isPresented: $viewModel.showCancelRequest) {
+            if viewModel.projectVendor.escrow?.status == "PENDING" {
+                CancellationReasonSheet(
+                    title: "Cancel Escrow",
+                    message: "This escrow hasn't been funded, so it will be canceled right away. Nothing has been charged.",
+                    placeholder: "Why are you canceling?",
+                    confirmTitle: "Cancel Escrow"
+                ) { reason in
+                    Task { await viewModel.requestCancellation(reason: reason) }
+                }
+            } else {
+                CancellationReasonSheet(
+                    title: "Request Cancellation",
+                    message: "\(viewModel.projectVendor.vendor.name) has \(Escrow.cancelResponseDays) days to refund the money still in escrow or decline. Payouts pause in the meantime. Released payments are final.",
+                    placeholder: "Let them know why you're canceling",
+                    confirmTitle: "Send Request"
+                ) { reason in
+                    Task { await viewModel.requestCancellation(reason: reason) }
+                }
+            }
+        }
+        .confirmationDialog("Withdraw Request", isPresented: $viewModel.showWithdrawConfirm) {
+            Button("Withdraw Request") {
+                Task { await viewModel.withdrawCancellation() }
+            }
+            Button("Keep Request", role: .cancel) { }
+        } message: {
+            Text("The booking continues as normal and you can release payments again.")
         }
         .sheet(isPresented: $viewModel.showFundEscrow) {
             if let escrow = viewModel.projectVendor.escrow {
@@ -225,7 +281,12 @@ struct VendorDetailView: View {
 
                 Divider().frame(height: 30)
 
-                ProgressStat(label: "Pending", value: formatCurrency(progress.pending), color: Color.gray)
+                let refundedCents = viewModel.projectVendor.escrow?.refundedAmountCents ?? 0
+                if refundedCents > 0 {
+                    ProgressStat(label: "Refunded", value: formatCents(refundedCents), color: Color(hex: "3B82F6"))
+                } else {
+                    ProgressStat(label: "Pending", value: formatCurrency(progress.pending), color: Color.gray)
+                }
             }
         }
         .padding(20)
@@ -269,8 +330,46 @@ struct VendorDetailView: View {
         }
     }
     
+    // MARK: - Cancellation Actions
+
+    private func cancellationActions(_ escrow: Escrow) -> some View {
+        VStack(spacing: 10) {
+            if escrow.canEscalate {
+                Button {
+                    Task { await viewModel.escalateCancellation() }
+                } label: {
+                    Text("ASK GO HARD TO DECIDE")
+                        .font(.custom("Spectral-Bold", size: 13))
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 14)
+                        .background(Color(hex: "8B5CF6"))
+                        .cornerRadius(10)
+                }
+            }
+
+            Button {
+                viewModel.showWithdrawConfirm = true
+            } label: {
+                Text("WITHDRAW REQUEST")
+                    .font(.custom("Spectral-Bold", size: 13))
+                    .foregroundColor(.black)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 14)
+                    .background(Color.white)
+                    .cornerRadius(10)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 10)
+                            .stroke(Color.black.opacity(0.15), lineWidth: 1)
+                    )
+            }
+        }
+        .disabled(viewModel.isLoading)
+        .padding(.horizontal)
+    }
+
     // MARK: - Awaiting Setup
-    
+
     private var awaitingSetupCard: some View {
         VStack(spacing: 16) {
             Image(systemName: "clock.badge.exclamationmark")
@@ -419,16 +518,19 @@ private struct StatusBadge: View {
         case "ACCEPTED": return "Accepted"
         case "PAID": return "In Progress"
         case "COMPLETED": return "Completed"
+        case "DECLINED": return "Declined"
+        case "CANCELED": return "Canceled"
         default: return status
         }
     }
-    
+
     private var statusColor: Color {
         switch status {
         case "PENDING", "INVITED": return Color(hex: "8B5CF6")
         case "ACCEPTED": return Color(hex: "3B82F6")
         case "PAID": return Color(hex: "22C55E")
         case "COMPLETED": return Color(hex: "10B981")
+        case "DECLINED": return Color(hex: "E60023")
         default: return .gray
         }
     }
@@ -466,26 +568,46 @@ private struct MilestoneCard: View {
     let onRelease: () -> Void
     let isLoading: Bool
     
-    private var isFunded: Bool {
-        escrowStatus == "AUTHORIZED" || escrowStatus == "FUNDED" || escrowStatus == "COMPLETE"
+    private var canRelease: Bool {
+        escrowStatus == "AUTHORIZED" || escrowStatus == "FUNDED"
     }
-    
+
+    /// A cancellation or dispute is open, so this milestone can't be released right now
+    private var isPaused: Bool {
+        escrowStatus == "CANCEL_REQUESTED" || escrowStatus == "DISPUTED"
+    }
+
+    private var isRefunded: Bool {
+        milestone.refunded == true
+    }
+
+    private var circleColor: Color {
+        if milestone.released { return Color(hex: "22C55E") }
+        if isRefunded { return Color(hex: "3B82F6") }
+        if canRelease || isPaused { return Color(hex: "F59E0B") }
+        return Color.gray.opacity(0.3)
+    }
+
     var body: some View {
         HStack(alignment: .top, spacing: 16) {
             VStack(spacing: 0) {
                 ZStack {
                     Circle()
-                        .fill(milestone.released ? Color(hex: "22C55E") : (isFunded ? Color(hex: "F59E0B") : Color.gray.opacity(0.3)))
+                        .fill(circleColor)
                         .frame(width: 32, height: 32)
-                    
+
                     if milestone.released {
                         Image(systemName: "checkmark")
+                            .font(.custom("Spectral-Bold", size: 14))
+                            .foregroundColor(.white)
+                    } else if isRefunded {
+                        Image(systemName: "arrow.uturn.backward")
                             .font(.custom("Spectral-Bold", size: 14))
                             .foregroundColor(.white)
                     } else {
                         Text("\(index + 1)")
                             .font(.custom("Spectral-Bold", size: 14))
-                            .foregroundColor(isFunded ? .white : .gray)
+                            .foregroundColor(canRelease || isPaused ? .white : .gray)
                     }
                 }
                 
@@ -549,7 +671,13 @@ private struct MilestoneCard: View {
                     .font(.custom("Spectral-Medium", size: 13))
                     .foregroundColor(Color(hex: "22C55E"))
             }
-        } else if isFunded {
+        } else if isRefunded {
+            milestoneNote("Refunded to you", icon: "arrow.uturn.backward.circle.fill", color: Color(hex: "3B82F6"))
+        } else if isPaused {
+            milestoneNote("Payouts paused", icon: "pause.circle.fill", color: Color(hex: "F59E0B"))
+        } else if escrowStatus == "CANCELED" {
+            milestoneNote("Canceled", icon: "xmark.circle", color: .gray)
+        } else if canRelease {
             Button(action: onRelease) {
                 HStack {
                     if isLoading {
@@ -568,7 +696,7 @@ private struct MilestoneCard: View {
                 .cornerRadius(8)
             }
             .disabled(isLoading)
-        } else if index == 0 {
+        } else if escrowStatus == "PENDING" && index == 0 {
             Button(action: onFund) {
                 HStack {
                     Image(systemName: "lock.fill")
@@ -592,7 +720,17 @@ private struct MilestoneCard: View {
             }
         }
     }
-    
+
+    private func milestoneNote(_ text: String, icon: String, color: Color) -> some View {
+        HStack(spacing: 6) {
+            Image(systemName: icon)
+                .foregroundColor(color)
+            Text(text)
+                .font(.custom("Spectral-Medium", size: 13))
+                .foregroundColor(color)
+        }
+    }
+
     private func formatCurrency(_ amount: Double) -> String {
         let formatter = NumberFormatter()
         formatter.numberStyle = .currency

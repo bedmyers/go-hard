@@ -11,6 +11,19 @@ struct VendorAgreementView: View {
     let project: Project
     @Environment(\.dismiss) var dismiss
     @State private var isLoading = false
+    /// Kept locally so it can be refreshed after a refund or decline
+    @State private var escrow: Escrow?
+    @State private var showRefundConfirm = false
+    @State private var showDeclineSheet = false
+    @State private var errorMessage: String?
+    @State private var noticeMessage: String?
+
+    private let api = APIService.shared
+
+    init(project: Project) {
+        self.project = project
+        _escrow = State(initialValue: project.myVendorRole?.escrow)
+    }
 
     private var myRole: MyVendorRole? {
         project.myVendorRole
@@ -22,7 +35,11 @@ struct VendorAgreementView: View {
                 headerSection
                 agreementDetailsCard
 
-                if let escrow = myRole?.escrow {
+                if let escrow {
+                    EscrowStatusBanner(escrow: escrow, perspective: .vendor, otherPartyName: project.customer.name)
+                        .padding(.horizontal)
+
+                    refundActions(escrow: escrow)
                     paymentStatusCard(escrow: escrow)
                     milestonesSection(escrow: escrow)
                 }
@@ -36,6 +53,134 @@ struct VendorAgreementView: View {
         .background(Color("Background"))
         .navigationTitle("Agreement")
         .navigationBarTitleDisplayMode(.inline)
+        .task { await refreshEscrow() }
+        .refreshable { await refreshEscrow() }
+        .confirmationDialog("Refund Customer", isPresented: $showRefundConfirm) {
+            Button("Refund \(formatCents(escrow?.unreleasedCents ?? 0))", role: .destructive) {
+                Task { await refund() }
+            }
+            Button("Cancel", role: .cancel) { }
+        } message: {
+            Text("\(formatCents(escrow?.unreleasedCents ?? 0)) still in escrow goes back to \(project.customer.name) and the booking is canceled. Payments already released stay with you. This can't be undone.")
+        }
+        .sheet(isPresented: $showDeclineSheet) {
+            CancellationReasonSheet(
+                title: "Decline Cancellation",
+                message: "Go Hard will review the booking and decide what happens to the money still in escrow. Payouts stay paused until then.",
+                placeholder: "Why should the booking stand?",
+                confirmTitle: "Decline"
+            ) { reason in
+                Task { await decline(reason: reason) }
+            }
+        }
+        .alert("Error", isPresented: Binding(get: { errorMessage != nil }, set: { if !$0 { errorMessage = nil } }), presenting: errorMessage) { _ in
+            Button("OK", role: .cancel) { }
+        } message: { message in
+            Text(message)
+        }
+        .alert("Done", isPresented: Binding(get: { noticeMessage != nil }, set: { if !$0 { noticeMessage = nil } }), presenting: noticeMessage) { _ in
+            Button("OK", role: .cancel) { }
+        } message: { message in
+            Text(message)
+        }
+    }
+
+    // MARK: - Refund Actions
+
+    @ViewBuilder
+    private func refundActions(escrow: Escrow) -> some View {
+        let canRefund = (escrow.holdsFunds && !escrow.hasChargeback) && escrow.unreleasedCents > 0
+
+        if escrow.status == "CANCEL_REQUESTED" {
+            VStack(spacing: 10) {
+                Button {
+                    showRefundConfirm = true
+                } label: {
+                    Text("REFUND \(formatCents(escrow.unreleasedCents))")
+                        .font(.custom("DelaGothicOne-Regular", size: 14))
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 16)
+                        .background(Color.black)
+                        .cornerRadius(12)
+                }
+
+                Button {
+                    showDeclineSheet = true
+                } label: {
+                    Text("DECLINE")
+                        .font(.custom("Spectral-Bold", size: 13))
+                        .foregroundColor(.black)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 14)
+                        .background(Color.white)
+                        .cornerRadius(12)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 12)
+                                .stroke(Color.black.opacity(0.15), lineWidth: 1)
+                        )
+                }
+            }
+            .disabled(isLoading)
+            .padding(.horizontal)
+        } else if canRefund {
+            // Vendors can always give the money back, e.g. if they can't make the date
+            Button {
+                showRefundConfirm = true
+            } label: {
+                HStack(spacing: 6) {
+                    if isLoading {
+                        ProgressView().scaleEffect(0.8)
+                    } else {
+                        Image(systemName: "arrow.uturn.backward")
+                        Text("Refund Customer")
+                    }
+                }
+                .font(.custom("Spectral-Bold", size: 13))
+                .foregroundColor(Color(hex: "E60023"))
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 12)
+                .background(Color(hex: "E60023").opacity(0.08))
+                .cornerRadius(12)
+            }
+            .disabled(isLoading)
+            .padding(.horizontal)
+        }
+    }
+
+    private func refund() async {
+        guard let escrow else { return }
+        isLoading = true
+        do {
+            let response = try await api.refundEscrow(escrowId: escrow.id)
+            noticeMessage = response.message ?? "Refund sent"
+            await refreshEscrow()
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+        isLoading = false
+    }
+
+    private func decline(reason: String) async {
+        guard let escrow else { return }
+        isLoading = true
+        do {
+            let response = try await api.declineCancellation(escrowId: escrow.id, reason: reason)
+            noticeMessage = response.message
+            await refreshEscrow()
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+        isLoading = false
+    }
+
+    private func refreshEscrow() async {
+        guard let escrowId = escrow?.id else { return }
+        do {
+            escrow = try await api.getEscrow(escrowId)
+        } catch {
+            print("❌ Error refreshing escrow: \(error)")
+        }
     }
 
     // MARK: - Header
@@ -139,9 +284,10 @@ struct VendorAgreementView: View {
                 .foregroundColor(.gray)
 
             VStack(spacing: 16) {
-                let releasedAmount = escrow.milestones.filter { $0.released }.reduce(0) { $0 + $1.amountCents }
+                let releasedAmount = escrow.releasedCents
                 let totalAmount = escrow.amountCents
-                let pendingAmount = totalAmount - releasedAmount
+                let refundedAmount = escrow.refundedAmountCents ?? 0
+                let pendingAmount = refundedAmount > 0 ? refundedAmount : totalAmount - releasedAmount
 
                 // Progress bar
                 GeometryReader { geometry in
@@ -171,9 +317,9 @@ struct VendorAgreementView: View {
                     Spacer()
 
                     VStack(alignment: .trailing, spacing: 4) {
-                        Text(escrow.status == "PENDING" ? "NOT YET FUNDED" : "IN ESCROW")
+                        Text(remainingLabel(escrow))
                             .font(.custom("Spectral-Bold", size: 10))
-                            .foregroundColor(escrow.status == "PENDING" ? .gray : Color(hex: "3B82F6"))
+                            .foregroundColor(escrow.status == "PENDING" || escrow.status == "CANCELED" ? .gray : Color(hex: "3B82F6"))
                         Text(formatCurrency(pendingAmount))
                             .font(.custom("DelaGothicOne-Regular", size: 16))
                     }
@@ -245,9 +391,24 @@ struct VendorAgreementView: View {
         .shadow(color: .black.opacity(0.05), radius: 8, x: 0, y: 4)
     }
 
+    private func remainingLabel(_ escrow: Escrow) -> String {
+        if (escrow.refundedAmountCents ?? 0) > 0 { return "REFUNDED" }
+        switch escrow.status {
+        case "PENDING": return "NOT YET FUNDED"
+        case "CANCELED": return "CANCELED"
+        default: return "IN ESCROW"
+        }
+    }
+
     private func milestoneStatus(_ milestone: Milestone, escrowStatus: String) -> String {
         if milestone.released {
             return "PAID"
+        } else if milestone.refunded == true {
+            return "REFUNDED"
+        } else if escrowStatus == "CANCEL_REQUESTED" || escrowStatus == "DISPUTED" {
+            return "PAUSED"
+        } else if escrowStatus == "CANCELED" {
+            return "CANCELED"
         } else if escrowStatus == "PENDING" {
             return "AWAITING FUNDING"
         } else {
@@ -258,7 +419,11 @@ struct VendorAgreementView: View {
     private func milestoneStatusColor(_ milestone: Milestone, escrowStatus: String) -> Color {
         if milestone.released {
             return Color(hex: "22C55E")
-        } else if escrowStatus == "PENDING" {
+        } else if milestone.refunded == true {
+            return Color(hex: "3B82F6")
+        } else if escrowStatus == "CANCEL_REQUESTED" || escrowStatus == "DISPUTED" {
+            return Color(hex: "F59E0B")
+        } else if escrowStatus == "PENDING" || escrowStatus == "CANCELED" {
             return .gray
         } else {
             return Color(hex: "3B82F6")
@@ -346,6 +511,7 @@ private struct StatusBadge: View {
         case "INVITED", "PENDING": return "PENDING"
         case "ACCEPTED": return "ACCEPTED"
         case "DECLINED": return "DECLINED"
+        case "PAID": return "IN PROGRESS"
         default: return status
         }
     }
@@ -353,7 +519,8 @@ private struct StatusBadge: View {
     private var statusColor: Color {
         switch status {
         case "INVITED", "PENDING": return Color(hex: "8B5CF6")
-        case "ACCEPTED": return Color(hex: "22C55E")
+        case "ACCEPTED", "PAID": return Color(hex: "22C55E")
+        case "COMPLETED": return Color(hex: "10B981")
         case "DECLINED": return .red
         default: return .gray
         }

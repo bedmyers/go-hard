@@ -19,6 +19,9 @@ class VendorDetailViewModel: ObservableObject {
     @Published var selectedMilestone: Milestone?
     @Published var showRemoveConfirm = false
     @Published var didRemoveVendor = false
+    @Published var showCancelRequest = false
+    @Published var showWithdrawConfirm = false
+    @Published var noticeMessage: String?
 
     private let api = APIService.shared
     
@@ -35,10 +38,10 @@ class VendorDetailViewModel: ObservableObject {
         let total = Double(projectVendor.amountCents) / 100.0
         
         let released = Double(milestones.filter { $0.released }.reduce(0) { $0 + $1.amountCents }) / 100.0
-        
-        let isFunded = escrow.status == "AUTHORIZED" || escrow.status == "FUNDED" || escrow.status == "COMPLETE"
-        let inEscrow = isFunded ? (total - released) : 0
-        let pending = isFunded ? 0 : (total - released)
+        let refunded = Double(escrow.refundedAmountCents ?? 0) / 100.0
+
+        let inEscrow = escrow.holdsFunds ? max(0, total - released - refunded) : 0
+        let pending = escrow.status == "PENDING" ? (total - released) : 0
         
         let percentage = total > 0 ? CGFloat(released / total) : 0
         
@@ -87,6 +90,52 @@ class VendorDetailViewModel: ObservableObject {
     
     func refreshData() async {
         await refreshEscrow()
+    }
+
+    // MARK: - Cancellation
+
+    /// Unfunded escrows can be canceled outright; funded ones need the vendor's answer
+    var canRequestCancellation: Bool {
+        guard let escrow = projectVendor.escrow else { return false }
+        return ["PENDING", "FUNDED", "AUTHORIZED"].contains(escrow.status)
+    }
+
+    /// Funded: asks the vendor to cancel. Unfunded: cancels right away (nothing was charged).
+    func requestCancellation(reason: String) async {
+        await performEscrowAction { escrowId in
+            try await self.api.requestCancellation(escrowId: escrowId, reason: reason)
+        }
+    }
+
+    func withdrawCancellation() async {
+        await performEscrowAction { escrowId in
+            try await self.api.withdrawCancellation(escrowId: escrowId)
+        }
+    }
+
+    func escalateCancellation() async {
+        await performEscrowAction { escrowId in
+            try await self.api.escalateCancellation(escrowId: escrowId)
+        }
+    }
+
+    private func performEscrowAction(_ action: (Int) async throws -> EscrowActionResponse) async {
+        guard let escrow = projectVendor.escrow else { return }
+
+        isLoading = true
+        errorMessage = nil
+
+        do {
+            let response = try await action(escrow.id)
+            noticeMessage = response.message
+            await refreshEscrow()
+        } catch {
+            errorMessage = error.localizedDescription
+            showError = true
+            print("❌ Escrow action failed: \(error)")
+        }
+
+        isLoading = false
     }
 
     var canRemoveVendor: Bool {

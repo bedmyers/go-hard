@@ -116,6 +116,49 @@ struct Escrow: Codable, Identifiable {
     let milestones: [Milestone]
     let createdAt: Date
     let updatedAt: Date
+
+    // Cancellation / refunds (optional so older responses still decode)
+    var cancelRequestedAt: Date? = nil
+    var cancelReason: String? = nil
+    var disputeReason: String? = nil
+    var stripeDisputeId: String? = nil
+    var refundedAmountCents: Int? = nil
+
+    /// Days the vendor has to answer a cancellation request (matches the backend)
+    static let cancelResponseDays = 7
+
+    /// Money is sitting in escrow and can still be released or refunded
+    var holdsFunds: Bool {
+        ["FUNDED", "AUTHORIZED", "CANCEL_REQUESTED", "DISPUTED"].contains(status)
+    }
+
+    /// Releases are frozen while a cancellation or dispute is open
+    var isPaused: Bool {
+        status == "CANCEL_REQUESTED" || status == "DISPUTED"
+    }
+
+    var hasChargeback: Bool {
+        stripeDisputeId != nil
+    }
+
+    var releasedCents: Int {
+        milestones.filter { $0.released }.reduce(0) { $0 + $1.amountCents }
+    }
+
+    /// What would go back to the customer if refunded now
+    var unreleasedCents: Int {
+        max(0, amountCents - releasedCents - (refundedAmountCents ?? 0))
+    }
+
+    var cancelResponseDeadline: Date? {
+        cancelRequestedAt.map { $0.addingTimeInterval(TimeInterval(Self.cancelResponseDays * 24 * 60 * 60)) }
+    }
+
+    /// The vendor didn't answer in time, so the customer can escalate to Go Hard
+    var canEscalate: Bool {
+        guard status == "CANCEL_REQUESTED", let deadline = cancelResponseDeadline else { return false }
+        return Date() >= deadline
+    }
 }
 
 // MARK: - Milestone
@@ -129,6 +172,7 @@ struct Milestone: Codable, Identifiable {
     let released: Bool
     let createdAt: Date
     let updatedAt: Date
+    var refunded: Bool? = nil  // returned to the customer instead of released
 }
 
 // MARK: - My Vendor Role (for vendor's view of projects they're part of)
