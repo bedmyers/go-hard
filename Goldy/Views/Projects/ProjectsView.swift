@@ -251,12 +251,12 @@ private struct InvitationCard: View {
                         }
                     } label: {
                         Text("Decline")
-                            .font(.custom("Spectral-Medium", size: 13))
+                            .font(.custom("Spectral-Bold", size: 12))
                             .foregroundColor(.black)
                             .frame(maxWidth: .infinity)
-                            .padding(.vertical, 10)
+                            .padding(.vertical, 12)
                             .background(Color.gray.opacity(0.1))
-                            .cornerRadius(6)
+                            .cornerRadius(8)
                     }
                     .disabled(isProcessing)
 
@@ -279,22 +279,21 @@ private struct InvitationCard: View {
                                     .tint(.white)
                             } else {
                                 Text("Accept")
-                                    .font(.custom("Spectral-Medium", size: 13))
+                                    .font(.custom("Spectral-Bold", size: 12))
                             }
                         }
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
-                        .padding(.vertical, 10)
+                        .padding(.vertical, 12)
                         .background(Color(hex: "22C55E"))
-                        .cornerRadius(6)
+                        .cornerRadius(8)
                     }
                     .disabled(isProcessing)
                 }
             }
             .padding(14)
         }
-        .background(Color.white)
-        .cornerRadius(10)
+        .cardStyle()
         .onTapGesture {
             showDetails = true
         }
@@ -486,8 +485,7 @@ private struct ProjectCard: View {
             }
         }
         .padding(14)
-        .background(Color.white)
-        .cornerRadius(10)
+        .cardStyle()
     }
 
     private func formatCurrency(_ amount: Double) -> String {

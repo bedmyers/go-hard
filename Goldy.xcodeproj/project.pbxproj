@@ -91,6 +91,8 @@
 		18999279308FC4AE000818C7 /* EscrowCancellationViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18999278308FC4AE000818C7 /* EscrowCancellationViews.swift */; };
 		189992F6308FCC8F000818C7 /* ErrorMessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 189992F5308FCC8F000818C7 /* ErrorMessageView.swift */; };
 		189992F8308FCC92000818C7 /* StatBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 189992F7308FCC92000818C7 /* StatBox.swift */; };
+		189992FE308FCF4C000818C7 /* AppAppearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 189992FD308FCF4C000818C7 /* AppAppearance.swift */; };
+		18999300308FD034000818C7 /* CardStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 189992FF308FD034000818C7 /* CardStyle.swift */; };
 		18FC98012D6EE2910053CFD3 /* DelaGothicOne-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 18FC98002D6EE2910053CFD3 /* DelaGothicOne-Regular.ttf */; };
 		18FC98052D737EFC0053CFD3 /* IBMPlexMono-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 18FC98042D737EFC0053CFD3 /* IBMPlexMono-Regular.ttf */; };
 /* End PBXBuildFile section */
@@ -173,6 +175,8 @@
 		18999278308FC4AE000818C7 /* EscrowCancellationViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EscrowCancellationViews.swift; sourceTree = "<group>"; };
 		189992F5308FCC8F000818C7 /* ErrorMessageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorMessageView.swift; sourceTree = "<group>"; };
 		189992F7308FCC92000818C7 /* StatBox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatBox.swift; sourceTree = "<group>"; };
+		189992FD308FCF4C000818C7 /* AppAppearance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppAppearance.swift; sourceTree = "<group>"; };
+		189992FF308FD034000818C7 /* CardStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardStyle.swift; sourceTree = "<group>"; };
 		18FC97FD2D6EE0E90053CFD3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		18FC98002D6EE2910053CFD3 /* DelaGothicOne-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "DelaGothicOne-Regular.ttf"; sourceTree = "<group>"; };
 		18FC98042D737EFC0053CFD3 /* IBMPlexMono-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "IBMPlexMono-Regular.ttf"; sourceTree = "<group>"; };
@@ -257,6 +261,7 @@
 			isa = PBXGroup;
 			children = (
 				187B1BD82EC034930090DE18 /* Color+Extensions.swift */,
+				189992FD308FCF4C000818C7 /* AppAppearance.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -296,6 +301,7 @@
 				18999278308FC4AE000818C7 /* EscrowCancellationViews.swift */,
 				189992F5308FCC8F000818C7 /* ErrorMessageView.swift */,
 				189992F7308FCC92000818C7 /* StatBox.swift */,
+				189992FF308FD034000818C7 /* CardStyle.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -594,6 +600,7 @@
 				187B1C762EDCF5F70090DE18 /* VendorDiscoverView.swift in Sources */,
 				187B1C522ED65F200090DE18 /* AddVendorView.swift in Sources */,
 				187B1BE32EC0349A0090DE18 /* AppState.swift in Sources */,
+				18999300308FD034000818C7 /* CardStyle.swift in Sources */,
 				187B1BE42EC0349A0090DE18 /* GoldyApp.swift in Sources */,
 				187B1BDA2EC034930090DE18 /* Color+Extensions.swift in Sources */,
 				187B1BEF2EC034A00090DE18 /* AppBackgroundView.swift in Sources */,
@@ -648,6 +655,7 @@
 				187B1C802EE62D1F0090DE18 /* VendorMarketplaceViewModel.swift in Sources */,
 				187B1BDE2EC034960090DE18 /* APIService.swift in Sources */,
 				187B1BE72EC0349D0090DE18 /* IntroView.swift in Sources */,
+				189992FE308FCF4C000818C7 /* AppAppearance.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -799,6 +807,7 @@
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UIUserInterfaceStyle = Light;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
@@ -845,6 +854,7 @@
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UIUserInterfaceStyle = Light;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";

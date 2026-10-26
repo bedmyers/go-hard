@@ -354,12 +354,12 @@ struct ForgotPasswordView: View {
                     }
                 }) {
                     Text("Send Reset Link")
-                        .font(.headline)
+                        .font(.custom("DelaGothicOne-Regular", size: 14))
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
-                        .padding()
+                        .padding(.vertical, 16)
                         .background(Color.black)
-                        .cornerRadius(8)
+                        .cornerRadius(12)
                 }
                 .padding(.horizontal)
                 

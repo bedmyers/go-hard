@@ -112,21 +112,14 @@ private struct AllRFPsView: View {
                 Button {
                     showCreateRFP = true
                 } label: {
+                    // The toolbar draws the button background; a custom capsule doubles it up
                     HStack(spacing: 4) {
                         Image(systemName: "plus")
                             .font(.system(size: 12, weight: .bold))
                         Text("New RFP")
-                            .font(.custom("Spectral-Bold", size: 13))
+                            .font(.custom("Spectral-Bold", size: 14))
                     }
                     .foregroundColor(.black)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 8)
-                    .background(Color.white)
-                    .cornerRadius(20)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 20)
-                            .stroke(Color.black, lineWidth: 1.5)
-                    )
                 }
             }
         }
@@ -279,8 +272,7 @@ private struct RFPCardWithProject: View {
             }
         }
         .padding(20)
-        .background(Color.white)
-        .cornerRadius(16)
+        .cardStyle(cornerRadius: 16)
     }
     
     private var cardHeader: some View {
@@ -598,8 +590,7 @@ private struct BrowseVendorsView: View {
                     }
                 }
                 .padding(12)
-                .background(Color.white)
-                .cornerRadius(12)
+                .cardStyle()
                 
                 Button {
                     showFilters.toggle()
@@ -839,8 +830,7 @@ private struct FilterSheet: View {
                             }
                             .tint(Color(hex: "22C55E"))
                             .padding()
-                            .background(Color.white)
-                            .cornerRadius(12)
+                            .cardStyle()
                         }
                         
                         Spacer(minLength: 40)
@@ -1069,8 +1059,7 @@ private struct VendorRowCard: View {
             }
         }
         .padding(14)
-        .background(Color.white)
-        .cornerRadius(10)
+        .cardStyle()
     }
 }
 

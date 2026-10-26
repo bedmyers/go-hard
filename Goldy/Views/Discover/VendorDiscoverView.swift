@@ -272,18 +272,17 @@ private struct OpenRFPCard: View {
                 HStack {
                     Image(systemName: "paperplane.fill")
                     Text("SUBMIT BID")
-                        .font(.custom("DelaGothicOne-Regular", size: 13))
+                        .font(.custom("DelaGothicOne-Regular", size: 14))
                 }
                 .foregroundColor(.black)
                 .frame(maxWidth: .infinity)
-                .padding(.vertical, 14)
+                .padding(.vertical, 16)
                 .background(Color(hex: "FFD700"))
-                .cornerRadius(10)
+                .cornerRadius(12)
             }
         }
         .padding(20)
-        .background(Color.white)
-        .cornerRadius(16)
+        .cardStyle(cornerRadius: 16)
             }
 }
 
@@ -383,8 +382,7 @@ private struct StatCard: View {
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 16)
-        .background(Color.white)
-        .cornerRadius(12)
+        .cardStyle()
     }
 }
 

@@ -93,8 +93,7 @@ struct RFPBidSheet: View {
         }
         .padding(16)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color.white)
-        .cornerRadius(12)
+        .cardStyle()
     }
     
     // MARK: - Bid Form
