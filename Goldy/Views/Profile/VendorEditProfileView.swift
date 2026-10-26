@@ -143,8 +143,7 @@ struct VendorEditProfileView: View {
         }
         .padding(24)
         .frame(maxWidth: .infinity)
-        .background(Color.white)
-        .cornerRadius(16)
+        .cardStyle(cornerRadius: 16)
         .onChange(of: viewModel.selectedProfilePhoto) { _, newValue in
             if newValue != nil {
                 Task { await viewModel.uploadProfilePhoto() }

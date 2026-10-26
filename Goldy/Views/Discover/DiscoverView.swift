@@ -112,21 +112,14 @@ private struct AllRFPsView: View {
                 Button {
                     showCreateRFP = true
                 } label: {
+                    // The toolbar draws the button background; a custom capsule doubles it up
                     HStack(spacing: 4) {
                         Image(systemName: "plus")
                             .font(.system(size: 12, weight: .bold))
                         Text("New RFP")
-                            .font(.custom("Spectral-Bold", size: 13))
+                            .font(.custom("Spectral-Bold", size: 14))
                     }
                     .foregroundColor(.black)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 8)
-                    .background(Color.white)
-                    .cornerRadius(20)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 20)
-                            .stroke(Color.black, lineWidth: 1.5)
-                    )
                 }
             }
         }
@@ -279,8 +272,7 @@ private struct RFPCardWithProject: View {
             }
         }
         .padding(20)
-        .background(Color.white)
-        .cornerRadius(16)
+        .cardStyle(cornerRadius: 16)
     }
     
     private var cardHeader: some View {
@@ -433,39 +425,6 @@ private struct RFPCardWithProject: View {
                 .padding(.vertical, 20)
             }
         }
-    }
-}
-
-// MARK: - Stat Box
-
-private struct StatBox: View {
-    let icon: String
-    let label: String
-    let value: String
-    var bgColor: Color
-    var valueColor: Color = .black
-    
-    var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            HStack(spacing: 4) {
-                Image(systemName: icon)
-                    .font(.custom("Spectral-Regular", size: 10))
-                    .foregroundColor(.gray)
-                Text(label)
-                    .font(.custom("Spectral-Bold", size: 9))
-                    .foregroundColor(.gray)
-            }
-            
-            Text(value)
-                .font(.custom("Spectral-Bold", size: 12))
-                .foregroundColor(valueColor)
-                .lineLimit(1)
-                .minimumScaleFactor(0.8)
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(10)
-        .background(bgColor)
-        .cornerRadius(8)
     }
 }
 
@@ -631,8 +590,7 @@ private struct BrowseVendorsView: View {
                     }
                 }
                 .padding(12)
-                .background(Color.white)
-                .cornerRadius(12)
+                .cardStyle()
                 
                 Button {
                     showFilters.toggle()
@@ -872,8 +830,7 @@ private struct FilterSheet: View {
                             }
                             .tint(Color(hex: "22C55E"))
                             .padding()
-                            .background(Color.white)
-                            .cornerRadius(12)
+                            .cardStyle()
                         }
                         
                         Spacer(minLength: 40)
@@ -1102,8 +1059,7 @@ private struct VendorRowCard: View {
             }
         }
         .padding(14)
-        .background(Color.white)
-        .cornerRadius(10)
+        .cardStyle()
     }
 }
 

@@ -1,197 +1,11 @@
 //
-//  VendorRFPBrowseView.swift
+//  RFPBidSheet.swift
 //  Goldy
 //
-//  Created by Blair Myers on 11/30/25.
+//  Sheet for a vendor to submit a bid on an RFP
 //
 
 import SwiftUI
-
-struct VendorRFPBrowseView: View {
-    @State private var rfps: [RFP] = []
-    @State private var isLoading = true
-    @State private var errorMessage: String?
-    @State private var selectedRFP: RFP?
-    
-    var body: some View {
-        ZStack {
-            Color("Background")
-                .ignoresSafeArea()
-            
-            if isLoading {
-                ProgressView()
-            } else if rfps.isEmpty {
-                emptyState
-            } else {
-                rfpList
-            }
-        }
-        .navigationTitle("Find Work")
-        .navigationBarTitleDisplayMode(.large)
-        .task {
-            await loadRFPs()
-        }
-        .refreshable {
-            await loadRFPs()
-        }
-        .sheet(item: $selectedRFP) { rfp in
-            RFPBidSheet(rfp: rfp) {
-                // On bid submitted, refresh and close
-                Task { await loadRFPs() }
-                selectedRFP = nil
-            }
-        }
-    }
-    
-    // MARK: - Empty State
-    
-    private var emptyState: some View {
-        VStack(spacing: 20) {
-            Image(systemName: "doc.text.magnifyingglass")
-                .font(.system(size: 60))
-                .foregroundColor(.gray.opacity(0.4))
-            
-            Text("No Open Requests")
-                .font(.custom("DelaGothicOne-Regular", size: 20))
-            
-            Text("Check back soon - couples are posting new requests all the time")
-                .font(.custom("Spectral-Regular", size: 14))
-                .foregroundColor(.gray)
-                .multilineTextAlignment(.center)
-                .padding(.horizontal, 40)
-        }
-    }
-    
-    // MARK: - RFP List
-    
-    private var rfpList: some View {
-        ScrollView {
-            VStack(spacing: 16) {
-                Text("\(rfps.count) open request\(rfps.count == 1 ? "" : "s")")
-                    .font(.custom("Spectral-Regular", size: 14))
-                    .foregroundColor(.gray)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.horizontal)
-                
-                LazyVStack(spacing: 16) {
-                    ForEach(rfps) { rfp in
-                        OpenRFPCard(rfp: rfp) {
-                            selectedRFP = rfp
-                        }
-                    }
-                }
-                .padding(.horizontal)
-            }
-            .padding(.vertical)
-        }
-    }
-    
-    // MARK: - Load RFPs
-    
-    private func loadRFPs() async {
-        do {
-            rfps = try await APIService.shared.browseOpenRFPs()
-            print("✅ Loaded \(rfps.count) open RFPs")
-        } catch {
-            errorMessage = error.localizedDescription
-            print("❌ Error loading RFPs: \(error)")
-        }
-        isLoading = false
-    }
-}
-
-// MARK: - Open RFP Card
-
-private struct OpenRFPCard: View {
-    let rfp: RFP
-    let onBid: () -> Void
-    
-    var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            // Header
-            HStack(alignment: .top) {
-                VStack(alignment: .leading, spacing: 6) {
-                    Text(rfp.title)
-                        .font(.custom("DelaGothicOne-Regular", size: 17))
-                        .foregroundColor(.black)
-                    
-                    HStack(spacing: 12) {
-                        if let project = rfp.project {
-                            Label(project.title, systemImage: "heart.fill")
-                                .font(.custom("Spectral-Regular", size: 12))
-                                .foregroundColor(.pink)
-                        }
-                        
-                        Label("Posted \(rfp.createdAt.timeAgoDisplay())", systemImage: "clock")
-                            .font(.custom("Spectral-Regular", size: 12))
-                            .foregroundColor(.gray)
-                    }
-                }
-                
-                Spacer()
-                
-                // Budget badge
-                VStack(alignment: .trailing, spacing: 2) {
-                    Text(rfp.budgetFormatted)
-                        .font(.custom("DelaGothicOne-Regular", size: 18))
-                        .foregroundColor(Color(hex: "22C55E"))
-                    Text("budget")
-                        .font(.custom("Spectral-Regular", size: 10))
-                        .foregroundColor(.gray)
-                }
-            }
-            
-            // Description
-            Text(rfp.description)
-                .font(.custom("Spectral-Regular", size: 14))
-                .foregroundColor(.gray)
-                .lineLimit(3)
-            
-            // Stats row
-            HStack(spacing: 16) {
-                if let deadline = rfp.deadline {
-                    HStack(spacing: 4) {
-                        Image(systemName: "calendar")
-                            .font(.custom("Spectral-Regular", size: 12))
-                        Text("Due \(deadline.formatted(date: .abbreviated, time: .omitted))")
-                            .font(.custom("Spectral-Regular", size: 12))
-                    }
-                    .foregroundColor(Color(hex: "FF6B35"))
-                }
-                
-                HStack(spacing: 4) {
-                    Image(systemName: "person.2")
-                        .font(.custom("Spectral-Regular", size: 12))
-                    Text("\(rfp.bidCount) bid\(rfp.bidCount == 1 ? "" : "s")")
-                        .font(.custom("Spectral-Regular", size: 12))
-                }
-                .foregroundColor(.gray)
-                
-                Spacer()
-            }
-            
-            // Bid button
-            Button(action: onBid) {
-                HStack {
-                    Image(systemName: "paperplane.fill")
-                    Text("SUBMIT BID")
-                        .font(.custom("DelaGothicOne-Regular", size: 13))
-                }
-                .foregroundColor(.black)
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 14)
-                .background(Color(hex: "FFD700"))
-                .cornerRadius(10)
-            }
-        }
-        .padding(20)
-        .background(Color.white)
-        .cornerRadius(16)
-        .shadow(color: .black.opacity(0.05), radius: 10, x: 0, y: 4)
-    }
-}
-
-// MARK: - RFP Bid Sheet
 
 struct RFPBidSheet: View {
     let rfp: RFP
@@ -279,8 +93,7 @@ struct RFPBidSheet: View {
         }
         .padding(16)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color.white)
-        .cornerRadius(12)
+        .cardStyle()
     }
     
     // MARK: - Bid Form
@@ -395,13 +208,5 @@ struct RFPBidSheet: View {
         }
         
         isLoading = false
-    }
-}
-
-// MARK: - Preview
-
-#Preview {
-    NavigationStack {
-        VendorRFPBrowseView()
     }
 }

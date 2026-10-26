@@ -205,9 +205,7 @@ private struct VendorInfoStep: View {
                         viewModel.clearSelectedVendor()
                     }
                 }
-                .background(Color.white)
-                .cornerRadius(12)
-                .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+                .cardStyle()
 
                 if viewModel.vendorInputMode == .search {
                     searchModeContent
@@ -284,9 +282,7 @@ private struct VendorInfoStep: View {
                         .font(.custom("Spectral-Regular", size: 16))
                         .lineLimit(3...5)
                         .padding()
-                        .background(Color.white)
-                        .cornerRadius(12)
-                        .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+                        .cardStyle()
                 }
 
                 Spacer(minLength: 100)
@@ -339,9 +335,7 @@ private struct VendorInfoStep: View {
                         }
                     }
                     .padding()
-                    .background(Color.white)
-                    .cornerRadius(12)
-                    .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+                    .cardStyle()
                 }
 
                 // Search results
@@ -455,9 +449,7 @@ private struct VendorInfoStep: View {
                 TextField("e.g., Bella Vista Events", text: $viewModel.vendorName)
                     .font(.custom("Spectral-Regular", size: 16))
                     .padding()
-                    .background(Color.white)
-                    .cornerRadius(12)
-                    .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+                    .cardStyle()
                     .focused($focusedField, equals: .name)
             }
 
@@ -473,9 +465,7 @@ private struct VendorInfoStep: View {
                     .textInputAutocapitalization(.never)
                     .autocorrectionDisabled()
                     .padding()
-                    .background(Color.white)
-                    .cornerRadius(12)
-                    .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+                    .cardStyle()
                     .focused($focusedField, equals: .email)
 
                 Text("We'll send them an invite to accept the agreement")
@@ -561,9 +551,7 @@ private struct VendorSearchResultCard: View {
                     .foregroundColor(Color(hex: "8B5CF6"))
             }
             .padding(12)
-            .background(Color.white)
-            .cornerRadius(12)
-            .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+            .cardStyle()
         }
     }
 }
@@ -615,9 +603,7 @@ private struct PaymentSetupStep: View {
                             .keyboardType(.numberPad)
                     }
                     .padding()
-                    .background(Color.white)
-                    .cornerRadius(12)
-                    .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+                    .cardStyle()
                 }
                 
                 // Milestones
@@ -705,8 +691,7 @@ private struct PaymentSetupStep: View {
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 30)
-        .background(Color.white)
-        .cornerRadius(12)
+        .cardStyle()
     }
     
     private var milestoneTotalIndicator: some View {
@@ -842,9 +827,7 @@ private struct MilestoneCard: View {
             }
         }
         .padding()
-        .background(Color.white)
-        .cornerRadius(12)
-        .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+        .cardStyle()
         .sheet(isPresented: $showDateOptions) {
             DueDatePickerSheet(dueDate: $milestone.dueDate)
                 .presentationDetents([.medium])
@@ -931,8 +914,7 @@ private struct DueDatePickerSheet: View {
                         .datePickerStyle(.graphical)
                         .labelsHidden()
                         .padding()
-                        .background(Color.white)
-                        .cornerRadius(12)
+                        .cardStyle()
                         .padding(.horizontal)
                     }
 
@@ -1088,8 +1070,7 @@ private struct TermsStep: View {
                             .foregroundColor(.gray)
                     }
                     .padding()
-                    .background(Color.white)
-                    .cornerRadius(12)
+                    .cardStyle()
                 }
 
                 Spacer(minLength: 100)
@@ -1248,9 +1229,7 @@ private struct TermsSectionCard: View {
                     .opacity(section.isEnabled ? 1 : 0.5)
             }
         }
-        .background(Color.white)
-        .cornerRadius(12)
-        .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+        .cardStyle()
     }
 }
 
@@ -1287,9 +1266,7 @@ private struct ReviewStep: View {
                 }
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 24)
-                .background(Color.white)
-                .cornerRadius(16)
-                .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+                .cardStyle(cornerRadius: 16)
 
                 // Vendor Summary
                 SummaryCard(title: "Vendor") {
@@ -1406,9 +1383,7 @@ private struct ReviewStep: View {
                     )
                 }
                 .padding()
-                .background(Color.white)
-                .cornerRadius(12)
-                .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+                .cardStyle()
                 
                 Spacer(minLength: 100)
             }
@@ -1432,8 +1407,7 @@ private struct SummaryCard<Content: View>: View {
             }
             .padding()
             .frame(maxWidth: .infinity, alignment: .leading)
-            .background(Color.white)
-            .cornerRadius(12)
+            .cardStyle()
         }
     }
 }
