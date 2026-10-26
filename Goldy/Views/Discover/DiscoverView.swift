@@ -112,21 +112,14 @@ private struct AllRFPsView: View {
                 Button {
                     showCreateRFP = true
                 } label: {
+                    // The toolbar draws the button background; a custom capsule doubles it up
                     HStack(spacing: 4) {
                         Image(systemName: "plus")
                             .font(.system(size: 12, weight: .bold))
                         Text("New RFP")
-                            .font(.custom("Spectral-Bold", size: 13))
+                            .font(.custom("Spectral-Bold", size: 14))
                     }
                     .foregroundColor(.black)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 8)
-                    .background(Color.white)
-                    .cornerRadius(20)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 20)
-                            .stroke(Color.black, lineWidth: 1.5)
-                    )
                 }
             }
         }
