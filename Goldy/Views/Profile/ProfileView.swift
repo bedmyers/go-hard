@@ -11,6 +11,8 @@ struct ProfileView: View {
     @EnvironmentObject var appState: AppState
     @State private var showLogoutConfirm = false
     @State private var showDeleteAccountConfirm = false
+    @State private var isDeletingAccount = false
+    @State private var deleteAccountError: String?
     @State private var showEditProfile = false
     
     var body: some View {
@@ -47,19 +49,54 @@ struct ProfileView: View {
         }
         .confirmationDialog("Delete Account", isPresented: $showDeleteAccountConfirm) {
             Button("Delete Account", role: .destructive) {
-                // TODO: Implement account deletion
+                Task { await deleteAccount() }
             }
             Button("Cancel", role: .cancel) { }
         } message: {
-            Text("This action cannot be undone. All your data will be permanently deleted.")
+            Text("Your profile, personal info and messages you've sent will be permanently deleted and you'll be logged out. Records of past payments are kept for the other party. This can't be undone.")
+        }
+        .alert(
+            "Couldn't Delete Account",
+            isPresented: Binding(get: { deleteAccountError != nil }, set: { if !$0 { deleteAccountError = nil } }),
+            presenting: deleteAccountError
+        ) { _ in
+            Button("OK", role: .cancel) { }
+        } message: { message in
+            Text(message)
+        }
+        .overlay {
+            if isDeletingAccount {
+                ZStack {
+                    Color.black.opacity(0.3).ignoresSafeArea()
+                    ProgressView("Deleting account…")
+                        .padding(24)
+                        .background(Color.white)
+                        .cornerRadius(16)
+                }
+            }
         }
         .sheet(isPresented: $showEditProfile) {
             VendorEditProfileView()
         }
     }
     
+    // MARK: - Delete Account
+
+    private func deleteAccount() async {
+        isDeletingAccount = true
+        defer { isDeletingAccount = false }
+
+        do {
+            _ = try await APIService.shared.deleteAccount()
+            appState.logout()
+        } catch {
+            // e.g. "You have 1 escrow still holding money..."
+            deleteAccountError = error.localizedDescription
+        }
+    }
+
     // MARK: - Profile Header
-    
+
     private var profileHeader: some View {
         VStack(spacing: 16) {
             ZStack {
