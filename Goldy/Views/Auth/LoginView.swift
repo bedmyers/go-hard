@@ -443,13 +443,17 @@ private struct AppleSignInButton: View {
             ]
         }
 
+        // One-time code the backend exchanges for a refresh token, so it can revoke
+        // Sign in with Apple if the account is deleted (Apple requirement)
+        let authorizationCode = appleIDCredential.authorizationCode.flatMap { String(data: $0, encoding: .utf8) }
+
         // Send to backend
         Task {
-            await signInWithApple(identityToken: identityToken, userInfo: userInfo)
+            await signInWithApple(identityToken: identityToken, authorizationCode: authorizationCode, userInfo: userInfo)
         }
     }
 
-    private func signInWithApple(identityToken: String, userInfo: [String: Any]) async {
+    private func signInWithApple(identityToken: String, authorizationCode: String?, userInfo: [String: Any]) async {
         authVM.isLoading = true
         authVM.errorMessage = ""
 
@@ -460,6 +464,9 @@ private struct AppleSignInButton: View {
         }
 
         var body: [String: Any] = ["identityToken": identityToken]
+        if let authorizationCode {
+            body["authorizationCode"] = authorizationCode
+        }
         if !userInfo.isEmpty {
             body["user"] = userInfo
         }
