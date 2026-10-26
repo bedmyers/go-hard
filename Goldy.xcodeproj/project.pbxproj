@@ -787,6 +787,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Goldy/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Go Hard";
+				INFOPLIST_KEY_UIUserInterfaceStyle = Light;
 				INFOPLIST_KEY_NSCameraUsageDescription = "Take photos for your vendor profile and portfolio";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Select photos for your vendor profile and portfolio";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
@@ -833,6 +834,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Goldy/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Go Hard";
+				INFOPLIST_KEY_UIUserInterfaceStyle = Light;
 				INFOPLIST_KEY_NSCameraUsageDescription = "Take photos for your vendor profile and portfolio";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Select photos for your vendor profile and portfolio";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
