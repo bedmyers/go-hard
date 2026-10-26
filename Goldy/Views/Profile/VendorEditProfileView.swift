@@ -145,7 +145,7 @@ struct VendorEditProfileView: View {
         .frame(maxWidth: .infinity)
         .background(Color.white)
         .cornerRadius(16)
-        .onChange(of: viewModel.selectedProfilePhoto) { newValue in
+        .onChange(of: viewModel.selectedProfilePhoto) { _, newValue in
             if newValue != nil {
                 Task { await viewModel.uploadProfilePhoto() }
             }
@@ -480,7 +480,7 @@ struct VendorEditProfileView: View {
         .padding(20)
         .background(Color.white.opacity(0.5))
         .cornerRadius(16)
-        .onChange(of: viewModel.selectedPortfolioPhotos) { newValue in
+        .onChange(of: viewModel.selectedPortfolioPhotos) { _, newValue in
             if !newValue.isEmpty {
                 Task { await viewModel.uploadPortfolioPhotos() }
             }

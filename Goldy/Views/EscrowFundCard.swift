@@ -49,7 +49,7 @@ struct EscrowFundCard: View {
         .background(Color.white)
         .cornerRadius(12)
         .shadow(color: Color.black.opacity(0.05), radius: 2, x: 0, y: 1)
-        .onChange(of: amountText) { newValue in
+        .onChange(of: amountText) { _, newValue in
             fund.amount = Double(newValue)
         }
         .onAppear {
@@ -61,9 +61,9 @@ struct EscrowFundCard: View {
 }
 
 #Preview {
-    @State var sampleFund = EscrowFund(text: "Sample description", amount: 100.00)
+    @Previewable @State var sampleFund = EscrowFund(text: "Sample description", amount: 100.00)
     
-    return VStack(spacing: 20) {
+    VStack(spacing: 20) {
         EscrowFundCard(fund: $sampleFund)
         EscrowFundCard(fund: .constant(EscrowFund(text: "", amount: nil)))
     }

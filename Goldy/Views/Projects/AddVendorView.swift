@@ -55,7 +55,7 @@ struct AddVendorView: View {
             } message: { error in
                 Text(error)
             }
-            .onChange(of: viewModel.didComplete) { completed in
+            .onChange(of: viewModel.didComplete) { _, completed in
                 if completed { dismiss() }
             }
         }

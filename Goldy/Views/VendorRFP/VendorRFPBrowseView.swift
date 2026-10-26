@@ -312,7 +312,7 @@ struct RFPBidSheet: View {
                         .stroke(Color.gray.opacity(0.2), lineWidth: 1)
                 )
                 
-                if let budget = rfp.budget {
+                if rfp.budget != nil {
                     Text("Client budget: \(rfp.budgetFormatted)")
                         .font(.custom("Spectral-Regular", size: 12))
                         .foregroundColor(.gray)

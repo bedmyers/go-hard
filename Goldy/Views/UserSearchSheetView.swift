@@ -82,7 +82,7 @@ struct UserSearchSheetView: View {
             }
         }
         .padding(20)
-        .onChange(of: query) { newValue in
+        .onChange(of: query) { _, newValue in
             if !newValue.isEmpty {
                 viewModel.searchUsers(query: newValue, token: authToken)
             }

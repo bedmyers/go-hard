@@ -32,7 +32,7 @@ struct SignupView: View {
             }
             .scrollDismissesKeyboard(.interactively)
         }
-        .onChange(of: viewModel.isSignedUp) { isSignedUp in
+        .onChange(of: viewModel.isSignedUp) { _, isSignedUp in
             if isSignedUp {
                 let token = UserDefaults.standard.string(forKey: "authToken") ?? ""
                 let userId = UserDefaults.standard.integer(forKey: "userId")

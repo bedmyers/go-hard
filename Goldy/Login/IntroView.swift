@@ -93,7 +93,7 @@ private struct IntroTitleView: View {
         .padding(.leading, 25)
         .padding(.top, 110)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .onChange(of: isAnimated) { animated in
+        .onChange(of: isAnimated) { _, animated in
             if animated {
                 animateLines()
             }
@@ -165,7 +165,7 @@ extension IntroView {
             .padding(.leading, 25)
             .padding(.top, 110)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .onChange(of: isAnimated) { animated in
+            .onChange(of: isAnimated) { _, animated in
                 if animated {
                     animateLines()
                 }

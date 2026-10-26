@@ -35,7 +35,7 @@ struct LoginView: View {
             }
             .scrollDismissesKeyboard(.interactively)
         }
-        .onChange(of: authVM.isAuthenticated) { isAuthed in
+        .onChange(of: authVM.isAuthenticated) { _, isAuthed in
             if isAuthed {
                 let token = UserDefaults.standard.string(forKey: "authToken") ?? ""
                 let userId = UserDefaults.standard.integer(forKey: "userId")

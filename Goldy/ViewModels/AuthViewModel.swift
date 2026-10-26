@@ -90,7 +90,7 @@ class AuthViewModel: ObservableObject {
         request.timeoutInterval = 30
         
         URLSession.shared.dataTaskPublisher(for: request)
-            .tryMap { [weak self] data, response -> Data in
+            .tryMap { data, response -> Data in
                 guard let httpResponse = response as? HTTPURLResponse else {
                     throw NetworkError.invalidResponse
                 }
