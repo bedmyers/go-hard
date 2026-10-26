@@ -217,6 +217,13 @@ class APIService {
         return try await makeRequest(endpoint: "/escrow/\(escrowId)/milestone/\(milestoneId)/release", method: "POST")
     }
 
+    // MARK: - Account
+
+    /// Deletes the current user's account. Fails while they have money in escrow.
+    func deleteAccount() async throws -> GenericSuccessResponse {
+        return try await makeRequest(endpoint: "/users/me", method: "DELETE")
+    }
+
     // MARK: - Escrow Cancellation & Refunds
 
     /// Customer: cancels an unfunded escrow outright, or asks the vendor to cancel a funded one
