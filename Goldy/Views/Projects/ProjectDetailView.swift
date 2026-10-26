@@ -571,8 +571,7 @@ private struct VendorCard: View {
                 .foregroundColor(.black)
         }
         .padding(14)
-        .background(Color.white)
-        .cornerRadius(10)
+        .cardStyle()
     }
 
     private func formatCurrency(_ amount: Double) -> String {
@@ -715,8 +714,7 @@ private struct PaymentRow: View {
                 .foregroundColor(.gray.opacity(0.4))
         }
         .padding(14)
-        .background(Color.white)
-        .cornerRadius(10)
+        .cardStyle()
         .opacity(isPaid ? 0.7 : 1.0)
     }
 

@@ -112,10 +112,10 @@ private struct OnboardingNeededView: View {
                 Task { await viewModel.startOnboarding() }
             } label: {
                 Text("CONNECT WITH STRIPE")
-                    .font(.custom("DelaGothicOne-Regular", size: 16))
+                    .font(.custom("DelaGothicOne-Regular", size: 14))
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity)
-                    .padding(.vertical, 18)
+                    .padding(.vertical, 16)
                     .background(Color.black)
                     .cornerRadius(12)
                     .shadow(color: .black.opacity(0.2), radius: 8, x: 0, y: 4)
@@ -235,10 +235,10 @@ private struct ErrorView: View {
                 retryAction()
             } label: {
                 Text("TRY AGAIN")
-                    .font(.custom("DelaGothicOne-Regular", size: 16))
+                    .font(.custom("DelaGothicOne-Regular", size: 14))
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity)
-                    .padding(.vertical, 18)
+                    .padding(.vertical, 16)
                     .background(Color.black)
                     .cornerRadius(12)
             }

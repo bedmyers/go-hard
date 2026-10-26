@@ -77,7 +77,7 @@ struct VendorWelcomeView: View {
                             onSetupProfile()
                         } label: {
                             Text("SET UP YOUR PROFILE")
-                                .font(.custom("DelaGothicOne-Regular", size: 15))
+                                .font(.custom("DelaGothicOne-Regular", size: 14))
                                 .foregroundColor(.white)
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 16)

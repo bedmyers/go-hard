@@ -337,12 +337,12 @@ struct VendorDetailView: View {
                     Task { await viewModel.escalateCancellation() }
                 } label: {
                     Text("ASK GO HARD TO DECIDE")
-                        .font(.custom("Spectral-Bold", size: 13))
+                        .font(.custom("DelaGothicOne-Regular", size: 14))
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
-                        .padding(.vertical, 14)
+                        .padding(.vertical, 16)
                         .background(Color(hex: "8B5CF6"))
-                        .cornerRadius(10)
+                        .cornerRadius(12)
                 }
             }
 
@@ -350,14 +350,14 @@ struct VendorDetailView: View {
                 viewModel.showWithdrawConfirm = true
             } label: {
                 Text("WITHDRAW REQUEST")
-                    .font(.custom("Spectral-Bold", size: 13))
+                    .font(.custom("DelaGothicOne-Regular", size: 14))
                     .foregroundColor(.black)
                     .frame(maxWidth: .infinity)
-                    .padding(.vertical, 14)
+                    .padding(.vertical, 16)
                     .background(Color.white)
-                    .cornerRadius(10)
+                    .cornerRadius(12)
                     .overlay(
-                        RoundedRectangle(cornerRadius: 10)
+                        RoundedRectangle(cornerRadius: 12)
                             .stroke(Color.black.opacity(0.15), lineWidth: 1)
                     )
             }

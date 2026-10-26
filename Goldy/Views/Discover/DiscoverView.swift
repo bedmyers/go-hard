@@ -1059,8 +1059,7 @@ private struct VendorRowCard: View {
             }
         }
         .padding(14)
-        .background(Color.white)
-        .cornerRadius(10)
+        .cardStyle()
     }
 }
 

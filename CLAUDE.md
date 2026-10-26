@@ -13,8 +13,10 @@ Wedding escrow app - SwiftUI frontend.
 - `Views/` - SwiftUI views organized by feature
 
 ## Design System
+The app is locked to light mode (`UIUserInterfaceStyle = Light`).
+
 Colors (use Color(hex: "...")):
-- Background: #F5F1E8 (warm beige)
+- Background: `Color("Background")` asset (#F1E8D9, warm beige) on every screen
 - Gold/Primary: #FFD700
 - Green/Success: #22C55E
 - Orange: #FF6B35
@@ -23,13 +25,18 @@ Colors (use Color(hex: "...")):
 - Pinterest Red: #E60023
 
 Typography:
-- Titles: DelaGothicOne-Regular
-- Body: System font
+- Titles/headings: DelaGothicOne-Regular (navigation titles too, via `AppAppearance`)
+- Body: Spectral (`Spectral-Regular`, `-Medium`, `-Bold`); section labels are Spectral-Bold 12 in caps
+
+Components:
+- Cards: `.cardStyle()` (white, 12pt corners, standard shadow) or `.cardStyle(cornerRadius: 16)` for large cards. Don't hand-roll card backgrounds/shadows.
+- Main buttons: full width, DelaGothicOne 14, `.padding(.vertical, 16)`, 12pt corners; black or gold fill. Secondary: white with a light 1pt border.
+- Buttons inside cards: Spectral-Bold 12, `.padding(.vertical, 12)`, 8pt corners.
+- Text fields: white, 10pt corners.
+- Toolbar buttons: plain icon/label only; iOS draws the button background.
 
 Style:
 - Bold, aggressive design - NOT minimal
-- White cards with subtle shadows
-- Rounded corners (12-16pt)
 
 ## Key Patterns
 - Auth token stored in UserDefaults

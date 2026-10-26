@@ -490,12 +490,12 @@ struct RFPDetailView: View {
                                         Image(systemName: "envelope.fill")
                                         Text("Email")
                                     }
-                                    .font(.custom("Spectral-Bold", size: 13))
+                                    .font(.custom("Spectral-Bold", size: 12))
                                     .foregroundColor(.white)
                                     .frame(maxWidth: .infinity)
                                     .padding(.vertical, 12)
                                     .background(Color(hex: "3B82F6"))
-                                    .cornerRadius(10)
+                                    .cornerRadius(8)
                                 }
                             }
 

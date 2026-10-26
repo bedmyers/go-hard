@@ -109,10 +109,10 @@ struct VendorAgreementView: View {
                     showDeclineSheet = true
                 } label: {
                     Text("DECLINE")
-                        .font(.custom("Spectral-Bold", size: 13))
+                        .font(.custom("DelaGothicOne-Regular", size: 14))
                         .foregroundColor(.black)
                         .frame(maxWidth: .infinity)
-                        .padding(.vertical, 14)
+                        .padding(.vertical, 16)
                         .background(Color.white)
                         .cornerRadius(12)
                         .overlay(
