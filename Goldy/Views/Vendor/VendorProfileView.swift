@@ -133,8 +133,7 @@ struct VendorProfileView: View {
         }
         .padding(24)
         .frame(maxWidth: .infinity)
-        .background(Color.white)
-        .cornerRadius(20)
+        .cardStyle(cornerRadius: 20)
     }
     
     // MARK: - Quick Stats
@@ -158,8 +157,7 @@ struct VendorProfileView: View {
             }
         }
         .padding(.vertical, 16)
-        .background(Color.white)
-        .cornerRadius(16)
+        .cardStyle(cornerRadius: 16)
     }
     
     private func statItem(value: String, label: String, icon: String) -> some View {
@@ -191,8 +189,7 @@ struct VendorProfileView: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(20)
-        .background(Color.white)
-        .cornerRadius(16)
+        .cardStyle(cornerRadius: 16)
     }
     
     // MARK: - Services Section
@@ -217,8 +214,7 @@ struct VendorProfileView: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(20)
-        .background(Color.white)
-        .cornerRadius(16)
+        .cardStyle(cornerRadius: 16)
     }
     
     // MARK: - Links Section
@@ -278,8 +274,7 @@ struct VendorProfileView: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(20)
-        .background(Color.white)
-        .cornerRadius(16)
+        .cardStyle(cornerRadius: 16)
     }
     
     // MARK: - Portfolio Section (Masonry Grid)
@@ -302,8 +297,7 @@ struct VendorProfileView: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(20)
-        .background(Color.white)
-        .cornerRadius(16)
+        .cardStyle(cornerRadius: 16)
     }
     
     // MARK: - Action Buttons

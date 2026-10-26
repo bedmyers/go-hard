@@ -272,8 +272,7 @@ private struct RFPCardWithProject: View {
             }
         }
         .padding(20)
-        .background(Color.white)
-        .cornerRadius(16)
+        .cardStyle(cornerRadius: 16)
     }
     
     private var cardHeader: some View {
@@ -591,8 +590,7 @@ private struct BrowseVendorsView: View {
                     }
                 }
                 .padding(12)
-                .background(Color.white)
-                .cornerRadius(12)
+                .cardStyle()
                 
                 Button {
                     showFilters.toggle()
@@ -832,8 +830,7 @@ private struct FilterSheet: View {
                             }
                             .tint(Color(hex: "22C55E"))
                             .padding()
-                            .background(Color.white)
-                            .cornerRadius(12)
+                            .cardStyle()
                         }
                         
                         Spacer(minLength: 40)

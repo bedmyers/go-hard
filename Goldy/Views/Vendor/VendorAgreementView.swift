@@ -268,9 +268,7 @@ struct VendorAgreementView: View {
                 }
             }
             .padding()
-            .background(Color.white)
-            .cornerRadius(12)
-            .shadow(color: .black.opacity(0.05), radius: 8, x: 0, y: 4)
+            .cardStyle()
         }
         .padding(.horizontal)
     }
@@ -326,9 +324,7 @@ struct VendorAgreementView: View {
                 }
             }
             .padding()
-            .background(Color.white)
-            .cornerRadius(12)
-            .shadow(color: .black.opacity(0.05), radius: 8, x: 0, y: 4)
+            .cardStyle()
         }
         .padding(.horizontal)
     }
@@ -386,9 +382,7 @@ struct VendorAgreementView: View {
             }
         }
         .padding()
-        .background(Color.white)
-        .cornerRadius(12)
-        .shadow(color: .black.opacity(0.05), radius: 8, x: 0, y: 4)
+        .cardStyle()
     }
 
     private func remainingLabel(_ escrow: Escrow) -> String {
@@ -474,9 +468,7 @@ struct VendorAgreementView: View {
                 }
             }
             .padding()
-            .background(Color.white)
-            .cornerRadius(12)
-            .shadow(color: .black.opacity(0.05), radius: 8, x: 0, y: 4)
+            .cardStyle()
         }
         .padding(.horizontal)
     }

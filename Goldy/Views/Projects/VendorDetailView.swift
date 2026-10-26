@@ -290,9 +290,7 @@ struct VendorDetailView: View {
             }
         }
         .padding(20)
-        .background(Color.white)
-        .cornerRadius(16)
-        .shadow(color: .black.opacity(0.04), radius: 8, x: 0, y: 4)
+        .cardStyle(cornerRadius: 16)
         .padding(.horizontal)
     }
     
@@ -395,9 +393,7 @@ struct VendorDetailView: View {
         }
         .padding(24)
         .frame(maxWidth: .infinity)
-        .background(Color.white)
-        .cornerRadius(16)
-        .shadow(color: .black.opacity(0.04), radius: 8, x: 0, y: 4)
+        .cardStyle(cornerRadius: 16)
         .padding(.horizontal)
     }
     
@@ -420,9 +416,7 @@ struct VendorDetailView: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(16)
-        .background(Color.white)
-        .cornerRadius(12)
-        .shadow(color: .black.opacity(0.04), radius: 8, x: 0, y: 4)
+        .cardStyle()
         .padding(.horizontal)
     }
 
@@ -447,9 +441,7 @@ struct VendorDetailView: View {
                     .foregroundColor(.gray)
             }
             .padding(16)
-            .background(Color.white)
-            .cornerRadius(12)
-            .shadow(color: .black.opacity(0.04), radius: 8, x: 0, y: 4)
+            .cardStyle()
         }
         .padding(.horizontal)
         .sheet(isPresented: $viewModel.showTerms) {
@@ -655,9 +647,7 @@ private struct MilestoneCard: View {
                 milestoneAction
             }
             .padding(16)
-            .background(Color.white)
-            .cornerRadius(12)
-            .shadow(color: .black.opacity(0.04), radius: 6, x: 0, y: 3)
+            .cardStyle()
         }
     }
     
@@ -793,8 +783,7 @@ private struct TermsBlock: View {
         }
         .padding()
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color.white)
-        .cornerRadius(12)
+        .cardStyle()
     }
 }
 

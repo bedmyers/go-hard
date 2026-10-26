@@ -192,8 +192,7 @@ struct RFPExpandableCard: View {
             }
         }
         .padding(20)
-        .background(Color.white)
-        .cornerRadius(16)
+        .cardStyle(cornerRadius: 16)
     }
 
     private var cardHeader: some View {

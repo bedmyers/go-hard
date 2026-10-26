@@ -158,8 +158,7 @@ struct CreateProjectView: View {
                                 Spacer()
                             }
                             .padding()
-                            .background(Color.white)
-                            .cornerRadius(12)
+                            .cardStyle()
                                                     }
 
                         // Location

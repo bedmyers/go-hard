@@ -282,8 +282,7 @@ private struct OpenRFPCard: View {
             }
         }
         .padding(20)
-        .background(Color.white)
-        .cornerRadius(16)
+        .cardStyle(cornerRadius: 16)
             }
 }
 
@@ -383,8 +382,7 @@ private struct StatCard: View {
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 16)
-        .background(Color.white)
-        .cornerRadius(12)
+        .cardStyle()
     }
 }
 
